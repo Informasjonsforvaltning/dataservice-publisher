@@ -1,0 +1,33 @@
+openapi: 3.0.2
+info:
+  title: Dataservice-catalog of Digdir
+  description: Exposes a dataservice-catalog
+  version: '1.0'
+  contact:
+    name: Digitaliseringsdirektoratet
+    url: 'https://digdir.no'
+  license:
+    name: License of API
+    url: 'http://data.norge.no/nlod/no/2.0'
+tags:
+  - name: dataservice-catalog
+    description: catalog operations
+paths:
+  /:
+    get:
+      tags:
+        - dataservice-catalog
+      summary: Returns a dataservice-catalog including dataservices
+      responses:
+        '200':
+          description: OK
+          content:
+            text/turtle:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
