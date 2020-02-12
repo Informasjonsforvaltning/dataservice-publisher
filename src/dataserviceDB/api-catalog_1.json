@@ -1,0 +1,8 @@
+# json structure containing an "api-catalog" and pointers to openAPI-specs
+
+<https://data.felleskomponent.no/catalogs/991825827/catalog>
+        a                dcat:Catalog ;
+        dct:description  "Dataservicekatalog for Digitaliseringsdirektoratet"@nb ;
+        dct:publisher    <https://data.brreg.no/enhetsregisteret/enhet/991825827> ;
+        dct:title        "Dataservicekatalog for Digitaliseringsdirektoratet"@nb ;
+        dcat:service     <https://data.digdir.no/dataservices/1> .
