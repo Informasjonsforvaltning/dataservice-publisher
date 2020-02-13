@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: Dataservice-catalog of Digdir
-  description: Exposes a dataservice-catalog
+  description: Exposes a dataservice-catalog according to DCAT-AP-NO v2
   version: '1.0'
   contact:
     name: Digitaliseringsdirektoratet
