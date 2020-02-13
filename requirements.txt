@@ -1,6 +1,0 @@
-flask
-requests
-rdflib
-rdflib-jsonld
-gunicorn
-python-dotenv
