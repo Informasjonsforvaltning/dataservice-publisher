@@ -13,7 +13,7 @@ tags:
   - name: dataservice-catalog
     description: catalog operations
 paths:
-  /:
+  catalogs/:
     get:
       tags:
         - dataservice-catalog

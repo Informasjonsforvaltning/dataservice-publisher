@@ -23,10 +23,10 @@ Install software:
 pip3 install --no-cache-dir -r requirements.txt
 ```
 ## Running the API locally
- Start the endpoint by simply:
+ Start the endpoint:
 ```
-% cd src
-% python3 app.py
+% FLASK_APP=dataservicecatalog FLASK_ENV=development flask run --port=8080
+% FLASK_APP=dataservicecatalog FLASK_ENV=development flask init-db
 ```
 ## Running the API in a wsgi-server (gunicorn)
 ```
