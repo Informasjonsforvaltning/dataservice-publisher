@@ -4,6 +4,10 @@ This service publishes a [dataservice](https://www.w3.org/TR/vocab-dcat-2/#Class
 
 The representation of the catalog accords to the [dcat-ap-no v.2 standard](https://github.com/difi/dcat-ap-no/tree/review).
 
+The API is specified according to [the OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) in [dataservice-catalog.yaml](./dataservice-catalog.yaml)
+
+The API is also published as a dataservice in this catalog.
+
 ## Install requirements
 You should work in a virtual environment. To do that, install [venv](https://docs.python.org/3/library/venv.html)
 ```
