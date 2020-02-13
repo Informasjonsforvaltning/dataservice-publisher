@@ -1,8 +1,14 @@
-# json structure containing an "api-catalog" and pointers to openAPI-specs
-
-<https://data.felleskomponent.no/catalogs/991825827/catalog>
-        a                dcat:Catalog ;
-        dct:description  "Dataservicekatalog for Digitaliseringsdirektoratet"@nb ;
-        dct:publisher    <https://data.brreg.no/enhetsregisteret/enhet/991825827> ;
-        dct:title        "Dataservicekatalog for Digitaliseringsdirektoratet"@nb ;
-        dcat:service     <https://data.digdir.no/dataservices/1> .
+{
+  "catalog":
+  {
+    "id": 1,
+    "title": "Dataservicekatalog for Digitaliseringsdirektoratet",
+    "description": "Katalog med alle api-beskrivelser i seksjon for Informasjonsforvaltning ",
+    "publisher": "991825827",
+    "apis":
+      [
+        "https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-informationmodel-harvester/master/src/main/resources/specification/specification.yaml",
+        "https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/ConceptRegistrationAPI.yaml"
+      ]
+  }
+}
