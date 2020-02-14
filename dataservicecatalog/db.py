@@ -1,3 +1,4 @@
+import os
 from tinydb import TinyDB, Query
 import json
 
@@ -8,7 +9,7 @@ from flask.cli import with_appcontext
 
 def get_db():
     if 'db' not in g:
-        g.db = TinyDB('db.json')
+        g.db = TinyDB(os.getcwd()+'/dataservicecatalog/db.json')
 
     return g.db
 
@@ -24,7 +25,6 @@ def init_db():
     db.purge()
 
 def load_db():
-    import os
     datafile_path = os.getcwd()+'/dataservicecatalog/api-catalog_1.json'
     datafile = open(datafile_path, 'r')
     data = json.load(datafile)

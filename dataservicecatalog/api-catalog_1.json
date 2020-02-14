@@ -1,24 +1,22 @@
   [
     {
-      "id": 1,
       "title": "Dataservicekatalog for Digitaliseringsdirektoratet",
       "description": "Katalog med alle api-beskrivelser i seksjon for Informasjonsforvaltning ",
       "publisher": "991825827",
       "apis":
       [
-        "https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-informationmodel-harvester/master/src/main/resources/specification/specification.yaml",
-        "https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/ConceptRegistrationAPI.yaml"
+        "https://raw.githubusercontent.com/api1",
+        "https://raw.githubusercontent.com/api2"
       ]
     },
     {
-      "id": 2,
       "title": "Dataservicekatalog2 for Digitaliseringsdirektoratet",
       "description": "Katalog med alle andre api-beskrivelser i seksjon for Informasjonsforvaltning ",
       "publisher": "991825827",
       "apis":
       [
-        "https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-informationmodel-harvester/master/src/main/resources/specification/specification.yaml",
-        "https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/ConceptRegistrationAPI.yaml"
+        "https://raw.githubusercontent.com/api3",
+        "https://raw.githubusercontent.com/api4"
       ]
     }
   ]
