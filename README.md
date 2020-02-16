@@ -30,8 +30,7 @@ pip3 install --no-cache-dir -r requirements.txt
 ```
 ## Running the API in a wsgi-server (gunicorn)
 ```
-% cd src
-% gunicorn wsgi:app --config=config.py
+% gunicorn "dataservicecatalog:create_app()"  --config=dataservicecatalog/gunicorn_config.py
 ```
 ## Running the wsgi-server in Docker
 

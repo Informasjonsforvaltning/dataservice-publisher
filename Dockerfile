@@ -12,4 +12,4 @@ COPY . /usr/src/app
 
 EXPOSE 8080
 
-CMD cd src && gunicorn wsgi:app --config=config.py
+CMD gunicorn "dataservicecatalog:create_app()"  --config=dataservicecatalog/gunicorn_config.py
