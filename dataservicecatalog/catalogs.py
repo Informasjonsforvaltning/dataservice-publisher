@@ -1,8 +1,9 @@
 import functools
 import json
+from tinydb import Query
 
 from flask import (
-    Blueprint, flash, g, redirect, Response, request, session, url_for
+    Blueprint, flash, g, redirect, Response, request, session, url_for, abort
 )
 
 from dataservicecatalog.db import get_db
@@ -30,9 +31,10 @@ def catalogs():
 
 @bp.route('/catalogs/<int:id>')
 def catalogById(id):
-    # TODO: refactor to get singe catalog
     db = get_db()
-    catalog = db.all()[0]
+    catalog = db.get(doc_id=id)
+    if catalog == None:
+        abort(404)
     if request.headers.get('Accept'):
         if 'application/json' == request.headers['Accept']:
             return Response(json.dumps(catalogs), mimetype='application/json')
