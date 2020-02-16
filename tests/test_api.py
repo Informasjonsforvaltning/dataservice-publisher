@@ -10,7 +10,6 @@ def test_catalogs_with_json():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'application/json' == resp.headers['Content-Type']
-    print('resp.text >', resp.text, '<')
     j = json.loads(resp.text)
     assert 0 < len(j)
 
