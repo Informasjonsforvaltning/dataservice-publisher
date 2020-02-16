@@ -12,4 +12,4 @@ ADD dataservicecatalog /usr/src/app/dataservicecatalog
 
 EXPOSE 8080
 
-CMD gunicorn "dataservicecatalog:create_app()"  --config=dataservicecatalog/gunicorn_config.py
+CMD gunicorn "dataservicecatalog:create_app()"  --config=dataservicecatalog/gunicorn_config.py && FLASK_APP=dataservicecatalog FLASK_ENV=development flask load-db

@@ -1,5 +1,5 @@
 import os
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, where
 import json
 
 import click
