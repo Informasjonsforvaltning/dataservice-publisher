@@ -5,8 +5,8 @@
       "publisher": "991825827",
       "apis":
       [
-        "https://raw.githubusercontent.com/api1",
-        "https://raw.githubusercontent.com/api2"
+        "https://raw.githubusercontent.com/Informasjonsforvaltning/model-publisher/master/model-catalog.yaml",
+        "https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/master/dataservice-catalog.yaml"
       ]
     },
     {
