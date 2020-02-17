@@ -9,7 +9,7 @@ from flask.cli import with_appcontext
 
 def get_db():
     if 'db' not in g:
-        g.db = TinyDB(os.getcwd()+'/dataservicecatalog/db.json')
+        g.db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
 
     return g.db
 

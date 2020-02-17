@@ -4,10 +4,11 @@ import uuid
 import yaml
 import requests
 
+from typing import List
+
 class Catalog:
 
     def __init__(self, catalog):
-        print(catalog)
         self.id = str(catalog.doc_id)
         self.uri = "http://localhost:8080/catalogs/" + self.id
         self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + catalog['publisher']
@@ -23,13 +24,12 @@ class DataService:
         assert endpointdescription != None, "There must a endpointdescription"
         # TODO: Refactor this code out of flask and into load-db script
         resp = requests.get(endpointdescription)
-        print(resp.status_code)
         if resp.status_code == 200:
             description = yaml.safe_load(resp.text)
             self.title = description['info']['title']
             self.description = description['info']['description']
 
-def _add_catalog_to_graph(g, catalog):
+def _add_catalog_to_graph(g: Graph, catalog: Catalog) -> Graph:
 
     dct = Namespace('http://purl.org/dc/terms/')
     g.bind('dct', dct)
@@ -43,7 +43,7 @@ def _add_catalog_to_graph(g, catalog):
 
     return g
 
-def _add_dataservice_to_graph(g, dataService):
+def _add_dataservice_to_graph(g: Graph, dataService: DataService) -> Graph:
 
     dct = Namespace('http://purl.org/dc/terms/')
     g.bind('dct', dct)
@@ -59,7 +59,7 @@ def _add_dataservice_to_graph(g, dataService):
 
     return g
 
-def map_catalogs_to_rdf(catalogs, format='turtle'):
+def map_catalogs_to_rdf(catalogs: List[Catalog], format='turtle') -> str:
     g = Graph()
 
     dct = Namespace('http://purl.org/dc/terms/')
@@ -74,7 +74,10 @@ def map_catalogs_to_rdf(catalogs, format='turtle'):
     return g.serialize(format=format, encoding='utf-8')
 
 
-def map_catalog_to_rdf(c, format='turtle'):
+def map_catalog_to_rdf(c: Catalog, format='turtle') -> str:
+    """Adds the catalog c to the graph g and returns a serialization as a string according to format"""
+    assert type(c) is Catalog, "type must be Catalog"
+
     g = Graph()
 
     dct = Namespace('http://purl.org/dc/terms/')

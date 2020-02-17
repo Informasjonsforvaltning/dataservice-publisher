@@ -7,7 +7,7 @@ def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    from . import db
+    from .model import db
     db.init_app(app)
 
     if test_config is None:

@@ -6,13 +6,13 @@ from flask import (
     Blueprint, flash, g, redirect, Response, request, session, url_for, abort
 )
 
-from dataservicecatalog.db import get_db
-from dataservicecatalog.mappers import map_catalogs_to_rdf, map_catalog_to_rdf
+from .model.db import get_db
+from .lib.mappers import map_catalogs_to_rdf, map_catalog_to_rdf
 
 bp = Blueprint('catalogs', __name__, url_prefix='/')
 
-@bp.route('/catalogs')
-def catalogs():
+@bp.route('/catalogs', methods=['GET'])
+def getCatalogs():
     db = get_db()
     catalogs = db.all()
     if request.headers.get('Accept'):
@@ -29,8 +29,11 @@ def catalogs():
     else:
         return Response(map_catalogs_to_rdf(catalogs,'turtle'), mimetype='text/turtle')
 
-@bp.route('/catalogs/<int:id>')
-def catalogById(id):
+@bp.route('/catalogs', methods=['POST'])
+# TODO create a POST endpoint where at the minimum a pointer to an openapi-spec can be posted.
+
+@bp.route('/catalogs/<int:id>', methods=['GET'])
+def getCatalogById(id):
     db = get_db()
     catalog = db.get(doc_id=id)
     if catalog == None:
