@@ -1,23 +1,21 @@
 import functools
 import json
-from tinydb import Query
 
 from flask import (
-    Blueprint, flash, g, redirect, Response, request, session, url_for, abort
+    Blueprint, flash, g, redirect, Response, request, session, url_for, abort, jsonify
 )
 
-from .model.db import get_db
+from .model.repository import fetch_catalogs, fetch_catalog_by_id
 from .lib.mappers import map_catalogs_to_rdf, map_catalog_to_rdf
 
 bp = Blueprint('catalogs', __name__, url_prefix='/')
 
 @bp.route('/catalogs', methods=['GET'])
 def getCatalogs():
-    db = get_db()
-    catalogs = db.all()
+    catalogs = fetch_catalogs()
     if request.headers.get('Accept'):
         if 'application/json' == request.headers['Accept']:
-            return Response(json.dumps(catalogs), mimetype='application/json')
+            return Response(json.dumps([dict(c.__dict__) for c in catalogs]), mimetype='application/json')
         elif 'text/turtle' == request.headers['Accept']:
             return Response(map_catalogs_to_rdf(catalogs,'turtle'), mimetype='text/turtle')
         elif 'application/rdf+xml' == request.headers['Accept']:
@@ -34,13 +32,12 @@ def getCatalogs():
 
 @bp.route('/catalogs/<int:id>', methods=['GET'])
 def getCatalogById(id):
-    db = get_db()
-    catalog = db.get(doc_id=id)
+    catalog = fetch_catalog_by_id(id)
     if catalog == None:
         abort(404)
     if request.headers.get('Accept'):
         if 'application/json' == request.headers['Accept']:
-            return Response(json.dumps(catalogs), mimetype='application/json')
+            return Response(json.dumps(catalog.__dict__), mimetype='application/json')
         elif 'text/turtle' == request.headers['Accept']:
             return Response(map_catalog_to_rdf(catalog,'turtle'), mimetype='text/turtle')
         elif 'application/rdf+xml' == request.headers['Accept']:

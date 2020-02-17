@@ -8,15 +8,16 @@ from typing import List
 
 class Catalog:
 
-    def __init__(self, catalog):
-        self.id = str(catalog.doc_id)
+    def __init__(self, document):
+        assert document.id != None, "the document must have an id"
+        self.id = str(document.id)
         self.uri = "http://localhost:8080/catalogs/" + self.id
-        self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + catalog['publisher']
-        self.title = catalog['title']
+        self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + document['publisher']
+        self.title = document['title']
 
 class DataService:
 
-    def __init__(self, endpointdescription):
+    def __init__(self, endpointdescription: str):
         self.id = str(uuid.uuid4())
         self.uri = "http://localhost:8080/dataservices/" + self.id
         self.endpointdescriptionUrl = endpointdescription
@@ -60,6 +61,7 @@ def _add_dataservice_to_graph(g: Graph, dataService: DataService) -> Graph:
     return g
 
 def map_catalogs_to_rdf(catalogs: List[Catalog], format='turtle') -> str:
+
     g = Graph()
 
     dct = Namespace('http://purl.org/dc/terms/')
@@ -68,8 +70,7 @@ def map_catalogs_to_rdf(catalogs: List[Catalog], format='turtle') -> str:
     g.bind('dcat', dcat)
 
     for c in catalogs:
-        catalog = Catalog(c)
-        g = g + _add_catalog_to_graph(g, catalog)
+        g = g + _add_catalog_to_graph(g, c)
 
     return g.serialize(format=format, encoding='utf-8')
 
@@ -85,8 +86,7 @@ def map_catalog_to_rdf(c: Catalog, format='turtle') -> str:
     dcat = Namespace('http://www.w3.org/ns/dcat#')
     g.bind('dcat', dcat)
 
-    catalog = Catalog(c)
-    g = g + _add_catalog_to_graph(g, catalog)
+    g = g + _add_catalog_to_graph(g, c)
 
     for a in c['apis']:
         dataService = DataService(a)
