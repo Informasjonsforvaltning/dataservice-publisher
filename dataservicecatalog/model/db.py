@@ -22,16 +22,18 @@ def close_db(e=None):
 
 def init_db():
     db = get_db()
+    db.purge_tables()
     db.purge()
 
 def load_db():
-    datafile_path = os.getcwd()+'/dataservicecatalog/api-catalog_1.json'
+    datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
     datafile = open(datafile_path, 'r')
     data = json.load(datafile)
     db = get_db()
+    catalogTable = db.table('catalogs')
     for d in data:
         print(d)
-        db.insert(d)
+        catalogTable.insert(d)
 
 
 @click.command('init-db')

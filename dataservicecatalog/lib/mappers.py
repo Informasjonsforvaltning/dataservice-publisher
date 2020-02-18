@@ -14,13 +14,15 @@ class Catalog:
         self.uri = "http://localhost:8080/catalogs/" + self.id
         self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + document['publisher']
         self.title = document['title']
+        self.dataServices = []
 
 class DataService:
 
-    def __init__(self, endpointdescription: str):
-        self.id = str(uuid.uuid4())
+    def __init__(self, document):
+        assert document.id != None, "the document must have an id"
+        self.id = str(document.id)
         self.uri = "http://localhost:8080/dataservices/" + self.id
-        self.endpointdescriptionUrl = endpointdescription
+        self.endpointdescriptionUrl = document['endpointdescription']
 
         assert endpointdescription != None, "There must a endpointdescription"
         # TODO: Refactor this code out of flask and into load-db script
@@ -88,8 +90,8 @@ def map_catalog_to_rdf(c: Catalog, format='turtle') -> str:
 
     g = g + _add_catalog_to_graph(g, c)
 
-    for a in c['apis']:
-        dataService = DataService(a)
+    for d in c.dataServices:
+        dataService = DataService(d)
         g = g + _add_dataservice_to_graph(g, dataService)
         g.add( (URIRef(catalog.uri), dcat.service, URIRef(dataService.uri)) )
 

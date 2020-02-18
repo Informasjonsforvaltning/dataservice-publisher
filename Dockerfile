@@ -12,6 +12,6 @@ ADD dataservicecatalog /usr/src/app/dataservicecatalog
 
 EXPOSE 8080
 
-RUN python3 dataservicecatalog/loadDB.py
+RUN python3 dataservicecatalog/model/loadDB.py
 
 CMD gunicorn "dataservicecatalog:create_app()"  --config=dataservicecatalog/gunicorn_config.py
