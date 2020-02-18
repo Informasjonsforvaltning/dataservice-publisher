@@ -17,7 +17,25 @@ paths:
     get:
       tags:
         - dataservice-catalog
-      summary: Returns a dataservice-catalog including dataservices
+      summary: Returns a list of dataservice-catalogs including dataservices
+      responses:
+        '200':
+          description: OK
+          content:
+            text/turtle:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
+  dataservices/:
+    get:
+      tags:
+        - dataservice-catalog
+      summary: Returns a list of dataservices
       responses:
         '200':
           description: OK

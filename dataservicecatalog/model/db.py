@@ -32,7 +32,6 @@ def load_db():
     db = get_db()
     catalogTable = db.table('catalogs')
     for d in data:
-        print(d)
         catalogTable.insert(d)
 
 

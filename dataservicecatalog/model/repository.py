@@ -14,7 +14,6 @@ def fetch_catalogs() -> List[Catalog]:
     list = []
     for c in catalogs:
         c.id = c.doc_id
-        print(c)
         catalog = Catalog(c)
         list.append(catalog)
 
@@ -25,11 +24,17 @@ def fetch_catalog_by_id(id) -> Catalog:
     assert id != None, "id can not be empty"
     db = get_db()
     catalogTable = db.table('catalogs')
+    dataserviceTable = db.table('dataservices')
     catalog = catalogTable.get(doc_id=id)
     catalog.id = catalog.doc_id
 
-    print(catalog)
-    # TODO add dataservices to the catalog object before returning
+    _dataservices = []
+    for d in catalog['dataservices']:
+        _d = dataserviceTable.get(doc_id=d)
+        _d.id = _d.doc_id
+        _dataservices.append(_d)
+    catalog['dataservices'] = _dataservices
+
     return Catalog(catalog)
 
 
@@ -41,7 +46,6 @@ def fetch_dataservices() -> List[DataService]:
     list = []
     for d in dataservices:
         d.id = d.doc_id
-        print(d)
         dataservice = DataService(d)
         list.append(dataservice)
 
@@ -55,5 +59,4 @@ def fetch_dataservice_by_id(id) -> DataService:
     dataservice = dataserviceTable.get(doc_id=id)
     dataservice.id = dataservice.doc_id
 
-    print(dataservice)
     return DataService(dataservice)

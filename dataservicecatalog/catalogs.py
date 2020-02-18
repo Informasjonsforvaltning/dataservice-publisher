@@ -10,7 +10,7 @@ from .lib.mappers import map_catalogs_to_rdf, map_catalog_to_rdf
 
 bp = Blueprint('catalogs', __name__, url_prefix='/catalogs')
 
-@bp.route('/', methods=['GET'])
+@bp.route('', methods=['GET'])
 def getCatalogs():
     catalogs = fetch_catalogs()
     if request.headers.get('Accept'):
@@ -28,7 +28,7 @@ def getCatalogs():
         return Response(map_catalogs_to_rdf(catalogs,'turtle'), mimetype='text/turtle')
 
 @bp.route('/', methods=['POST'])
-# TODO create a POST endpoint where at the minimum a pointer to an openapi-spec can be posted.
+# TODO: create a POST where a catalog including dataservices can be posted
 
 @bp.route('/<int:id>', methods=['GET'])
 def getCatalogById(id):

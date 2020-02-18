@@ -10,7 +10,7 @@ from .lib.mappers import map_dataservices_to_rdf, map_dataservice_to_rdf
 
 bp = Blueprint('dataservices', __name__, url_prefix='/dataservices')
 
-@bp.route('/', methods=['GET'])
+@bp.route('', methods=['GET'])
 def getDataservices():
     dataservices = fetch_dataservices()
     if request.headers.get('Accept'):
@@ -28,7 +28,7 @@ def getDataservices():
         return Response(map_dataservices_to_rdf(dataservices,'turtle'), mimetype='text/turtle')
 
 @bp.route('/', methods=['POST'])
-# TODO create a POST endpoint where at the minimum a pointer to an openapi-spec can be posted.
+# TODO: create a POST endpoint where at the minimum a pointer to an openapi-spec can be posted.
 
 @bp.route('/<int:id>', methods=['GET'])
 def getDataserviceById(id):
