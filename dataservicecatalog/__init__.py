@@ -26,6 +26,9 @@ def create_app(test_config=None):
     from . import catalogs
     app.register_blueprint(catalogs.bp)
 
+    from . import dataservices
+    app.register_blueprint(dataservices.bp)
+
     @app.route('/ready', methods=['GET'])
     def isReady():
         return "OK"

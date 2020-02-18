@@ -11,7 +11,7 @@ class Catalog:
     def __init__(self, document):
         self.publisher = "https://data.brreg.no/enhetsregisteret/api/enheter/" + document['publisher']
         self.title = document['title']
-        self.dataServices = []
+        self.dataservices = []
 
 class DataService:
 
@@ -29,14 +29,14 @@ datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
 datafile = open(datafile_path, 'r')
 data = json.load(datafile)
 catalogTable = db.table('catalogs')
-dataServiceTable = db.table('dataservices')
+dataserviceTable = db.table('dataservices')
 for d in data:
     c = Catalog(d)
     for a in d['apis']:
         ds = DataService(a)
         print(ds.__dict__)
-        id = dataServiceTable.insert(ds.__dict__)
-        c.dataServices.append(id)
+        id = dataserviceTable.insert(ds.__dict__)
+        c.dataservices.append(id)
     catalogTable.insert(c.__dict__)
 
 db.close()

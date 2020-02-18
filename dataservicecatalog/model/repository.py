@@ -3,7 +3,7 @@ import requests
 from tinydb.database import Document
 from typing import List
 
-from dataservicecatalog.lib.mappers import Catalog
+from dataservicecatalog.lib.mappers import Catalog, DataService
 from .db import get_db
 
 def fetch_catalogs() -> List[Catalog]:
@@ -29,4 +29,31 @@ def fetch_catalog_by_id(id) -> Catalog:
     catalog.id = catalog.doc_id
 
     print(catalog)
+    # TODO add dataservices to the catalog object before returning
     return Catalog(catalog)
+
+
+def fetch_dataservices() -> List[DataService]:
+    """Returns a list of DataService objects"""
+    db = get_db()
+    dataserviceTable = db.table('dataservices')
+    dataservices = dataserviceTable.all()
+    list = []
+    for d in dataservices:
+        d.id = d.doc_id
+        print(d)
+        dataservice = DataService(d)
+        list.append(dataservice)
+
+    return list
+
+def fetch_dataservice_by_id(id) -> DataService:
+    """Returns a DataService object with id = id"""
+    assert id != None, "id can not be empty"
+    db = get_db()
+    dataserviceTable = db.table('dataservices')
+    dataservice = dataserviceTable.get(doc_id=id)
+    dataservice.id = dataservice.doc_id
+
+    print(dataservice)
+    return DataService(dataservice)

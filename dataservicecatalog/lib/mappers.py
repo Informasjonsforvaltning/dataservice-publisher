@@ -14,7 +14,7 @@ class Catalog:
         self.uri = "http://localhost:8080/catalogs/" + self.id
         self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + document['publisher']
         self.title = document['title']
-        self.dataServices = []
+        self.dataservices = []
 
 class DataService:
 
@@ -23,14 +23,10 @@ class DataService:
         self.id = str(document.id)
         self.uri = "http://localhost:8080/dataservices/" + self.id
         self.endpointdescriptionUrl = document['endpointdescription']
-
-        assert endpointdescription != None, "There must a endpointdescription"
-        # TODO: Refactor this code out of flask and into load-db script
-        resp = requests.get(endpointdescription)
-        if resp.status_code == 200:
-            description = yaml.safe_load(resp.text)
-            self.title = description['info']['title']
-            self.description = description['info']['description']
+        if 'title' in document:
+            self.title = document['title']
+        if 'description' in document:
+            self.description = document['description']
 
 def _add_catalog_to_graph(g: Graph, catalog: Catalog) -> Graph:
 
@@ -46,19 +42,19 @@ def _add_catalog_to_graph(g: Graph, catalog: Catalog) -> Graph:
 
     return g
 
-def _add_dataservice_to_graph(g: Graph, dataService: DataService) -> Graph:
+def _add_dataservice_to_graph(g: Graph, dataservice: DataService) -> Graph:
 
     dct = Namespace('http://purl.org/dc/terms/')
     g.bind('dct', dct)
     dcat = Namespace('http://www.w3.org/ns/dcat#')
     g.bind('dcat', dcat)
 
-    g.add( (URIRef(dataService.uri), RDF.type, dcat.DataService) )
-    g.add( (URIRef(dataService.uri), dcat.endpointdescription, URIRef(dataService.endpointdescriptionUrl)) )
-    if hasattr(dataService, 'title'):
-        g.add( (URIRef(dataService.uri), dct.title, Literal(dataService.title, lang='nb')) )
-    if hasattr(dataService, 'description'):
-        g.add( (URIRef(dataService.uri), dct.description, Literal(dataService.description, lang='nb')) )
+    g.add( (URIRef(dataservice.uri), RDF.type, dcat.DataService) )
+    g.add( (URIRef(dataservice.uri), dcat.endpointdescription, URIRef(dataservice.endpointdescriptionUrl)) )
+    if hasattr(dataservice, 'title'):
+        g.add( (URIRef(dataservice.uri), dct.title, Literal(dataservice.title, lang='nb')) )
+    if hasattr(dataservice, 'description'):
+        g.add( (URIRef(dataservice.uri), dct.description, Literal(dataservice.description, lang='nb')) )
 
     return g
 
@@ -90,9 +86,39 @@ def map_catalog_to_rdf(c: Catalog, format='turtle') -> str:
 
     g = g + _add_catalog_to_graph(g, c)
 
-    for d in c.dataServices:
-        dataService = DataService(d)
-        g = g + _add_dataservice_to_graph(g, dataService)
-        g.add( (URIRef(catalog.uri), dcat.service, URIRef(dataService.uri)) )
+    for d in c.dataservices:
+        dataservice = DataService(d)
+        g = g + _add_dataservice_to_graph(g, dataservice)
+        g.add( (URIRef(catalog.uri), dcat.service, URIRef(dataservice.uri)) )
+
+    return g.serialize(format=format, encoding='utf-8')
+
+def map_dataservices_to_rdf(dataservices: List[DataService], format='turtle') -> str:
+
+    g = Graph()
+
+    dct = Namespace('http://purl.org/dc/terms/')
+    g.bind('dct', dct)
+    dcat = Namespace('http://www.w3.org/ns/dcat#')
+    g.bind('dcat', dcat)
+
+    for d in dataservices:
+        g = g + _add_dataservice_to_graph(g, d)
+
+    return g.serialize(format=format, encoding='utf-8')
+
+
+def map_dataservice_to_rdf(dataservice: DataService, format='turtle') -> str:
+    """Adds the dataservice c to the graph g and returns a serialization as a string according to format"""
+    assert type(dataservice) is DataService, "type must be DataService"
+
+    g = Graph()
+
+    dct = Namespace('http://purl.org/dc/terms/')
+    g.bind('dct', dct)
+    dcat = Namespace('http://www.w3.org/ns/dcat#')
+    g.bind('dcat', dcat)
+
+    g = g + _add_dataservice_to_graph(g, dataservice)
 
     return g.serialize(format=format, encoding='utf-8')
