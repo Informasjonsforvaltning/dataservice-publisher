@@ -31,6 +31,10 @@ def create_dataservice(url):
             dataservice['contact'] = {}
             if 'name' in description['info']['contact']:
                 dataservice['contact']['name'] = description['info']['contact']['name']
+            if 'email' in description['info']['contact']:
+                dataservice['contact']['email'] = description['info']['contact']['email']
+            if 'url' in description['info']['contact']:
+                dataservice['contact']['url'] = description['info']['contact']['url']
     return dataservice
 
 datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'

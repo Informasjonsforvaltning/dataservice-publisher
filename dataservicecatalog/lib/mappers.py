@@ -13,20 +13,34 @@ class Catalog:
         self.id = str(document.doc_id)
         self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + document['publisher']
         self.title = document['title']
+        self.description = document['description']
         self.dataservices = []
         for d in document['dataservices']:
             self.dataservices.append(d)
+
+class Contact:
+    def __init__(self, document):
+        assert document['name'] != None, "the contact must have a name"
+        self.name = document['name']
+        if 'email' in document:
+            self.email = document['email']
+        if 'url' in document:
+            self.url = document['url']
 
 class DataService:
 
     def __init__(self, document):
         assert document.doc_id != None, "the document must have an id"
         self.id = str(document.doc_id)
-        self.endpointdescriptionUrl = document['endpointdescription']
+        self.endpointdescription = document['endpointdescription']
         if 'title' in document:
             self.title = document['title']
         if 'description' in document:
             self.description = document['description']
+        if 'endpointUrl' in document:
+            self.endpointUrl = document['endpointUrl']
+        if 'contact' in document:
+            self.contactpoint = Contact(document['contact'])
 
 def _add_catalog_to_graph(g: Graph, catalog: Catalog) -> Graph:
 
@@ -50,15 +64,28 @@ def _add_dataservice_to_graph(g: Graph, dataservice: DataService) -> Graph:
     g.bind('dct', dct)
     dcat = Namespace('http://www.w3.org/ns/dcat#')
     g.bind('dcat', dcat)
-
+    vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
+    g.bind('vcard', vcard)
     dataservice_uri = "http://localhost:8080/dataservices/" + dataservice.id
 
     g.add( (URIRef(dataservice_uri), RDF.type, dcat.DataService) )
-    g.add( (URIRef(dataservice_uri), dcat.endpointdescription, URIRef(dataservice.endpointdescriptionUrl)) )
+    g.add( (URIRef(dataservice_uri), dcat.endpointdescription, URIRef(dataservice.endpointdescription)) )
     if hasattr(dataservice, 'title'):
         g.add( (URIRef(dataservice_uri), dct.title, Literal(dataservice.title, lang='nb')) )
     if hasattr(dataservice, 'description'):
         g.add( (URIRef(dataservice_uri), dct.description, Literal(dataservice.description, lang='nb')) )
+    if hasattr(dataservice, 'endpointUrl'):
+        g.add( (URIRef(dataservice_uri), dcat.endpointUrl, URIRef(dataservice.endpointUrl)) )
+    if hasattr(dataservice, 'contactpoint'):
+        contactpoint = BNode()
+        g.add( (URIRef(dataservice_uri), dcat.contactPoint, contactpoint) )
+        g.add( (contactpoint, RDF.type, vcard.Organization) )
+        if hasattr(dataservice.contactpoint, 'name'):
+            g.add( (contactpoint, vcard.hasOrganizationName, Literal(dataservice.contactpoint.name, lang='nb')) )
+        if hasattr(dataservice.contactpoint, 'email'):
+            g.add( (contactpoint, vcard.hasEmail, URIRef('mailto:' + dataservice.contactpoint.email)) )
+        if hasattr(dataservice.contactpoint, 'url'):
+            g.add( (contactpoint, vcard.hasURL, URIRef(dataservice.contactpoint.url)) )
 
     return g
 
