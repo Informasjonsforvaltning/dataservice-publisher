@@ -1,5 +1,8 @@
 import functools
 import json
+import jsonpickle
+jsonpickle.set_preferred_backend('json')
+
 
 from flask import (
     Blueprint, flash, g, redirect, Response, request, session, url_for, abort, jsonify
@@ -15,7 +18,7 @@ def getCatalogs():
     catalogs = fetch_catalogs()
     if request.headers.get('Accept'):
         if 'application/json' == request.headers['Accept']:
-            return Response(json.dumps([dict(c.__dict__) for c in catalogs]), mimetype='application/json')
+            return Response(jsonpickle.encode(catalogs, unpicklable=False), mimetype='application/json')
         elif 'text/turtle' == request.headers['Accept']:
             return Response(map_catalogs_to_rdf(catalogs,'turtle'), mimetype='text/turtle')
         elif 'application/rdf+xml' == request.headers['Accept']:
@@ -37,7 +40,7 @@ def getCatalogById(id):
         abort(404)
     if request.headers.get('Accept'):
         if 'application/json' == request.headers['Accept']:
-            return Response(json.dumps(catalog.__dict__), mimetype='application/json')
+            return Response(jsonpickle.encode(catalog, unpicklable=False), mimetype='application/json')
         elif 'text/turtle' == request.headers['Accept']:
             return Response(map_catalog_to_rdf(catalog,'turtle'), mimetype='text/turtle')
         elif 'application/rdf+xml' == request.headers['Accept']:
