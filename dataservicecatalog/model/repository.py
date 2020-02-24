@@ -30,8 +30,9 @@ def fetch_catalog_by_id(id) -> Catalog:
 
     _dataservices = []
     for d in catalog['dataservices']:
+        _d = {}
         _d = dataserviceTable.get(doc_id=d)
-        _d.id = _d.doc_id
+        _d['id'] = _d.doc_id
         _dataservices.append(_d)
     catalog['dataservices'] = _dataservices
 
@@ -57,6 +58,5 @@ def fetch_dataservice_by_id(id) -> DataService:
     db = get_db()
     dataserviceTable = db.table('dataservices')
     dataservice = dataserviceTable.get(doc_id=id)
-    dataservice.id = dataservice.doc_id
-
+    dataservice['id'] = dataservice.doc_id
     return DataService(dataservice)
