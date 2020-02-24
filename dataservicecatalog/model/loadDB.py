@@ -7,25 +7,34 @@ import yaml
 db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
 
 # TODO: consider just using simple dicts, not classes here
-class Catalog:
 
-    def __init__(self, document):
-        self.publisher = document['publisher']
-        self.title = document['title']
-        self.dataservices = []
+def create_catalog(document):
+    catalog = {}
+    catalog['publisher'] = document['publisher']
+    catalog['title'] = document['title']
+    catalog['description'] = document['description']
+    catalog['dataservices'] = []
 
-class DataService:
+    return catalog
 
-    def __init__(self, url):
-        self.endpointdescription = url
-        assert url != None, "There must a endpointdescription"
+def create_dataservice(url):
+    dataservice = {}
+    dataservice['endpointdescription'] = url
+    assert url != None, "There must a endpointdescription"
 
-        resp = requests.get(url)
-        if resp.status_code == 200:
-            description = yaml.safe_load(resp.text)
-            self.title = description['info']['title']
-            self.description = description['info']['description']
-            # TODO: add more attributes to DataService from openAPI
+    resp = requests.get(url)
+    if resp.status_code == 200:
+        description = yaml.safe_load(resp.text)
+        dataservice['title'] = description['info']['title']
+        dataservice['description'] = description['info']['description']
+        if 'servers' in description:
+            dataservice['endpointUrl'] = description['servers'][0]['url']
+        if 'contact' in description['info']:
+            dataservice['contact'] = {}
+            if 'name' in description['info']['contact']:
+                dataservice['contact']['name'] = description['info']['contact']['name']
+        # TODO: add more attributes to DataService from openAPI
+    return dataservice
 
 datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
 datafile = open(datafile_path, 'r')
@@ -33,11 +42,11 @@ data = json.load(datafile)
 catalogTable = db.table('catalogs')
 dataserviceTable = db.table('dataservices')
 for d in data:
-    c = Catalog(d)
+    c = create_catalog(d)
     for a in d['apis']:
-        ds = DataService(a)
-        id = dataserviceTable.insert(ds.__dict__)
-        c.dataservices.append(id)
-    catalogTable.insert(c.__dict__)
+        ds = create_dataservice(a)
+        id = dataserviceTable.insert(ds)
+        c['dataservices'].append(id)
+    catalogTable.insert(c)
 
 db.close()
