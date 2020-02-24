@@ -6,8 +6,6 @@ import yaml
 
 db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
 
-# TODO: consider just using simple dicts, not classes here
-
 def create_catalog(document):
     catalog = {}
     catalog['publisher'] = document['publisher']
@@ -33,7 +31,6 @@ def create_dataservice(url):
             dataservice['contact'] = {}
             if 'name' in description['info']['contact']:
                 dataservice['contact']['name'] = description['info']['contact']['name']
-        # TODO: add more attributes to DataService from openAPI
     return dataservice
 
 datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
