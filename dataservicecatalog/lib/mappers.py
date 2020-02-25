@@ -11,12 +11,16 @@ class Catalog:
     def __init__(self, document):
         assert document.doc_id != None, "the document must have an id"
         self.id = str(document.doc_id)
-        self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + document['publisher']
-        self.title = document['title']
-        self.description = document['description']
-        self.dataservices = []
-        for d in document['dataservices']:
-            self.dataservices.append(d)
+        if 'publisher' in document:
+            self.publisherUrl = "https://data.brreg.no/enhetsregisteret/api/enheter/" + document['publisher']
+        if 'title' in document:
+            self.title = document['title']
+        if 'description' in document:
+            self.description = document['description']
+        if 'dataservices' in document:
+            self.dataservices = []
+            for d in document['dataservices']:
+                self.dataservices.append(d)
 
 class Contact:
     def __init__(self, document):
@@ -32,7 +36,8 @@ class DataService:
     def __init__(self, document):
         assert document.doc_id != None, "the document must have an id"
         self.id = str(document.doc_id)
-        self.endpointdescription = document['endpointdescription']
+        if 'endpointdescription' in document:
+            self.endpointdescription = document['endpointdescription']
         if 'title' in document:
             self.title = document['title']
         if 'description' in document:
@@ -43,7 +48,7 @@ class DataService:
             self.contactpoint = Contact(document['contact'])
 
 def _add_catalog_to_graph(g: Graph, catalog: Catalog) -> Graph:
-
+    """Adds the catalog to the Graph g and returns g"""
     dct = Namespace('http://purl.org/dc/terms/')
     g.bind('dct', dct)
     dcat = Namespace('http://www.w3.org/ns/dcat#')
@@ -59,7 +64,7 @@ def _add_catalog_to_graph(g: Graph, catalog: Catalog) -> Graph:
     return g
 
 def _add_dataservice_to_graph(g: Graph, dataservice: DataService) -> Graph:
-
+    """Adds the dataservice to the Graph g and returns g"""
     dct = Namespace('http://purl.org/dc/terms/')
     g.bind('dct', dct)
     dcat = Namespace('http://www.w3.org/ns/dcat#')
@@ -90,72 +95,62 @@ def _add_dataservice_to_graph(g: Graph, dataservice: DataService) -> Graph:
     return g
 
 def map_catalogs_to_rdf(catalogs: List[Catalog], format='turtle') -> str:
+    """Maps the list of catalogs to rdf and returns a serialization as a string according to format"""
+    for c in catalogs:
+        assert type(c) is Catalog, "type must be Catalog"
 
     g = Graph()
 
-    dct = Namespace('http://purl.org/dc/terms/')
-    g.bind('dct', dct)
-    dcat = Namespace('http://www.w3.org/ns/dcat#')
-    g.bind('dcat', dcat)
-
     for c in catalogs:
-        g = g + _add_catalog_to_graph(g, c)
+        g = _add_catalog_to_graph(g, c)
         catalog_uri = "http://localhost:8080/catalogs/" + c.id
         for d in c.dataservices:
             dataservice_uri = "http://localhost:8080/dataservices/" + str(d)
+            dcat = Namespace('http://www.w3.org/ns/dcat#')
+            g.bind('dcat', dcat)
             g.add( (URIRef(catalog_uri), dcat.service, URIRef(dataservice_uri)) )
 
     return g.serialize(format=format, encoding='utf-8')
 
 
 def map_catalog_to_rdf(catalog: Catalog, format='turtle') -> str:
-    """Adds the catalog c to the graph g and returns a serialization as a string according to format"""
+    """Maps the catalog to rdf and returns a serialization as a string according to format"""
     assert type(catalog) is Catalog, "type must be Catalog"
 
     g = Graph()
 
-    dct = Namespace('http://purl.org/dc/terms/')
-    g.bind('dct', dct)
-    dcat = Namespace('http://www.w3.org/ns/dcat#')
-    g.bind('dcat', dcat)
-
     catalog_uri = "http://localhost:8080/catalogs/" + catalog.id
 
-    g = g + _add_catalog_to_graph(g, catalog)
+    g = _add_catalog_to_graph(g, catalog)
     for d in catalog.dataservices:
         dataservice = DataService(d)
         dataservice_uri = "http://localhost:8080/dataservices/" + dataservice.id
-        g = g + _add_dataservice_to_graph(g, dataservice)
+        dcat = Namespace('http://www.w3.org/ns/dcat#')
+        g.bind('dcat', dcat)
         g.add( (URIRef(catalog_uri), dcat.service, URIRef(dataservice_uri)) )
 
     return g.serialize(format=format, encoding='utf-8')
 
 def map_dataservices_to_rdf(dataservices: List[DataService], format='turtle') -> str:
+    """Maps the list of dataservices to rdf and returns a serialization as a string according to format"""
+
+    for d in dataservices:
+        assert type(d) is DataService, "type must be DataService"
 
     g = Graph()
 
-    dct = Namespace('http://purl.org/dc/terms/')
-    g.bind('dct', dct)
-    dcat = Namespace('http://www.w3.org/ns/dcat#')
-    g.bind('dcat', dcat)
-
     for d in dataservices:
-        g = g + _add_dataservice_to_graph(g, d)
+        g = _add_dataservice_to_graph(g, d)
 
     return g.serialize(format=format, encoding='utf-8')
 
 
 def map_dataservice_to_rdf(dataservice: DataService, format='turtle') -> str:
-    """Adds the dataservice c to the graph g and returns a serialization as a string according to format"""
+    """Maps the dataservice to rdf and returns a serialization as a string according to format"""
     assert type(dataservice) is DataService, "type must be DataService"
 
     g = Graph()
 
-    dct = Namespace('http://purl.org/dc/terms/')
-    g.bind('dct', dct)
-    dcat = Namespace('http://www.w3.org/ns/dcat#')
-    g.bind('dcat', dcat)
-
-    g = g + _add_dataservice_to_graph(g, dataservice)
+    g = _add_dataservice_to_graph(g, dataservice)
 
     return g.serialize(format=format, encoding='utf-8')
