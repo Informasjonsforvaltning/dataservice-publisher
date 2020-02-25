@@ -1,5 +1,6 @@
 import requests
-import rdflib
+from rdflib import Graph
+from rdflib.compare import isomorphic
 import json
 
 def test_catalogs_with_json():
@@ -20,7 +21,7 @@ def test_catalogs_no_accept_returns_turtle():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
@@ -32,7 +33,7 @@ def test_catalogs_with_text_turtle():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
@@ -44,7 +45,7 @@ def test_catalogs_with_application_rdf_xml():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'application/rdf+xml; charset=utf-8' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='xml')
     assert 0 < len(g)
 
@@ -56,7 +57,7 @@ def test_catalogs_with_application_ld_json():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'application/ld+json' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='json-ld')
     assert 0 < len(g)
 
@@ -78,7 +79,7 @@ def test_catalog_by_id_no_accept_returns_turtle():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
@@ -90,7 +91,7 @@ def test_catalog_by_id_with_text_turtle():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
@@ -102,7 +103,7 @@ def test_catalog_by_id_with_application_rdf_xml():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'application/rdf+xml; charset=utf-8' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='xml')
     assert 0 < len(g)
 
@@ -114,6 +115,34 @@ def test_catalog_by_id_with_application_ld_json():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'application/ld+json' == resp.headers['Content-Type']
-    g = rdflib.Graph()
+    g = Graph()
     g.parse(data=resp.text, format='json-ld')
     assert 0 < len(g)
+
+def test_isomorphic():
+    "GET request to url returns a 200"
+    url = 'http://localhost:8080/catalogs/1'
+    headers = {'Accept': 'text/turtle'}
+    resp = requests.get(url, headers=headers)
+    assert 200 == resp.status_code
+    assert 0 < len(resp.content)
+    assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
+    g = Graph()
+    g.parse(data=resp.text, format='turtle')
+    assert 0 < len(g)
+    f = Graph().parse("tests/catalog_1.ttl", format='turtle')
+    assert isomorphic(g, f)
+
+def test_not_isomorphic():
+    "GET request to url returns a 200"
+    url = 'http://localhost:8080/catalogs/1'
+    headers = {'Accept': 'text/turtle'}
+    resp = requests.get(url, headers=headers)
+    assert 200 == resp.status_code
+    assert 0 < len(resp.content)
+    assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
+    g = Graph()
+    g.parse(data=resp.text, format='turtle')
+    assert 0 < len(g)
+    f = Graph().parse("tests/catalog_2.ttl", format='turtle')
+    assert not isomorphic(g, f)
