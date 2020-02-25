@@ -125,6 +125,7 @@ def map_catalog_to_rdf(catalog: Catalog, format='turtle') -> str:
     for d in catalog.dataservices:
         dataservice = DataService(d)
         dataservice_uri = "http://localhost:8080/dataservices/" + dataservice.id
+        g = _add_dataservice_to_graph(g, dataservice)
         dcat = Namespace('http://www.w3.org/ns/dcat#')
         g.bind('dcat', dcat)
         g.add( (URIRef(catalog_uri), dcat.service, URIRef(dataservice_uri)) )
