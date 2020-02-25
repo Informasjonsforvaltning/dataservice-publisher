@@ -6,6 +6,7 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
+from .loadDB import load_db
 
 def get_db():
     if 'db' not in g:
@@ -24,16 +25,6 @@ def init_db():
     db = get_db()
     db.purge_tables()
     db.purge()
-
-def load_db():
-    datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
-    datafile = open(datafile_path, 'r')
-    data = json.load(datafile)
-    db = get_db()
-    catalogTable = db.table('catalogs')
-    for d in data:
-        catalogTable.insert(d)
-
 
 @click.command('init-db')
 @with_appcontext

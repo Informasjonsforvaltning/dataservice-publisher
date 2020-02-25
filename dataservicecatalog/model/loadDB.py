@@ -4,9 +4,7 @@ import json
 import requests
 import yaml
 
-db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
-
-def create_catalog(document):
+def _create_catalog(document):
     catalog = {}
     catalog['publisher'] = document['publisher']
     catalog['title'] = document['title']
@@ -15,7 +13,7 @@ def create_catalog(document):
 
     return catalog
 
-def create_dataservice(url):
+def _create_dataservice(url):
     dataservice = {}
     dataservice['endpointdescription'] = url
     assert url != None, "There must a endpointdescription"
@@ -37,17 +35,22 @@ def create_dataservice(url):
                 dataservice['contact']['url'] = description['info']['contact']['url']
     return dataservice
 
-datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
-datafile = open(datafile_path, 'r')
-data = json.load(datafile)
-catalogTable = db.table('catalogs')
-dataserviceTable = db.table('dataservices')
-for d in data:
-    c = create_catalog(d)
-    for a in d['apis']:
-        ds = create_dataservice(a)
-        id = dataserviceTable.insert(ds)
-        c['dataservices'].append(id)
-    catalogTable.insert(c)
+def load_db():
+    db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
+    datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
+    datafile = open(datafile_path, 'r')
+    data = json.load(datafile)
+    catalogTable = db.table('catalogs')
+    dataserviceTable = db.table('dataservices')
+    for d in data:
+        c = _create_catalog(d)
+        for a in d['apis']:
+            ds = _create_dataservice(a)
+            id = dataserviceTable.insert(ds)
+            c['dataservices'].append(id)
+        catalogTable.insert(c)
 
-db.close()
+    db.close()
+
+if __name__ == "__main__":
+    load_db()
