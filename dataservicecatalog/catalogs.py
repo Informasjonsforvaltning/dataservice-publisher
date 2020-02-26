@@ -30,8 +30,6 @@ def getCatalogs():
     else:
         return Response(map_catalogs_to_rdf(catalogs,'turtle'), mimetype='text/turtle')
 
-@bp.route('/', methods=['POST'])
-# TODO: create a POST where a catalog including dataservices can be posted
 
 @bp.route('/<int:id>', methods=['GET'])
 def getCatalogById(id):

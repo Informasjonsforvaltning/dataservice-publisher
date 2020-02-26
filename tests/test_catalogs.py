@@ -3,9 +3,12 @@ from rdflib import Graph
 from rdflib.compare import isomorphic
 import json
 
+from os import environ as env
+HOST_URL = env.get("HOST_URL") + ":" + env.get("HOST_PORT")
+
 def test_catalogs_with_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs'
+    url = HOST_URL + "/catalogs"
     headers = {'Accept': 'application/json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -16,7 +19,7 @@ def test_catalogs_with_json():
 
 def test_catalogs_no_accept_returns_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs'
+    url = HOST_URL + "/catalogs"
     resp = requests.get(url)
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
@@ -27,7 +30,7 @@ def test_catalogs_no_accept_returns_turtle():
 
 def test_catalogs_with_text_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs'
+    url = HOST_URL + "/catalogs"
     headers = {'Accept': 'text/turtle'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -39,7 +42,7 @@ def test_catalogs_with_text_turtle():
 
 def test_catalogs_with_application_rdf_xml():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs'
+    url = HOST_URL + "/catalogs"
     headers = {'Accept': 'application/rdf+xml'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -51,7 +54,7 @@ def test_catalogs_with_application_rdf_xml():
 
 def test_catalogs_with_application_ld_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs'
+    url = HOST_URL + "/catalogs"
     headers = {'Accept': 'application/ld+json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -63,7 +66,7 @@ def test_catalogs_with_application_ld_json():
 
 def test_catalog_by_id_with_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs/1'
+    url = HOST_URL + "/catalogs/1"
     headers = {'Accept': 'application/json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -74,7 +77,7 @@ def test_catalog_by_id_with_json():
 
 def test_catalog_by_id_no_accept_returns_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs/1'
+    url = HOST_URL + "/catalogs/1"
     resp = requests.get(url)
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
@@ -85,7 +88,7 @@ def test_catalog_by_id_no_accept_returns_turtle():
 
 def test_catalog_by_id_with_text_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs/1'
+    url = HOST_URL + "/catalogs/1"
     headers = {'Accept': 'text/turtle'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -97,7 +100,7 @@ def test_catalog_by_id_with_text_turtle():
 
 def test_catalog_by_id_with_application_rdf_xml():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs/1'
+    url = HOST_URL + "/catalogs/1"
     headers = {'Accept': 'application/rdf+xml'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -109,7 +112,7 @@ def test_catalog_by_id_with_application_rdf_xml():
 
 def test_catalog_by_id_with_application_ld_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs/1'
+    url = HOST_URL + "/catalogs/1"
     headers = {'Accept': 'application/ld+json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -121,7 +124,7 @@ def test_catalog_by_id_with_application_ld_json():
 
 def test_isomorphic():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs/1'
+    url = HOST_URL + "/catalogs/1"
     headers = {'Accept': 'text/turtle'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -135,7 +138,7 @@ def test_isomorphic():
 
 def test_not_isomorphic():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/catalogs/1'
+    url = HOST_URL + "/catalogs/1"
     headers = {'Accept': 'text/turtle'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -146,3 +149,10 @@ def test_not_isomorphic():
     assert 0 < len(g)
     f = Graph().parse("tests/catalog_2.ttl", format='turtle')
     assert not isomorphic(g, f)
+
+# BAD CASES:
+def test_not_found_gives_404():
+    "GET request to url returns a 404"
+    url = HOST_URL + "/catalogs/ID_NOT_IN_DB"
+    resp = requests.get(url)
+    assert 404 == resp.status_code

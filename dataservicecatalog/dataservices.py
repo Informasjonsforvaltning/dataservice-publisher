@@ -29,15 +29,6 @@ def getDataservices():
     else:
         return Response(map_dataservices_to_rdf(dataservices,'turtle'), mimetype='text/turtle')
 
-@bp.route('/', methods=['POST'])
-def create_dataservice():
-    # print('request.headers: ', request.headers)
-    # print('request.mimetype: ', request.mimetype)
-    # print('request.get_json: ', request.get_json(silent=False, force=True))
-    # print('request.json: ', request.json)
-    # print('request.data: ', request.data)
-    abort(501)
-# TODO: create a POST endpoint where at the minimum a pointer to an openapi-spec can be posted.
 
 @bp.route('/<int:id>', methods=['GET'])
 def getDataserviceById(id):

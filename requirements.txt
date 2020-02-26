@@ -8,3 +8,4 @@ pytest
 tinydb
 pyyaml
 jsonpickle
+pytest-dotenv

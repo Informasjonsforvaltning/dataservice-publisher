@@ -2,10 +2,14 @@ import os
 import logging
 from flask import Flask, Response
 import rdflib
+from dotenv import find_dotenv, load_dotenv
 
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    find_dotenv(raise_error_if_not_found=True)
+    load_dotenv()
 
     from .model import db
     db.init_app(app)

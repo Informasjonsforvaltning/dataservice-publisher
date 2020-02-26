@@ -2,9 +2,12 @@ import requests
 import rdflib
 import json
 
+from os import environ as env
+HOST_URL = env.get("HOST_URL") + ":" + env.get("HOST_PORT")
+
 def test_dataservices_with_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices'
+    url = HOST_URL + "/dataservices"
     headers = {'Accept': 'application/json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -15,7 +18,7 @@ def test_dataservices_with_json():
 
 def test_dataservices_no_accept_returns_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices'
+    url = HOST_URL + "/dataservices"
     resp = requests.get(url)
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
@@ -26,7 +29,7 @@ def test_dataservices_no_accept_returns_turtle():
 
 def test_dataservices_with_text_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices'
+    url = HOST_URL + "/dataservices"
     headers = {'Accept': 'text/turtle'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -38,7 +41,7 @@ def test_dataservices_with_text_turtle():
 
 def test_dataservices_with_application_rdf_xml():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices'
+    url = HOST_URL + "/dataservices"
     headers = {'Accept': 'application/rdf+xml'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -50,7 +53,7 @@ def test_dataservices_with_application_rdf_xml():
 
 def test_dataservices_with_application_ld_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices'
+    url = HOST_URL + "/dataservices"
     headers = {'Accept': 'application/ld+json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -62,7 +65,7 @@ def test_dataservices_with_application_ld_json():
 
 def test_dataservice_by_id_with_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices/1'
+    url = HOST_URL + "/dataservices/1"
     headers = {'Accept': 'application/json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -73,7 +76,7 @@ def test_dataservice_by_id_with_json():
 
 def test_dataservice_by_id_no_accept_returns_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices/1'
+    url = HOST_URL + "/dataservices/1"
     resp = requests.get(url)
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
@@ -84,7 +87,7 @@ def test_dataservice_by_id_no_accept_returns_turtle():
 
 def test_dataservice_by_id_with_text_turtle():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices/1'
+    url = HOST_URL + "/dataservices/1"
     headers = {'Accept': 'text/turtle'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -96,7 +99,7 @@ def test_dataservice_by_id_with_text_turtle():
 
 def test_dataservice_by_id_with_application_rdf_xml():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices/1'
+    url = HOST_URL + "/dataservices/1"
     headers = {'Accept': 'application/rdf+xml'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -108,7 +111,7 @@ def test_dataservice_by_id_with_application_rdf_xml():
 
 def test_dataservice_by_id_with_application_ld_json():
     "GET request to url returns a 200"
-    url = 'http://localhost:8080/dataservices/1'
+    url = HOST_URL + "/dataservices/1"
     headers = {'Accept': 'application/ld+json'}
     resp = requests.get(url, headers=headers)
     assert 200 == resp.status_code
@@ -117,3 +120,11 @@ def test_dataservice_by_id_with_application_ld_json():
     g = rdflib.Graph()
     g.parse(data=resp.text, format='json-ld')
     assert 0 < len(g)
+
+
+# BAD CASES:
+def test_not_found_gives_404():
+    "GET request to url returns a 404"
+    url = HOST_URL + "/dataservices/ID_NOT_IN_DB"
+    resp = requests.get(url)
+    assert 404 == resp.status_code

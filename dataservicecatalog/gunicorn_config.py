@@ -4,7 +4,7 @@ import multiprocessing
 
 load_dotenv()
 
-PORT = int(env.get("PORT", 8080))
+PORT = int(env.get("HOST_PORT", 8080))
 DEBUG_MODE = env.get("DEBUG_MODE", False)
 LOG_LEVEL = env.get("LOG_LEVEL", "info")
 
