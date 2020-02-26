@@ -45,7 +45,7 @@ PUBLISHER_URL = "https://data.brreg.no/enhetsregisteret/api/enheter"
 To build and run the api in a Docker container:
 ```
 % docker build -t digdir/dataservice-publisher:latest .
-% docker run -p 8080:8080 -d digdir/dataservice-publisher:latest
+% docker run --env-file .env -p 8080:8080 -d digdir/dataservice-publisher:latest
 ```
 
 ## Running tests

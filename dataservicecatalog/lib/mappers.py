@@ -5,7 +5,9 @@ import yaml
 import requests
 
 from os import environ as env
-HOST_URL = env.get("HOST_URL") + ":" + env.get("HOST_PORT")
+HOST_URL = env.get("HOST_URL")
+HOST_PORT = str(env.get("HOST_PORT"))
+URL = HOST_URL + ':' + HOST_PORT
 PUBLISHER_URL = env.get("PUBLISHER_URL")
 
 from typing import List
@@ -58,7 +60,7 @@ def _add_catalog_to_graph(g: Graph, catalog: Catalog) -> Graph:
     dcat = Namespace('http://www.w3.org/ns/dcat#')
     g.bind('dcat', dcat)
 
-    uri = HOST_URL + "/catalogs/" + catalog.id
+    uri = URL + "/catalogs/" + catalog.id
 
     # Add triples using store's add method.
     g.add( (URIRef(uri), RDF.type, dcat.Catalog) )
@@ -75,7 +77,7 @@ def _add_dataservice_to_graph(g: Graph, dataservice: DataService) -> Graph:
     g.bind('dcat', dcat)
     vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
     g.bind('vcard', vcard)
-    dataservice_uri = HOST_URL + "/dataservices/" + dataservice.id
+    dataservice_uri = URL + "/dataservices/" + dataservice.id
 
     g.add( (URIRef(dataservice_uri), RDF.type, dcat.DataService) )
     g.add( (URIRef(dataservice_uri), dcat.endpointdescription, URIRef(dataservice.endpointdescription)) )
@@ -107,9 +109,9 @@ def map_catalogs_to_rdf(catalogs: List[Catalog], format='turtle') -> str:
 
     for c in catalogs:
         g = _add_catalog_to_graph(g, c)
-        catalog_uri = HOST_URL + "/catalogs/" + c.id
+        catalog_uri = URL + "/catalogs/" + c.id
         for d in c.dataservices:
-            dataservice_uri = HOST_URL + "/dataservices/" + str(d)
+            dataservice_uri = URL + "/dataservices/" + str(d)
             dcat = Namespace('http://www.w3.org/ns/dcat#')
             g.bind('dcat', dcat)
             g.add( (URIRef(catalog_uri), dcat.service, URIRef(dataservice_uri)) )
@@ -123,12 +125,12 @@ def map_catalog_to_rdf(catalog: Catalog, format='turtle') -> str:
 
     g = Graph()
 
-    catalog_uri = HOST_URL + "/catalogs/" + catalog.id
+    catalog_uri = URL + "/catalogs/" + catalog.id
 
     g = _add_catalog_to_graph(g, catalog)
     for d in catalog.dataservices:
         dataservice = DataService(d)
-        dataservice_uri = HOST_URL + "/dataservices/" + dataservice.id
+        dataservice_uri = URL + "/dataservices/" + dataservice.id
         g = _add_dataservice_to_graph(g, dataservice)
         dcat = Namespace('http://www.w3.org/ns/dcat#')
         g.bind('dcat', dcat)
