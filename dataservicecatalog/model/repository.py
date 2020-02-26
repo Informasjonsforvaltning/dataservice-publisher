@@ -26,6 +26,8 @@ def fetch_catalog_by_id(id) -> Catalog:
     catalogTable = db.table('catalogs')
     dataserviceTable = db.table('dataservices')
     catalog = catalogTable.get(doc_id=id)
+    if catalog == None:
+        return None
     catalog.id = catalog.doc_id
 
     _dataservices = []
@@ -58,5 +60,7 @@ def fetch_dataservice_by_id(id) -> DataService:
     db = get_db()
     dataserviceTable = db.table('dataservices')
     dataservice = dataserviceTable.get(doc_id=id)
+    if dataservice == None:
+        return None
     dataservice['id'] = dataservice.doc_id
     return DataService(dataservice)
