@@ -17,7 +17,7 @@ jobs:
        run: docker build -t digdir/dataservice-publisher:latest .
 
      - name: Run Docker image
-       run: docker run -p 8080:8080 -d digdir/dataservice-publisher:latest
+       run: docker run --env-file .env -p 8080:8080 -d digdir/dataservice-publisher:latest
 
      - name: Set up Python 3.7
        uses: actions/setup-python@v1
