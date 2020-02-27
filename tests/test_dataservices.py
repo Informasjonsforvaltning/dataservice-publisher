@@ -5,6 +5,7 @@ import json
 from os import environ as env
 HOST_URL = env.get("HOST_URL")
 
+
 def test_dataservices_with_json():
     "GET request to url returns a 200"
     url = HOST_URL + "/dataservices"
@@ -16,6 +17,7 @@ def test_dataservices_with_json():
     j = json.loads(resp.text)
     assert 0 < len(j)
 
+
 def test_dataservices_no_accept_returns_turtle():
     "GET request to url returns a 200"
     url = HOST_URL + "/dataservices"
@@ -26,6 +28,7 @@ def test_dataservices_no_accept_returns_turtle():
     g = rdflib.Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
+
 
 def test_dataservices_with_text_turtle():
     "GET request to url returns a 200"
@@ -39,6 +42,7 @@ def test_dataservices_with_text_turtle():
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
+
 def test_dataservices_with_application_rdf_xml():
     "GET request to url returns a 200"
     url = HOST_URL + "/dataservices"
@@ -50,6 +54,7 @@ def test_dataservices_with_application_rdf_xml():
     g = rdflib.Graph()
     g.parse(data=resp.text, format='xml')
     assert 0 < len(g)
+
 
 def test_dataservices_with_application_ld_json():
     "GET request to url returns a 200"
@@ -63,6 +68,7 @@ def test_dataservices_with_application_ld_json():
     g.parse(data=resp.text, format='json-ld')
     assert 0 < len(g)
 
+
 def test_dataservice_by_id_with_json():
     "GET request to url returns a 200"
     url = HOST_URL + "/dataservices/1"
@@ -74,6 +80,7 @@ def test_dataservice_by_id_with_json():
     j = json.loads(resp.text)
     assert 0 < len(j)
 
+
 def test_dataservice_by_id_no_accept_returns_turtle():
     "GET request to url returns a 200"
     url = HOST_URL + "/dataservices/1"
@@ -84,6 +91,7 @@ def test_dataservice_by_id_no_accept_returns_turtle():
     g = rdflib.Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
+
 
 def test_dataservice_by_id_with_text_turtle():
     "GET request to url returns a 200"
@@ -97,6 +105,7 @@ def test_dataservice_by_id_with_text_turtle():
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
+
 def test_dataservice_by_id_with_application_rdf_xml():
     "GET request to url returns a 200"
     url = HOST_URL + "/dataservices/1"
@@ -108,6 +117,7 @@ def test_dataservice_by_id_with_application_rdf_xml():
     g = rdflib.Graph()
     g.parse(data=resp.text, format='xml')
     assert 0 < len(g)
+
 
 def test_dataservice_by_id_with_application_ld_json():
     "GET request to url returns a 200"

@@ -1,10 +1,8 @@
-import yaml
-import requests
-from tinydb.database import Document
 from typing import List
 
 from dataservicecatalog.lib.mappers import Catalog, DataService
 from .db import get_db
+
 
 def fetch_catalogs() -> List[Catalog]:
     """Returns a list of Catalog objects"""
@@ -19,14 +17,15 @@ def fetch_catalogs() -> List[Catalog]:
 
     return list
 
+
 def fetch_catalog_by_id(id) -> Catalog:
     """Returns a Catalog object with id = id"""
-    assert id != None, "id can not be empty"
+    assert id is not None, "id can not be empty"
     db = get_db()
     catalogTable = db.table('catalogs')
     dataserviceTable = db.table('dataservices')
     catalog = catalogTable.get(doc_id=id)
-    if catalog == None:
+    if catalog is None:
         return None
     catalog.id = catalog.doc_id
 
@@ -54,13 +53,14 @@ def fetch_dataservices() -> List[DataService]:
 
     return list
 
+
 def fetch_dataservice_by_id(id) -> DataService:
     """Returns a DataService object with id = id"""
-    assert id != None, "id can not be empty"
+    assert id is not None, "id can not be empty"
     db = get_db()
     dataserviceTable = db.table('dataservices')
     dataservice = dataserviceTable.get(doc_id=id)
-    if dataservice == None:
+    if dataservice is None:
         return None
     dataservice['id'] = dataservice.doc_id
     return DataService(dataservice)

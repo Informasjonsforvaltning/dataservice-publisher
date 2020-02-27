@@ -1,8 +1,9 @@
 import os
-from tinydb import TinyDB, where
+from tinydb import TinyDB
 import json
 import requests
 import yaml
+
 
 def _create_catalog(document):
     catalog = {}
@@ -13,10 +14,11 @@ def _create_catalog(document):
 
     return catalog
 
+
 def _create_dataservice(url):
     dataservice = {}
     dataservice['endpointdescription'] = url
-    assert url != None, "There must a endpointdescription"
+    assert url is not None, "There must a endpointdescription"
 
     resp = requests.get(url)
     if resp.status_code == 200:
@@ -28,12 +30,19 @@ def _create_dataservice(url):
         if 'contact' in description['info']:
             dataservice['contact'] = {}
             if 'name' in description['info']['contact']:
-                dataservice['contact']['name'] = description['info']['contact']['name']
+                dataservice['contact']['name'] = (
+                    description['info']['contact']['name']
+                )
             if 'email' in description['info']['contact']:
-                dataservice['contact']['email'] = description['info']['contact']['email']
+                dataservice['contact']['email'] = (
+                   description['info']['contact']['email']
+                )
             if 'url' in description['info']['contact']:
-                dataservice['contact']['url'] = description['info']['contact']['url']
+                dataservice['contact']['url'] = (
+                   description['info']['contact']['url']
+                )
     return dataservice
+
 
 def load_db():
     db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
@@ -51,6 +60,7 @@ def load_db():
         catalogTable.insert(c)
 
     db.close()
+
 
 if __name__ == "__main__":
     load_db()

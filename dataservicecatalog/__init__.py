@@ -1,8 +1,8 @@
 import os
-import logging
-from flask import Flask, Response
-import rdflib
+from flask import Flask
 from dotenv import load_dotenv
+from .model import db
+
 
 def create_app(test_config=None):
     # Create and configure the app
@@ -18,8 +18,6 @@ def create_app(test_config=None):
     if not PUBLISHER_URL:
         raise ValueError("No PUBLISHER_URL set for Flask application")
 
-
-    from .model import db
     db.init_app(app)
 
     if test_config is None:

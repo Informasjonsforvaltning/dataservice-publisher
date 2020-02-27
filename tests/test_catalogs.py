@@ -2,9 +2,9 @@ import requests
 from rdflib import Graph
 from rdflib.compare import isomorphic
 import json
-
 from os import environ as env
 HOST_URL = env.get("HOST_URL")
+
 
 def test_catalogs_with_json():
     "GET request to url returns a 200"
@@ -17,6 +17,7 @@ def test_catalogs_with_json():
     j = json.loads(resp.text)
     assert 0 < len(j)
 
+
 def test_catalogs_no_accept_returns_turtle():
     "GET request to url returns a 200"
     url = HOST_URL + "/catalogs"
@@ -27,6 +28,7 @@ def test_catalogs_no_accept_returns_turtle():
     g = Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
+
 
 def test_catalogs_with_text_turtle():
     "GET request to url returns a 200"
@@ -40,6 +42,7 @@ def test_catalogs_with_text_turtle():
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
+
 def test_catalogs_with_application_rdf_xml():
     "GET request to url returns a 200"
     url = HOST_URL + "/catalogs"
@@ -51,6 +54,7 @@ def test_catalogs_with_application_rdf_xml():
     g = Graph()
     g.parse(data=resp.text, format='xml')
     assert 0 < len(g)
+
 
 def test_catalogs_with_application_ld_json():
     "GET request to url returns a 200"
@@ -64,6 +68,7 @@ def test_catalogs_with_application_ld_json():
     g.parse(data=resp.text, format='json-ld')
     assert 0 < len(g)
 
+
 def test_catalog_by_id_with_json():
     "GET request to url returns a 200"
     url = HOST_URL + "/catalogs/1"
@@ -75,6 +80,7 @@ def test_catalog_by_id_with_json():
     j = json.loads(resp.text)
     assert 0 < len(j)
 
+
 def test_catalog_by_id_no_accept_returns_turtle():
     "GET request to url returns a 200"
     url = HOST_URL + "/catalogs/1"
@@ -85,6 +91,7 @@ def test_catalog_by_id_no_accept_returns_turtle():
     g = Graph()
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
+
 
 def test_catalog_by_id_with_text_turtle():
     "GET request to url returns a 200"
@@ -98,6 +105,7 @@ def test_catalog_by_id_with_text_turtle():
     g.parse(data=resp.text, format='turtle')
     assert 0 < len(g)
 
+
 def test_catalog_by_id_with_application_rdf_xml():
     "GET request to url returns a 200"
     url = HOST_URL + "/catalogs/1"
@@ -110,6 +118,7 @@ def test_catalog_by_id_with_application_rdf_xml():
     g.parse(data=resp.text, format='xml')
     assert 0 < len(g)
 
+
 def test_catalog_by_id_with_application_ld_json():
     "GET request to url returns a 200"
     url = HOST_URL + "/catalogs/1"
@@ -121,6 +130,7 @@ def test_catalog_by_id_with_application_ld_json():
     g = Graph()
     g.parse(data=resp.text, format='json-ld')
     assert 0 < len(g)
+
 
 def test_isomorphic():
     "GET request to url returns a 200"
@@ -136,6 +146,7 @@ def test_isomorphic():
     f = Graph().parse("tests/catalog_1.ttl", format='turtle')
     assert isomorphic(g, f)
 
+
 def test_not_isomorphic():
     "GET request to url returns a 200"
     url = HOST_URL + "/catalogs/1"
@@ -149,6 +160,7 @@ def test_not_isomorphic():
     assert 0 < len(g)
     f = Graph().parse("tests/catalog_2.ttl", format='turtle')
     assert not isomorphic(g, f)
+
 
 # BAD CASES:
 def test_not_found_gives_404():

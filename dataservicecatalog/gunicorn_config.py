@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 from os import environ as env
+import logging
+from gunicorn import glogging
 import multiprocessing
 
 load_dotenv()
@@ -16,8 +18,7 @@ loglevel = str(LOG_LEVEL)
 accesslog = '-'
 
 # Need to override the logger to remove healthcheck (ping) form accesslog
-import logging
-from gunicorn import glogging
+
 
 class CustomGunicornLogger(glogging.Logger):
 
@@ -29,12 +30,15 @@ class CustomGunicornLogger(glogging.Logger):
         logger.addFilter(PingFilter())
         logger.addFilter(ReadyFilter())
 
+
 class PingFilter(logging.Filter):
     def filter(self, record):
         return 'GET /ping' not in record.getMessage()
 
+
 class ReadyFilter(logging.Filter):
     def filter(self, record):
         return 'GET /ready' not in record.getMessage()
+
 
 logger_class = CustomGunicornLogger
