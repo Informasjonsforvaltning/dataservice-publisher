@@ -1,7 +1,7 @@
   [
     {
       "title": "Dataservicekatalog for Digitaliseringsdirektoratet",
-      "description": "Katalog med alle api-beskrivelser i seksjon for Informasjonsforvaltning ",
+      "description": "Katalog med alle api-beskrivelser i seksjon for Informasjonsforvaltning",
       "publisher": "991825827",
       "apis":
       [
@@ -11,7 +11,7 @@
     },
     {
       "title": "Dataservicekatalog2 for Digitaliseringsdirektoratet",
-      "description": "Katalog med FDK-relaterte api-beskrivelser i seksjon for Informasjonsforvaltning ",
+      "description": "Katalog med FDK-relaterte api-beskrivelser i seksjon for Informasjonsforvaltning",
       "publisher": "991825827",
       "apis":
       [
