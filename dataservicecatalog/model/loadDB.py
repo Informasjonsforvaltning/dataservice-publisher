@@ -6,13 +6,12 @@ import yaml
 
 
 def _create_catalog(document):
-    catalog = {}
-    catalog['publisher'] = document['publisher']
-    catalog['title'] = document['title']
-    catalog['description'] = document['description']
-    catalog['dataservices'] = []
-
-    return catalog
+    return {
+      'publisher': document['publisher'],
+      'title': document['title'],
+      'description': document['description'],
+      'dataservices': []
+    }
 
 
 def _create_dataservice(url):

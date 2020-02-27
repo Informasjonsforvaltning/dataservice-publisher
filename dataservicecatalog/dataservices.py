@@ -24,12 +24,10 @@ def getDataservices():
         elif 'application/ld+json' == request.headers['Accept']:
             return Response(map_dataservices_to_rdf(dataservices, 'json-ld'),
                             mimetype='application/ld+json')
-        else:
-            return Response(map_dataservices_to_rdf(dataservices, 'turtle'),
-                            mimetype='text/turtle')
-    else:
         return Response(map_dataservices_to_rdf(dataservices, 'turtle'),
                         mimetype='text/turtle')
+    return Response(map_dataservices_to_rdf(dataservices, 'turtle'),
+                    mimetype='text/turtle')
 
 
 @bp.route('/<int:id>', methods=['GET'])
@@ -50,9 +48,7 @@ def getDataserviceById(id):
         elif 'application/ld+json' == request.headers['Accept']:
             return Response(map_dataservice_to_rdf(dataservice, 'json-ld'),
                             mimetype='application/ld+json')
-        else:
-            return Response(map_dataservice_to_rdf(dataservice, 'turtle'),
-                            mimetype='text/turtle')
-    else:
         return Response(map_dataservice_to_rdf(dataservice, 'turtle'),
                         mimetype='text/turtle')
+    return Response(map_dataservice_to_rdf(dataservice, 'turtle'),
+                    mimetype='text/turtle')

@@ -23,12 +23,10 @@ def getCatalogs():
         elif 'application/ld+json' == request.headers['Accept']:
             return Response(map_catalogs_to_rdf(catalogs, 'json-ld'),
                             mimetype='application/ld+json')
-        else:
-            return Response(map_catalogs_to_rdf(catalogs, 'turtle'),
-                            mimetype='text/turtle')
-    else:
         return Response(map_catalogs_to_rdf(catalogs, 'turtle'),
                         mimetype='text/turtle')
+    return Response(map_catalogs_to_rdf(catalogs, 'turtle'),
+                    mimetype='text/turtle')
 
 
 @bp.route('/<int:id>', methods=['GET'])
@@ -49,9 +47,7 @@ def getCatalogById(id):
         elif 'application/ld+json' == request.headers['Accept']:
             return Response(map_catalog_to_rdf(catalog, 'json-ld'),
                             mimetype='application/ld+json')
-        else:
-            return Response(map_catalog_to_rdf(catalog, 'turtle'),
-                            mimetype='text/turtle')
-    else:
         return Response(map_catalog_to_rdf(catalog, 'turtle'),
                         mimetype='text/turtle')
+    return Response(map_catalog_to_rdf(catalog, 'turtle'),
+                    mimetype='text/turtle')
