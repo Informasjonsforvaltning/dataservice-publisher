@@ -4,7 +4,7 @@ from rdflib.compare import isomorphic
 import json
 
 from os import environ as env
-HOST_URL = env.get("HOST_URL") + ":" + env.get("HOST_PORT")
+HOST_URL = env.get("HOST_URL")
 
 def test_catalogs_with_json():
     "GET request to url returns a 200"

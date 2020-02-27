@@ -14,9 +14,6 @@ def create_app(test_config=None):
     HOST_URL = os.environ.get("HOST_URL")
     if not HOST_URL:
         raise ValueError("No HOST_URL set for Flask application")
-    HOST_PORT = os.environ.get("HOST_PORT")
-    if not HOST_PORT:
-        raise ValueError("No HOST_PORT set for Flask application")
     PUBLISHER_URL = os.environ.get("PUBLISHER_URL")
     if not PUBLISHER_URL:
         raise ValueError("No PUBLISHER_URL set for Flask application")

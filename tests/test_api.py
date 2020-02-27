@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from os import environ as env
-HOST_URL = env.get("HOST_URL") + ":" + env.get("HOST_PORT")
+HOST_URL = env.get("HOST_URL")
 
 def test_ping():
     "Get request to /ping returns a 200"

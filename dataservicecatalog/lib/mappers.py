@@ -5,9 +5,7 @@ import yaml
 import requests
 
 from os import environ as env
-HOST_URL = env.get("HOST_URL")
-HOST_PORT = str(env.get("HOST_PORT"))
-URL = HOST_URL + ':' + HOST_PORT
+URL = env.get("HOST_URL", "http://localhost:8080")
 PUBLISHER_URL = env.get("PUBLISHER_URL")
 
 from typing import List
