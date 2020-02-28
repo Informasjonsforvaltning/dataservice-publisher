@@ -42,7 +42,7 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest
-          pytest -rAs
+          pytest -ras
 
       - name: Publish docker image to Google Cloud
         run: docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher
