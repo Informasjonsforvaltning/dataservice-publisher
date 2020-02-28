@@ -1,0 +1,29 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://localhost:8080/catalogs/1> a dcat:Catalog ;
+    dct:publisher <https://organization-catalogue.fellesdatakatalog.brreg.no/organizations/991825827> ;
+    dct:title "Dataservicekatalog for Digitaliseringsdirektoratet"@nb ;
+    dcat:service <http://localhost:8080/dataservices/1>,
+        <http://localhost:8080/dataservices/2> .
+
+<http://localhost:8080/dataservices/1> a dcat:DataService ;
+    dct:description "Exposes a model-catalog"@nb ;
+    dct:title "Model-catalog of Digdir"@nb ;
+    dcat:contactPoint [ a vcard:Organization ;
+            vcard:hasOrganizationName "Digitaliseringsdirektoratet"@nb ;
+            vcard:hasURL <https://digdir.no> ] ;
+    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/model-publisher/master/model-catalog.yaml> .
+
+<http://localhost:8080/dataservices/2> a dcat:DataService ;
+    dct:description "Exposes a dataservice-catalog according to DCAT-AP-NO v2"@nb ;
+    dct:title "Dataservice-catalog of Digdir"@nb ;
+    dcat:contactPoint [ a vcard:Organization ;
+            vcard:hasOrganizationName "Digitaliseringsdirektoratet"@nb ;
+            vcard:hasURL <https://digdir.no> ] ;
+    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/master/dataservice-catalog.yaml> .

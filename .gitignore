@@ -1,6 +1,5 @@
 .DS_Store
 .venv
-.env
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -16,3 +15,5 @@ __pycache__/
 
 .hypothesis
 .pytest_cache
+
+db.json

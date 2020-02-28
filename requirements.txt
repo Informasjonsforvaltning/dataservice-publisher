@@ -1,0 +1,11 @@
+flask
+requests
+rdflib
+rdflib-jsonld
+gunicorn
+python-dotenv
+pytest
+tinydb
+pyyaml
+jsonpickle
+pytest-dotenv

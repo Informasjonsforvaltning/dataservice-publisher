@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: Dataservice-catalog of Digdir
-  description: Exposes a dataservice-catalog according to DCAT-AP-NO v2
+  description: Exposes a collection of dataservice-catalogs according to DCAT-AP-NO v2
   version: '1.0'
   contact:
     name: Digitaliseringsdirektoratet
@@ -13,15 +13,20 @@ tags:
   - name: dataservice-catalog
     description: catalog operations
 paths:
-  /:
+  /catalogs:
     get:
       tags:
         - dataservice-catalog
-      summary: Returns a dataservice-catalog including dataservices
+      summary: Returns a list of dataservice-catalogs including dataservices
       responses:
         '200':
           description: OK
           content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Catalog'
             text/turtle:
               schema:
                 type: string
@@ -31,3 +36,63 @@ paths:
             application/ld+json:
               schema:
                 type: string
+  /dataservices:
+    get:
+      tags:
+        - dataservice-catalog
+      summary: Returns a list of dataservices
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dataservice'
+            text/turtle:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
+components:
+  schemas:
+    Catalog:
+      properties:
+        id:
+          type: string
+        publisherUrl:
+          type: string
+          format: uri
+        title:
+          type: string
+        description:
+          type: string
+        dataservices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dataservice'
+    Dataservice:
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        endpointUrl:
+          type: string
+          format: uri
+        endpointdescription:
+          type: string
+          format: uri
+        contactpoint:
+          $ref: '#/components/schemas/Contact'
+    Contact:
+      properties:
+        name:
+          type: string
