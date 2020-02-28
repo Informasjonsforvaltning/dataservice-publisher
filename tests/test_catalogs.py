@@ -140,11 +140,11 @@ def test_isomorphic():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
-    g = Graph()
-    g.parse(data=resp.text, format='turtle')
-    assert 0 < len(g)
-    f = Graph().parse("tests/catalog_1.ttl", format='turtle')
-    assert isomorphic(g, f)
+    g1 = Graph()
+    g1.parse(data=resp.text, format='turtle')
+    assert 0 < len(g1)
+    g2 = Graph().parse("tests/catalog_1.ttl", format='turtle')
+    assert isomorphic(g1, g2)
 
 
 def test_not_isomorphic():
@@ -155,11 +155,11 @@ def test_not_isomorphic():
     assert 200 == resp.status_code
     assert 0 < len(resp.content)
     assert 'text/turtle; charset=utf-8' == resp.headers['Content-Type']
-    g = Graph()
-    g.parse(data=resp.text, format='turtle')
-    assert 0 < len(g)
-    f = Graph().parse("tests/catalog_2.ttl", format='turtle')
-    assert not isomorphic(g, f)
+    g1 = Graph()
+    g1.parse(data=resp.text, format='turtle')
+    assert 0 < len(g1)
+    g2 = Graph().parse("tests/catalog_2.ttl", format='turtle')
+    assert not isomorphic(g1, g2)
 
 
 # BAD CASES:
