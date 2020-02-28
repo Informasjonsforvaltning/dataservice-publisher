@@ -1,6 +1,6 @@
 import requests
 from rdflib import Graph
-from rdflib.compare import isomorphic
+from rdflib.compare import isomorphic, graph_diff
 import json
 from os import environ as env
 HOST_URL = env.get("HOST_URL")
@@ -132,6 +132,12 @@ def test_catalog_by_id_with_application_ld_json():
     assert 0 < len(g)
 
 
+def _dump_turtle_sorted(g):
+    for l in sorted(g.serialize(format='turtle').splitlines()):
+        if l:
+            print(l.decode('ascii'))
+
+
 def test_isomorphic():
     "GET request to url returns a 200"
     url = f"{HOST_URL}/catalogs/1"
@@ -144,6 +150,13 @@ def test_isomorphic():
     g1.parse(data=resp.text, format='turtle')
     assert 0 < len(g1)
     g2 = Graph().parse("tests/catalog_1.ttl", format='turtle')
+    in_both, in_first, in_second = graph_diff(g1, g2)
+    print("\nin both:")
+    _dump_turtle_sorted(in_both)
+    print("\nin first:")
+    _dump_turtle_sorted(in_first)
+    print("\nin second:")
+    _dump_turtle_sorted(in_second)
     assert isomorphic(g1, g2)
 
 
