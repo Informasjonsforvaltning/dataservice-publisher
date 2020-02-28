@@ -50,13 +50,13 @@ def load_db():
     data = json.load(datafile)
     catalogTable = db.table('catalogs')
     dataserviceTable = db.table('dataservices')
-    for d in data:
-        c = _create_catalog(d)
-        for a in d['apis']:
-            ds = _create_dataservice(a)
-            id = dataserviceTable.insert(ds)
-            c['dataservices'].append(id)
-        catalogTable.insert(c)
+    for dataservice in data:
+        catalog = _create_catalog(dataservice)
+        for api in dataservice['apis']:
+            _dataservice = _create_dataservice(api)
+            id = dataserviceTable.insert(_dataservice)
+            catalog['dataservices'].append(id)
+        catalogTable.insert(catalog)
 
     db.close()
 
