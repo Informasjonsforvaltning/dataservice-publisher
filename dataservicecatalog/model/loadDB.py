@@ -4,6 +4,8 @@ import json
 import requests
 import yaml
 
+DB = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
+
 
 def _create_catalog(document):
     return {
@@ -43,13 +45,17 @@ def _create_dataservice(url):
     return dataservice
 
 
+def init_db():
+    DB.purge_tables()
+    DB.purge()
+
+
 def load_db():
-    db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
     datafile_path = os.getcwd()+'/dataservicecatalog/model/api-catalog_1.json'
     datafile = open(datafile_path, 'r')
     data = json.load(datafile)
-    catalogTable = db.table('catalogs')
-    dataserviceTable = db.table('dataservices')
+    catalogTable = DB.table('catalogs')
+    dataserviceTable = DB.table('dataservices')
     for dataservice in data:
         catalog = _create_catalog(dataservice)
         for api in dataservice['apis']:
@@ -58,8 +64,9 @@ def load_db():
             catalog['dataservices'].append(id)
         catalogTable.insert(catalog)
 
-    db.close()
+    DB.close()
 
 
 if __name__ == "__main__":
+    init_db()
     load_db()

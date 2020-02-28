@@ -21,7 +21,7 @@
     dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/model-publisher/master/model-catalog.yaml> .
 
 <http://localhost:8080/dataservices/2> a dcat:DataService ;
-    dct:description "Exposes a dataservice-catalog according to DCAT-AP-NO v2"@nb ;
+    dct:description "Exposes a collection of dataservice-catalogs according to DCAT-AP-NO v2"@nb ;
     dct:title "Dataservice-catalog of Digdir"@nb ;
     dcat:contactPoint [ a vcard:Organization ;
             vcard:hasOrganizationName "Digitaliseringsdirektoratet"@nb ;
