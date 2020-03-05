@@ -84,10 +84,10 @@ components:
           type: string
         description:
           type: string
-        endpointUrl:
+        endpointURL:
           type: string
           format: uri
-        endpointdescription:
+        endpointDescription:
           type: string
           format: uri
         contactpoint:

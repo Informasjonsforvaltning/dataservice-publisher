@@ -18,8 +18,8 @@ def _create_catalog(document):
 
 def _create_dataservice(url):
     dataservice = {}
-    dataservice['endpointdescription'] = url
-    assert url is not None, "There must a endpointdescription"
+    dataservice['endpointDescription'] = url
+    assert url is not None, "There must a endpointDescription"
 
     resp = requests.get(url)
     if resp.status_code == 200:
@@ -27,7 +27,7 @@ def _create_dataservice(url):
         dataservice['title'] = description['info']['title']
         dataservice['description'] = description['info']['description']
         if 'servers' in description:
-            dataservice['endpointUrl'] = description['servers'][0]['url']
+            dataservice['endpointURL'] = description['servers'][0]['url']
         if 'contact' in description['info']:
             dataservice['contact'] = {}
             if 'name' in description['info']['contact']:

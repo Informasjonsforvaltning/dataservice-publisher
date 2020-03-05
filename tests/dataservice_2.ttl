@@ -12,5 +12,5 @@
     dcat:contactPoint [ a vcard:Organization ;
             vcard:hasOrganizationName "Digitaliseringsdirektoratet"@nb ;
             vcard:hasURL <https://digdir.no> ] ;
-    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/master/dataservice-catalog.yaml> .
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/master/dataservice-catalog.yaml> .
 
