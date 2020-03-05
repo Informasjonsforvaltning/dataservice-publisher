@@ -135,7 +135,7 @@ def test_catalog_by_id_with_application_ld_json():
 def _dump_turtle_sorted(g):
     for l in sorted(g.serialize(format='turtle').splitlines()):
         if l:
-            print(l.decode('ascii'))
+            print(l.decode())
 
 
 def test_isomorphic():

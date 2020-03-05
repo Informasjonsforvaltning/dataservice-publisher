@@ -22,8 +22,8 @@
             vcard:hasEmail <mailto:fellesdatakatalog@brreg.no> ;
             vcard:hasOrganizationName "Brønnøysundregistrene"@nb ;
             vcard:hasURL <https://fellesdatakatalog.brreg.no> ] ;
-    dcat:endpointUrl <https://fellesdatakatalog.brreg.no/api/informationmodels> ;
-    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-informationmodel-harvester/master/src/main/resources/specification/specification.yaml> .
+    dcat:endpointURL <https://fellesdatakatalog.brreg.no/api/informationmodels> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-informationmodel-harvester/master/src/main/resources/specification/specification.yaml> .
 
 <http://localhost:8080/dataservices/4> a dcat:DataService ;
     dct:description "Provides a basic search api against the National API Directory of Norway"@nb ;
@@ -32,8 +32,8 @@
             vcard:hasEmail <mailto:fellesdatakatalog@brreg.no> ;
             vcard:hasOrganizationName "Brønnøysundregistrene"@nb ;
             vcard:hasURL <https://fellesdatakatalog.brreg.no> ] ;
-    dcat:endpointUrl <https://fellesdatakatalog.brreg.no/api/apis> ;
-    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-api-harvester/master/src/main/resources/specification/fdk-api-harvester.yaml> .
+    dcat:endpointURL <https://fellesdatakatalog.brreg.no/api/apis> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-api-harvester/master/src/main/resources/specification/fdk-api-harvester.yaml> .
 
 <http://localhost:8080/dataservices/5> a dcat:DataService ;
     dct:description "Tilgjengeliggjør begreper fra Begrepskatalog"@nb ;
@@ -42,8 +42,8 @@
             vcard:hasEmail <mailto:fellesdatakatalog@brreg.no> ;
             vcard:hasOrganizationName "Brønnøysundregistrene"@nb ;
             vcard:hasURL <https://fellesdatakatalog.brreg.no> ] ;
-    dcat:endpointUrl <https://begrepskatalog.fellesdatakatalog.brreg.no/api> ;
-    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/ConceptRegistrationAPI.yaml> .
+    dcat:endpointURL <https://begrepskatalog.fellesdatakatalog.brreg.no/api> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/ConceptRegistrationAPI.yaml> .
 
 <http://localhost:8080/dataservices/6> a dcat:DataService ;
     dct:description "Tilgjengeliggjør begreper fra en begrepskatalog ihht SKOS-AP-NO"@nb ;
@@ -52,8 +52,8 @@
             vcard:hasEmail <mailto:fellesdatakatalog@brreg.no> ;
             vcard:hasOrganizationName "Brønnøysundregistrene"@nb ;
             vcard:hasURL <https://fellesdatakatalog.brreg.no> ] ;
-    dcat:endpointUrl <https://registrering-begrep-api.fellesdatakatalog.brreg.no/> ;
-    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/skos-ap-no.yaml> .
+    dcat:endpointURL <https://registrering-begrep-api.fellesdatakatalog.brreg.no/> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/skos-ap-no.yaml> .
 
 <http://localhost:8080/dataservices/7> a dcat:DataService ;
     dct:description "Exposes a basic service which provides information related to the organization catalogue in the National Data Directory"@nb ;
@@ -62,6 +62,5 @@
             vcard:hasEmail <mailto:fellesdatakatalog@brreg.no> ;
             vcard:hasOrganizationName "Brønnøysundregistrene"@nb ;
             vcard:hasURL <https://fellesdatakatalog.brreg.no> ] ;
-    dcat:endpointUrl <https://fellesdatakatalog.brreg.no> ;
-    dcat:endpointdescription <https://raw.githubusercontent.com/Informasjonsforvaltning/organization-catalogue/master/src/main/resources/specification/organization-catalogue.yaml> .
-
+    dcat:endpointURL <https://fellesdatakatalog.brreg.no> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/organization-catalogue/master/src/main/resources/specification/organization-catalogue.yaml> .

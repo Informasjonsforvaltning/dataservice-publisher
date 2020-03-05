@@ -37,14 +37,14 @@ class DataService:
     def __init__(self, document):
         assert document.doc_id is not None, "the document must have an id"
         self.id = str(document.doc_id)
-        if 'endpointdescription' in document:
-            self.endpointdescription = document['endpointdescription']
+        if 'endpointDescription' in document:
+            self.endpointDescription = document['endpointDescription']
         if 'title' in document:
             self.title = document['title']
         if 'description' in document:
             self.description = document['description']
-        if 'endpointUrl' in document:
-            self.endpointUrl = document['endpointUrl']
+        if 'endpointURL' in document:
+            self.endpointURL = document['endpointURL']
         if 'contact' in document:
             self.contactpoint = Contact(document['contact'])
 
@@ -77,17 +77,17 @@ def _add_dataservice_to_graph(g: Graph, dataservice: DataService) -> Graph:
     dataservice_uri = URL + "/dataservices/" + dataservice.id
 
     g.add((URIRef(dataservice_uri), RDF.type, dcat.DataService))
-    g.add((URIRef(dataservice_uri), dcat.endpointdescription,
-           URIRef(dataservice.endpointdescription)))
+    g.add((URIRef(dataservice_uri), dcat.endpointDescription,
+           URIRef(dataservice.endpointDescription)))
     if hasattr(dataservice, 'title'):
         g.add((URIRef(dataservice_uri), dct.title,
                Literal(dataservice.title, lang='nb')))
     if hasattr(dataservice, 'description'):
         g.add((URIRef(dataservice_uri), dct.description,
                Literal(dataservice.description, lang='nb')))
-    if hasattr(dataservice, 'endpointUrl'):
-        g.add((URIRef(dataservice_uri), dcat.endpointUrl,
-               URIRef(dataservice.endpointUrl)))
+    if hasattr(dataservice, 'endpointURL'):
+        g.add((URIRef(dataservice_uri), dcat.endpointURL,
+               URIRef(dataservice.endpointURL)))
     if hasattr(dataservice, 'contactpoint'):
         contactpoint = BNode()
         g.add((URIRef(dataservice_uri), dcat.contactPoint, contactpoint))
