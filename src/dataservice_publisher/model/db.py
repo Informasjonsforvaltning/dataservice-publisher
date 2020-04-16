@@ -9,14 +9,14 @@ from .loadDB import load_db
 
 
 def get_db():
-    if 'db' not in g:
-        g.db = TinyDB(os.getcwd()+'/dataservicecatalog/model/db.json')
+    if "db" not in g:
+        g.db = TinyDB(os.getcwd() + "/dataservice_publisher/model/db.json")
 
     return g.db
 
 
 def close_db(e=None):
-    db = g.pop('db', None)
+    db = g.pop("db", None)
 
     if db is not None:
         db.close()
@@ -28,20 +28,20 @@ def init_db():
     db.purge()
 
 
-@click.command('init-db')
+@click.command("init-db")
 @with_appcontext
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Initialized the database.')
+    click.echo("Initialized the database.")
 
 
-@click.command('load-db')
+@click.command("load-db")
 @with_appcontext
 def load_db_command():
     """Loads the db with test data."""
     load_db()
-    click.echo('Loaded the database.')
+    click.echo("Loaded the database.")
 
 
 def init_app(app):

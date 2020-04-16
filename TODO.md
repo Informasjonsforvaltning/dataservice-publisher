@@ -1,0 +1,9 @@
+ - [x] Add poetry to manage dependencies
+ - [ ] Add nox tool to automate testing
+ - [ ] Use datacatalogtordf to do the conversion from json to rdf
+ - [ ] Refactor towards [Architecture Patterns with Python](https://www.oreilly.com/library/view/architecture-patterns-with/9781492052197/)
+  - [ ] Domain model pattern
+  - [ ] Repository pattern
+  - [ ] Service layer pattern
+  - [ ] Unit of Work (UoW) pattern
+  - [ ] Aggregate pattern

@@ -1,6 +1,6 @@
 from typing import List
 
-from dataservicecatalog.lib.mappers import Catalog, DataService
+from dataservice_publisher.lib.mappers import Catalog, DataService
 from .db import get_db
 
 

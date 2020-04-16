@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "dataservice_publisher"
+version = "0.1.0"
+description = "A service for publishing dataservices in a datacatalog"
+authors = ["Stig B. Dørmænen <stigbd@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/Informasjonsforvaltning/dataservice-publisher"
+repository = "https://github.com/Informasjonsforvaltning/dataservice-publisher"
+classifiers=[
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+]
+[tool.poetry.dependencies]
+python = "^3.8"
+flask = "^1.1.2"
+requests = "^2.23.0"
+rdflib = "^4.2.2"
+rdflib-jsonld = "^0.5.0"
+gunicorn = "^20.0.4"
+python-dotenv = "^0.12.0"
+pytest = "^5.4.1"
+tinydb = "^3.15.2"
+pyyaml = "^5.3.1"
+jsonpickle = "^1.4"
+pytest-dotenv = "^0.4.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
