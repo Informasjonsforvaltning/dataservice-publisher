@@ -1,12 +1,19 @@
+"""Package for making catalog of dataservices available in a Flask API."""
 import os
-from flask import Flask
+from typing import Any
+
 from dotenv import load_dotenv
+from flask import Flask
+
+from . import catalogs
+from . import dataservices
 from .model import db
 
 __version__ = "0.1.0"
 
 
-def create_app(test_config=None):
+def create_app(test_config: Any = None) -> Flask:
+    """Create app."""
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
@@ -35,20 +42,18 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import catalogs
-
     app.register_blueprint(catalogs.bp)
-
-    from . import dataservices
 
     app.register_blueprint(dataservices.bp)
 
     @app.route("/ready", methods=["GET"])
-    def isReady():
+    def isReady() -> str:
+        """Ready route function."""
         return "OK"
 
     @app.route("/ping", methods=["GET"])
-    def isAlive():
+    def isAlive() -> str:
+        """Ping route function."""
         return "OK"
 
     return app

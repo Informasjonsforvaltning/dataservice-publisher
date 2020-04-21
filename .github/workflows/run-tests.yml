@@ -6,27 +6,15 @@ on:
       - master
 
 jobs:
-  build:
-
+  tests:
     runs-on: ubuntu-latest
-
+    name: Python 3.7
     steps:
-     - uses: actions/checkout@v1
-
-     - name: Build Docker image
-       run: docker build -t digdir/dataservice-publisher:latest .
-
-     - name: Run Docker image
-       run: docker run --env-file .env -p 8080:8080 -d digdir/dataservice-publisher:latest
-
-     - name: Set up Python 3.7
-       uses: actions/setup-python@v1
-       with:
-         python-version: 3.7
-
-     - name: Test with pytest
-       run: |
-         pip install "poetry==1.0.5"
-         poetry config virtualenvs.create false \
-           && poetry install --no-interaction --no-ansi
-         pytest -rAs
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+        architecture: x64
+    - run: pip install nox==2019.11.9
+    - run: pip install poetry==1.0.5
+    - run: nox

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  dataservicepublisher:
+    build: ../.
+    environment:
+      - HOST_URL=${HOST_URL}
+      - HOST_PORT=${HOST_PORT}
+      - PUBLISHER_URL=${PUBLISHER_URL}
+    ports:
+      - "8080:8080"

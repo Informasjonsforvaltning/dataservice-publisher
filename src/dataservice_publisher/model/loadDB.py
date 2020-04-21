@@ -1,13 +1,16 @@
-import os
-from tinydb import TinyDB
+"""Datastore module for initial loading of data into the data storage."""
 import json
+import os
+
 import requests
+from tinydb import TinyDB
 import yaml
 
 DB = TinyDB(os.getcwd() + "/dataservice_publisher/model/db.json")
 
 
-def _create_catalog(document):
+def _create_catalog(document: dict) -> dict:
+    """Creates a catalog dict based on an input document."""
     return {
         "publisher": document["publisher"],
         "title": document["title"],
@@ -16,10 +19,10 @@ def _create_catalog(document):
     }
 
 
-def _create_dataservice(url):
+def _create_dataservice(url: str) -> dict:
+    """Creates a dataservice dict based on an openAPI specification at url."""
     dataservice = {}
     dataservice["endpointDescription"] = url
-    assert url is not None, "There must a endpointDescription"
 
     resp = requests.get(url)
     if resp.status_code == 200:
@@ -41,12 +44,14 @@ def _create_dataservice(url):
     return dataservice
 
 
-def init_db():
+def init_db() -> None:
+    """Initializes datastorage."""
     DB.purge_tables()
     DB.purge()
 
 
-def load_db():
+def load_db() -> None:
+    """Loads datastorage with data from file."""
     datafile_path = os.getcwd() + "/dataservice_publisher/model/api-catalog_1.json"
     datafile = open(datafile_path, "r")
     data = json.load(datafile)
