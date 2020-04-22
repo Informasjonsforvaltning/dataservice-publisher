@@ -1,7 +1,8 @@
 version: '3'
 services:
-  dataservicepublisher:
+  dataservice-publisher:
     build: ../.
+    image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher
     environment:
       - HOST_URL=${HOST_URL}
       - HOST_PORT=${HOST_PORT}

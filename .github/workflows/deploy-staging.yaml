@@ -23,12 +23,6 @@ jobs:
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: gcloud auth configure-docker
 
-      - name: Build Docker image with GitHub commit sha tag and staging tag
-        run: docker build . -t eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA -t eu.gcr.io/digdir-fdk-infra/dataservice-publisher:staging_latest
-
-      - name: Run Docker image
-        run: docker run --env-file .env -p 8080:8080 -d eu.gcr.io/digdir-fdk-infra/dataservice-publisher:staging_latest
-
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
