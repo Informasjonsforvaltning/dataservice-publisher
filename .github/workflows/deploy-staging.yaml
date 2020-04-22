@@ -37,8 +37,11 @@ jobs:
       - name: Test with nox
         run: nox
 
-      - name: Publish docker image to Google Cloud
-        run: docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher
+      - name: Tag and publish docker image to Google Cloud
+        run: |
+          docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA
+          docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher eu.gcr.io/digdir-fdk-infra/dataservice-publisher:staging_latest
+          docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher
 
       - name: Apply Helm template
         uses: stefanprodan/kube-tools@v1
