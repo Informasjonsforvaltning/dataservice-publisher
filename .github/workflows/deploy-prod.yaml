@@ -41,6 +41,7 @@ jobs:
         run: |
           docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA
           docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:latest
+          docker rmi eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test
           docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher
 
       - name: Apply Helm template
