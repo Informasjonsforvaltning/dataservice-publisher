@@ -23,29 +23,26 @@ jobs:
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: gcloud auth configure-docker
 
-      - name: Build Docker image with GitHub commit sha tag and staging tag
-        run: docker build . -t eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA -t eu.gcr.io/digdir-fdk-infra/dataservice-publisher:latest
-
-      - name: Run Docker image
-        run: docker run --env-file .env -p 8080:8080 -d eu.gcr.io/digdir-fdk-infra/dataservice-publisher:latest
-
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
           python-version: 3.7
+          architecture: x64
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip3 install --no-cache-dir -r requirements.txt
+          pip install nox==2019.11.9
+          pip install poetry==1.0.5
 
-      - name: Test with pytest
+      - name: Test with nox
+        run: nox
+
+      - name: Tag and publish docker image to Google Cloud
         run: |
-          pip install pytest
-          pytest -ras
-
-      - name: Publish docker image to Google Cloud
-        run: docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher
+          docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA
+          docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:latest
+          docker rmi eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test
+          docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher
 
       - name: Apply Helm template
         uses: stefanprodan/kube-tools@v1

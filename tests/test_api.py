@@ -1,18 +1,21 @@
-from os import environ as env
+"""Test cases for ping and ready."""
+from typing import Any
+
+import pytest
 import requests
-from dotenv import load_dotenv
-load_dotenv()
-
-HOST_URL = env.get("HOST_URL")
 
 
-def test_ping():
-    "Get request to /ping returns a 200"
-    resp = requests.get(HOST_URL + "/ping")
+@pytest.mark.contract
+def test_ping(http_service: Any) -> None:
+    """Should return status code 200."""
+    url = f"{http_service}/ping"
+    resp = requests.get(url)
     assert 200 == resp.status_code
 
 
-def test_ready():
-    "Get request to /ready returns a 200"
-    resp = requests.get(HOST_URL + "/ready")
+@pytest.mark.contract
+def test_ready(http_service: Any) -> None:
+    """Should return status code 200."""
+    url = f"{http_service}/ready"
+    resp = requests.get(url)
     assert 200 == resp.status_code

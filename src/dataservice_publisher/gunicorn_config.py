@@ -1,8 +1,11 @@
-from dotenv import load_dotenv
-from os import environ as env
+"""Gunicorn module for mapping a catalog to rdf."""
 import logging
-from gunicorn import glogging
 import multiprocessing
+from os import environ as env
+from typing import Any
+
+from dotenv import load_dotenv
+from gunicorn import glogging
 
 load_dotenv()
 
@@ -15,14 +18,16 @@ bind = ":" + PORT
 workers = multiprocessing.cpu_count() * 2 + 1
 threads = 2 * multiprocessing.cpu_count()
 loglevel = str(LOG_LEVEL)
-accesslog = '-'
+accesslog = "-"
 
 # Need to override the logger to remove healthcheck (ping) form accesslog
 
 
 class CustomGunicornLogger(glogging.Logger):
+    """Custom Gunicorn Logger class."""
 
-    def setup(self, cfg):
+    def setup(self, cfg: Any) -> None:
+        """Set up function."""
         super().setup(cfg)
 
         # Add filters to Gunicorn logger
@@ -32,13 +37,19 @@ class CustomGunicornLogger(glogging.Logger):
 
 
 class PingFilter(logging.Filter):
-    def filter(self, record):
-        return 'GET /ping' not in record.getMessage()
+    """Custom Ping Filter class."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Filter function."""
+        return "GET /ping" not in record.getMessage()
 
 
 class ReadyFilter(logging.Filter):
-    def filter(self, record):
-        return 'GET /ready' not in record.getMessage()
+    """Custom Ready Filter class."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Filter function."""
+        return "GET /ready" not in record.getMessage()
 
 
 logger_class = CustomGunicornLogger

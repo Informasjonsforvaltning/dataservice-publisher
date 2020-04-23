@@ -8,37 +8,35 @@ The API is specified according to [the OpenAPI Specification](https://github.com
 
 The API is also published as a dataservice in this catalog.
 
-## Install requirements
-You should work in a virtual environment. To do that, install [venv](https://docs.python.org/3/library/venv.html)
+### Requirements
+- python3
+- [pyenv](https://github.com/pyenv/pyenv) (recommended)
+- [poetry](https://python-poetry.org/)
+- [nox](https://nox.thea.codes/en/stable/)
+
+### Install software:
 ```
-sudo apt-get install python3-venv
+% pyenv local 3.8.2 3.7.7
+% poetry install
 ```
-Create and activate your virtual environment
-```
-python3 -m venv .venv
-source .venv/bin/activate
-```
-Install software:
-```
-python3 -m pip install --upgrade pip
-pip3 install --no-cache-dir -r requirements.txt
-```
-## Environment variables
+### Environment variables
 To run the service you need to supply a set of environment variables. A simple way to solve this is to supply a .env file in the root directory:
 ```
 HOST_URL = "http://localhost"
 HOST_PORT = "8080"
 PUBLISHER_URL = "https://data.brreg.no/enhetsregisteret/api/enheter"
 ```
-## Running the API locally
+### Running the API locally
  Start the endpoint:
 ```
-% FLASK_APP=dataservicecatalog FLASK_ENV=development flask run --port=8080
-% FLASK_APP=dataservicecatalog FLASK_ENV=development flask init-db
+% poetry shell
+% FLASK_APP=dataservice_publisher FLASK_ENV=development flask run --port=8080
+% FLASK_APP=dataservice_publisher FLASK_ENV=development flask init-db
 ```
 ## Running the API in a wsgi-server (gunicorn)
 ```
-% gunicorn "dataservicecatalog:create_app()"  --config=dataservicecatalog/gunicorn_config.py
+% poetry shell
+% gunicorn  --chdir src "dataservice_publisher:create_app()"  --config=src/dataservice_publisher/gunicorn_config.py
 ```
 ## Running the wsgi-server in Docker
 

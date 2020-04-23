@@ -1,0 +1,66 @@
+[tool.poetry]
+name = "dataservice_publisher"
+version = "0.1.0"
+description = "A service for publishing dataservices in a datacatalog"
+authors = ["Stig B. Dørmænen <stigbd@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/Informasjonsforvaltning/dataservice-publisher"
+repository = "https://github.com/Informasjonsforvaltning/dataservice-publisher"
+classifiers=[
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+]
+[tool.poetry.dependencies]
+python = "^3.7"
+flask = "^1.1.2"
+rdflib = "^4.2.2"
+rdflib-jsonld = "^0.5.0"
+gunicorn = "^20.0.4"
+python-dotenv = "^0.12.0"
+tinydb = "^3.15.2"
+pyyaml = "^5.3.1"
+jsonpickle = "^1.4"
+requests = "^2.23.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.4.1"
+pytest-dotenv = "^0.4.0"
+pytest-docker = "^0.7.2"
+pytest-cov = "^2.8.1"
+docker-compose = "^1.25.5"
+coverage = {extras = ["toml"], version = "^5.0.3"}
+black = "^19.10b0"
+flake8 = "^3.7.9"
+flake8-bandit = "^2.1.2"
+flake8-black = "^0.1.1"
+flake8-bugbear = "^20.1.4"
+flake8-import-order = "^0.18.1"
+safety = "^1.8.7"
+mypy = "^0.770"
+pytype = {version = "^2020.2.20", python = "3.7"}
+flake8-annotations = "^2.0.1"
+flake8-docstrings = "^1.5.0"
+darglint = "^1.2.0"
+Pygments = "^2.6.1"
+xdoctest = {extras = ["all"], version = "^0.11.0"}
+sphinx = "^2.4.4"
+sphinx-autodoc-typehints = "^1.10.3"
+codecov = "^2.0.16"
+flake8-assertive = "^1.2.1"
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.run]
+branch = false
+source = ["dataservice_publisher"]
+
+[tool.coverage.report]
+show_missing = true
+# fail_under = 100
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
