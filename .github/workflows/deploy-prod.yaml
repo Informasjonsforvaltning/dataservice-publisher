@@ -1,4 +1,4 @@
-name: Build and deploy to production (digdir) when pull request is created
+name: Build and deploy to production when pull request is created
 
 on:
   push:
@@ -71,16 +71,21 @@ jobs:
         with:
           args: "apply -f ./kubectlapply.yaml --force"
 
-      - name: Notify slack of deploy
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: pullreminders/slack-action@master
+      - name: Notify slack
+        uses: 8398a7/action-slack@v3
         with:
-          args: '{\"channel\":\"C7NTH118T\",\"text\":\"Application dataservice-publisher deployed to digdir-production\"}'
+          status: ${{ job.status }}
+          author_name: 'Deploy dataservice-publisher to prod'
+          fields: repo,message,commit,author,ref,workflow
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
 
       - name: Trigger deploy to demo
         uses: peter-evans/repository-dispatch@master
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
-          event-type: deploy-demo-digdir
+          event-type: deploy-demo
           client-payload: '{"sha": "${{ github.sha }}"}'
