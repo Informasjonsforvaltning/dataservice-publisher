@@ -74,6 +74,8 @@ jobs:
       - name: Notify slack
         uses: 8398a7/action-slack@v3
         with:
+          mention: 'channel'
+          if_mention: failure
           status: ${{ job.status }}
           author_name: 'Deploy dataservice-publisher to prod'
           fields: repo,message,commit,author,ref,workflow

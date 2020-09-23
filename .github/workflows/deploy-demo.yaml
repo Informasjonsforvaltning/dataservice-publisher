@@ -42,6 +42,8 @@ jobs:
       - name: Notify slack
         uses: 8398a7/action-slack@v3
         with:
+          mention: 'channel'
+          if_mention: failure
           status: ${{ job.status }}
           author_name: 'Deploy dataservice-publisher to demo'
           fields: repo,message,commit,author,ref,workflow
@@ -49,4 +51,3 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
-
