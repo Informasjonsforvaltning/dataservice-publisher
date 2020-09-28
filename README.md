@@ -18,9 +18,8 @@ The API is also published as a dataservice in this catalog.
 ```
 % git clone https://github.com/Informasjonsforvaltning/dataservice-publisher.git
 % cd dataservice-publisher
-% pyenv install 3.8.3
 % pyenv install 3.7.7
-% pyenv local 3.8.3 3.7.7
+% pyenv local 3.7.7
 % poetry install
 ```
 ### Environment variables
