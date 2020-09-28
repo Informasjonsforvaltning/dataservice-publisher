@@ -1,4 +1,4 @@
-name: Build and deploy to production when pull request is created
+name: Deploy to production
 
 on:
   push:
@@ -77,13 +77,12 @@ jobs:
           mention: 'channel'
           if_mention: failure
           status: ${{ job.status }}
-          author_name: 'Deploy dataservice-publisher to prod'
-          fields: repo,message,commit,author,ref,workflow
+          author_name: 'Application: dataservice-publisher | Environment: prod'
+          fields: commit,author,workflow,message
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
-
 
       - name: Trigger deploy to demo
         uses: peter-evans/repository-dispatch@master
