@@ -23,10 +23,18 @@ The API is also published as a dataservice in this catalog.
 % poetry install
 ```
 ### Environment variables
-To run the service you need to supply a set of environment variables. A simple way to solve this is to supply a .env file in the root directory:
+To run the service locally, you need to supply a set of environment variables. A simple way to solve this is to supply a .env file in the root directory, e.g:
 ```
-HOST = "http://localhost"
-HOST_PORT = "8080"
+HOST=localhost
+HOST_PORT=8080
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=passw123
+FUSEKI_HOST=localhost
+FUSEKI_PORT=3030
+FUSEKI_PASSWORD=passw123
+SECRET_KEY=super_secret
+TDB=2
+FUSEKI_DATASET_1=ds
 ```
 ### Running the API locally
  Start the endpoint:
