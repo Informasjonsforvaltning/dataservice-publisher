@@ -16,7 +16,7 @@ import yaml
 load_dotenv()
 HOST = env.get("HOST", "dataservice-publisher")
 PORT = int(env.get("PORT", "8080"))
-DATASET = env.get("DATASET_1", "ds")
+DATASET = env.get("FUSEKI_DATASET_1", "ds")
 FUSEKI_PASSWORD = env.get("FUSEKI_PASSWORD")
 FUSEKI_HOST = env.get("FUSEKI_HOST", "fuseki")
 FUSEKI_PORT = int(env.get("FUSEKI_PORT", "3030"))

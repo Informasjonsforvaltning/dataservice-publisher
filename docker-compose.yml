@@ -8,6 +8,8 @@ services:
       - HOST_PORT=${HOST_PORT}
       - ADMIN_USERNAME=${ADMIN_USERNAME}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - FUSEKI_HOST=${FUSEKI_HOST}
+      - FUSEKI_PORT=${FUSEKI_PORT}
       - FUSEKI_PASSWORD=${FUSEKI_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
     ports:
@@ -20,6 +22,6 @@ services:
       environment:
         - TDB=${TDB}
         - ADMIN_PASSWORD=${FUSEKI_PASSWORD}
-        - FUSEKI_DATASET_1=${DATASET_1}
+        - FUSEKI_DATASET_1=${FUSEKI_DATASET_1}
       ports:
         - "3030:${FUSEKI_PORT}"

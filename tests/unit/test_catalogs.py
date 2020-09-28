@@ -12,7 +12,7 @@ from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 
 
 load_dotenv()
-DATASET = env.get("DATASET_1", "ds")
+DATASET = env.get("FUSEKI_DATASET_1", "ds")
 
 
 @pytest.mark.unit
