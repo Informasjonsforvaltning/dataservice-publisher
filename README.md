@@ -67,11 +67,11 @@ Regardless if you run the app via Docker or not, in another terminal:
 ```
 % curl --header "Content-Type: application/json" \
   --request POST \
-  --data '{"username":"xyz","password":"xyz"}' \
+  --data '{"username":"admin","password":"passw123"}' \
   http://localhost:8080/login
 % export ACCESS="" #token from response
 % curl --header "Content-Type: application/json" \
-  --header "Authorization: Bearer $ACCESS"
+  --header "Authorization: Bearer $ACCESS" \
   --request POST \
   --data @tests/files/catalog_1.json \
   http://localhost:8080/catalogs
