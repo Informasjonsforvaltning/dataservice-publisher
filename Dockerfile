@@ -14,6 +14,4 @@ ADD src /usr/src/app/src
 
 EXPOSE 8080
 
-RUN cd src && python3 dataservice_publisher/model/loadDB.py
-
 CMD gunicorn  --chdir src "dataservice_publisher:create_app()"  --config=src/dataservice_publisher/gunicorn_config.py

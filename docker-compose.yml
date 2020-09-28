@@ -1,0 +1,25 @@
+version: '3'
+services:
+  dataservice-publisher:
+    build: .
+    image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test
+    environment:
+      - HOST=${HOST}
+      - HOST_PORT=${HOST_PORT}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - FUSEKI_PASSWORD=${FUSEKI_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+    ports:
+      - "8080:${HOST_PORT}"
+    depends_on:
+      - "fuseki"
+
+  fuseki:
+      image: stain/jena-fuseki
+      environment:
+        - TDB=${TDB}
+        - ADMIN_PASSWORD=${FUSEKI_PASSWORD}
+        - FUSEKI_DATASET_1=${DATASET_1}
+      ports:
+        - "3030:${FUSEKI_PORT}"
