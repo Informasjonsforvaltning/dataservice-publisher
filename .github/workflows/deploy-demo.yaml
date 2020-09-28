@@ -45,8 +45,8 @@ jobs:
           mention: 'channel'
           if_mention: failure
           status: ${{ job.status }}
-          author_name: 'Deploy dataservice-publisher to demo'
-          fields: repo,message,commit,author,ref,workflow
+          author_name: 'Application: dataservice-publisher | Environment: demo'
+          fields: commit,author,workflow
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
