@@ -8,14 +8,15 @@ from flask import Flask
 import pytest
 from pytest_mock import MockerFixture
 from rdflib import Graph
+from rdflib.compare import graph_diff, isomorphic
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
-
+import yaml
 
 load_dotenv()
 DATASET = env.get("FUSEKI_DATASET_1", "ds")
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_catalogs(client: Flask, mocker: MockerFixture) -> None:
     """Should return 200 and a turtle serialization."""
     # Set up the mock
@@ -32,7 +33,7 @@ def test_catalogs(client: Flask, mocker: MockerFixture) -> None:
     assert 0 < len(g)
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_catalogs_by_id(client: Flask, mocker: MockerFixture) -> None:
     """Should return 200 and a turtle serialization."""
     # Set up the mock
@@ -49,7 +50,7 @@ def test_catalogs_by_id(client: Flask, mocker: MockerFixture) -> None:
     assert 0 < len(g)
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_catalogs_by_id_does_not_exist(client: Flask, mocker: MockerFixture) -> None:
     """Should return 404."""
     # Set up the mock
@@ -61,7 +62,7 @@ def test_catalogs_by_id_does_not_exist(client: Flask, mocker: MockerFixture) -> 
     assert 0 == len(response.data)
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_create_catalog_unauthenticated_fails(
     client: Flask, mocker: MockerFixture
 ) -> None:
@@ -71,19 +72,8 @@ def test_create_catalog_unauthenticated_fails(
     mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=True)
 
     headers = {"Content-Type": "application/json"}
-    data = dict(
-        identifier="http://dataservice-publisher:8080/catalogs/1234",
-        title={"en": "A dataservice catalog"},
-        publisher="http://example.com/publisher/1234",
-        description={"en": "bladibladibla"},
-        apis=[
-            {
-                "identifier": "http://example.com/dataservice/1",
-                "url": "https://raw.githubusercontent.com/"
-                "OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
-            }
-        ],
-    )
+    with open("./tests/files/catalog_1.json") as json_file:
+        data = json.load(json_file)
 
     response = client.post("/catalogs", headers=headers, data=json.dumps(data))
 
@@ -91,39 +81,47 @@ def test_create_catalog_unauthenticated_fails(
     assert response.headers["WWW-Authenticate"] == 'Bearer token_type="JWT"'
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_create_catalog_success(client: Flask, mocker: MockerFixture) -> None:
     """Should return 201 and location header."""
     # Set up the mocks
     mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
     mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=True)
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
+    mocker.patch(
+        "SPARQLWrapper.SPARQLWrapper.queryAndConvert",
+        return_value=_mock_full_queryresult(),
+    )
 
     headers = {"Content-Type": "application/json", "Authorizaton": "Bearer dummy"}
-    data = dict(
-        identifier="http://dataservice-publisher:8080/catalogs/1234",
-        title={"en": "A dataservice catalog"},
-        publisher="http://example.com/publisher/1234",
-        description={"en": "bladibladibla"},
-        apis=[
-            {
-                "identifier": "http://example.com/dataservice/1",
-                "url": "https://raw.githubusercontent.com/"
-                "OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
-            }
-        ],
-    )
+    with open("./tests/files/catalog_1.json") as json_file:
+        data = json.load(json_file)
 
     response = client.post("/catalogs", headers=headers, data=json.dumps(data))
 
-    assert response.status_code == 201
-    assert (
-        response.headers["Location"]
-        == "http://dataservice-publisher:8080/catalogs/1234"
-    )
+    assert response.status_code == 200
+    assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    assert 0 < len(response.data)
+    g1 = Graph().parse(data=response.data, format="turtle")
+    assert 0 < len(g1)
+
+    # Verify that all of the input is created:
+    response = client.get("/catalogs/1234")
+
+    assert 200 == response.status_code
+    assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    assert 0 < len(response.data)
+    g2 = Graph().parse(data=response.data, format="turtle")
+    assert 0 < len(g2)
+
+    _isomorphic = isomorphic(g1, g2)
+    if not _isomorphic:
+        _dump_diff(g1, g2)
+        pass
+    assert _isomorphic
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_create_catalog_failure(client: Flask, mocker: MockerFixture) -> None:
     """Should return status_code 400."""
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
@@ -133,7 +131,7 @@ def test_create_catalog_failure(client: Flask, mocker: MockerFixture) -> None:
     assert response.status_code == 400
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_catalogs_fails_with_exception(client: Flask, mocker: MockerFixture) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
@@ -147,7 +145,7 @@ def test_catalogs_fails_with_exception(client: Flask, mocker: MockerFixture) -> 
     assert response.status_code == 500
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_catalog_by_id_fails_with_exception(
     client: Flask, mocker: MockerFixture
 ) -> None:
@@ -163,7 +161,7 @@ def test_catalog_by_id_fails_with_exception(
     assert response.status_code == 500
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_create_catalog_fails_with_exception(
     client: Flask, mocker: MockerFixture
 ) -> None:
@@ -175,19 +173,8 @@ def test_create_catalog_fails_with_exception(
     )
 
     headers = {"Content-Type": "application/json"}
-    data = dict(
-        identifier="http://dataservice-publisher:8080/catalogs/1234",
-        title={"en": "A dataservice catalog"},
-        publisher="http://example.com/publisher/1234",
-        description={"en": "bladibladibla"},
-        apis=[
-            {
-                "identifier": "http://example.com/dataservice/1",
-                "url": "https://raw.githubusercontent.com/"
-                "OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
-            }
-        ],
-    )
+    with open("./tests/files/catalog_1.json") as json_file:
+        data = json.load(json_file)
 
     response = client.post("/catalogs", headers=headers, data=json.dumps(data))
 
@@ -196,7 +183,7 @@ def test_create_catalog_fails_with_exception(
 
 def _mock_queryresult() -> str:
     """Create a mock catalog collection response."""
-    response = """
+    result = """
     @prefix dcat: <http://www.w3.org/ns/dcat#> .
     @prefix dct: <http://purl.org/dc/terms/> .
     @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -207,10 +194,39 @@ def _mock_queryresult() -> str:
 
     <http://dataservice-publisher:8080/catalogs/1> a dcat:Catalog .
     """
-    return response
+    return result
+
+
+def _mock_full_queryresult() -> str:
+    """Create a mock catalog collection response."""
+    with open("./tests/files/catalog_1.ttl", "r") as file:
+        data = file.read()
+    return data
 
 
 def _mock_yaml_load() -> Dict[str, Any]:
     """Create a mock openAPI-specification dokument."""
-    info = dict(title="Swagger petstore")
-    return dict(openapi="3.0.3", info=info)
+    with open("./tests/files/petstore.yaml", "r") as file:
+        _yaml = yaml.safe_load(file)
+
+    return _yaml
+
+
+# ---------------------------------------------------------------------- #
+# Utils for displaying debug information
+
+
+def _dump_diff(g1: Graph, g2: Graph) -> None:
+    in_both, in_first, in_second = graph_diff(g1, g2)
+    print("\nin both:")
+    _dump_turtle(in_both)
+    print("\nin first:")
+    _dump_turtle(in_first)
+    print("\nin second:")
+    _dump_turtle(in_second)
+
+
+def _dump_turtle(g: Graph) -> None:
+    for _l in g.serialize(format="turtle").splitlines():
+        if _l:
+            print(_l.decode())

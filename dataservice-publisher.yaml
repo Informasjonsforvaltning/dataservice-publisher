@@ -36,8 +36,18 @@ paths:
         - dataservice-publisher
       summary: Adds a catalog to the database and returns a location headre
       responses:
-        '201':
-          description: Create
+        '200':
+          description: OK
+          content:
+            text/turtle:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
   /dataservices:
     get:
       tags:

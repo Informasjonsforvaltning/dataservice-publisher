@@ -1,7 +1,6 @@
 """Repository module for service layer."""
 import logging
 from os import environ as env
-from typing import Any
 
 from datacatalogtordf import Catalog
 from dotenv import load_dotenv
@@ -50,7 +49,7 @@ def fetch_catalogs() -> Graph:
         raise e
 
 
-def create_catalog(catalog: dict) -> Any:
+def create_catalog(catalog: dict) -> Graph:
     """Create a graph based on catalog and persist to store."""
     # Use datacatalogtordf and oastodcat to create a graph and persist:
     try:
@@ -65,11 +64,13 @@ def create_catalog(catalog: dict) -> Any:
             _dataservice = OASDataService(oas)
             _dataservice.identifier = api["identifier"]
             _dataservice.endpointDescription = api["url"]
+            if "publisher" in api:
+                _dataservice.publisher = api["publisher"]
             #
             # Add dataservice to catalog:
             _catalog.services.append(_dataservice)
 
-        g = _catalog._to_graph()
+        _g = _catalog._to_graph()
 
         update_endpoint = f"http://{FUSEKI_HOST}:{FUSEKI_PORT}/{DATASET}/update"
         sparql = SPARQLWrapper(update_endpoint)
@@ -77,9 +78,9 @@ def create_catalog(catalog: dict) -> Any:
         sparql.setMethod(POST)
         # Prepare query:
         prefixes = ""
-        for ns in g.namespaces():
+        for ns in _g.namespaces():
             prefixes += f"PREFIX {ns[0]}: <{ns[1]}>\n"
-        for s, p, o in g:
+        for s, p, o in _g:
             if isinstance(o, Literal):
                 querystring = (
                     prefixes
@@ -100,7 +101,7 @@ def create_catalog(catalog: dict) -> Any:
             sparql.setQuery(querystring)
             sparql.query()
 
-        return _catalog.identifier
+        return _g
     except SPARQLWrapperException as e:
         logging.exception("message")
         # Logs the error appropriately.

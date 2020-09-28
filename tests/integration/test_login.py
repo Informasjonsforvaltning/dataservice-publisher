@@ -12,7 +12,7 @@ ADMIN_USERNAME = env.get("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = env.get("ADMIN_PASSWORD")
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_login_succeds(client: Flask) -> None:
     """Should return 200 and an access_token."""
     headers = {"Content-Type": "application/json"}
@@ -25,7 +25,7 @@ def test_login_succeds(client: Flask) -> None:
     assert data["access_token"]
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_login_without_username_password_fails(client: Flask) -> None:
     """Should return 401 an WWW-Authenticate header."""
     response = client.post("/login")
@@ -33,7 +33,7 @@ def test_login_without_username_password_fails(client: Flask) -> None:
     assert response.status_code == 401
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_login_wrong_username_password_fails(client: Flask) -> None:
     """Should return 401 an WWW-Authenticate header."""
     headers = {"Content-Type": "application/json"}

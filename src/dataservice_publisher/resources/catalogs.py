@@ -23,14 +23,14 @@ class Catalogs(Resource):
 
     @jwt_required
     def post(self) -> Response:
-        """Create a catalog and return location header."""
+        """Create a catalog and return the resulting graph."""
         if request.json is None:
             abort(400)
-        catalog_identifier = create_catalog(request.json)
-        response = make_response()
-        response.headers["Location"] = catalog_identifier
-        response.status_code = 201
-        return response
+        catalog = create_catalog(request.json)
+        return Response(
+            catalog.serialize(format="text/turtle", encoding="utf-8"),
+            mimetype="text/turtle",
+        )
 
 
 class Catalog(Resource):

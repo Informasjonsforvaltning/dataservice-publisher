@@ -5,7 +5,7 @@ import requests
 import requests_mock
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_ready(client: Flask) -> None:
     """Should return OK."""
     # Configure the mock to return a response with an OK status code.
@@ -18,7 +18,7 @@ def test_ready(client: Flask) -> None:
         assert response.data.decode() == "OK"
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_ready_fails(client: Flask) -> None:
     """Should return 400."""
     # Configure the mock to return a response with an OK status code.

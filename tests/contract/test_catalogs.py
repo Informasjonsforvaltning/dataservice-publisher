@@ -2,7 +2,6 @@
 import json
 from os import environ as env
 from typing import Any
-from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 import pytest
@@ -56,12 +55,16 @@ def test_create_catalog(http_service: Any, access_token: str) -> None:
     }
 
     resp = requests.post(url, json=data, headers=headers)
-    assert 201 == resp.status_code
-    assert resp.headers["Location"]
-    assert 0 == len(resp.content)
+    assert 200 == resp.status_code
+    assert 0 < len(resp.content)
+    assert "text/turtle; charset=utf-8" == resp.headers["Content-Type"]
+    g = Graph()
+    g.parse(data=resp.text, format="turtle")
+    assert 0 < len(g)
 
     # Check that the location header is valid and return the catalog:
-    path = urlparse(resp.headers["Location"]).path
+    # TODO get the path from the graph (identifier of the catalog)
+    path = "/catalogs/1"
     url = f"{http_service}{path}"
     resp = requests.get(url)
     assert 200 == resp.status_code

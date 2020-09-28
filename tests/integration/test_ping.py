@@ -3,7 +3,7 @@ from flask import Flask
 import pytest
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_ping(client: Flask) -> None:
     """Should return OK."""
     response = client.get("/ping")
