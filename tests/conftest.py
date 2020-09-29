@@ -14,8 +14,7 @@ from requests.exceptions import ConnectionError
 from dataservice_publisher import create_app
 
 load_dotenv()
-HOST = env.get("HOST", "dataservice-publisher")
-PORT = int(env.get("HOST_PORT", "8080"))
+HOST_PORT = int(env.get("HOST_PORT", "8080"))
 FUSEKI_HOST = env.get("FUSEKI_HOST", "fuseki")
 FUSEKI_PORT = int(env.get("FUSEKI_PORT", "3030"))
 
@@ -37,7 +36,7 @@ def is_responsive(url: Any) -> Any:
 def http_service(docker_ip: Any, docker_services: Any) -> Any:
     """Ensure that HTTP service is up and responsive."""
     # `port_for` takes a container port and returns the corresponding host port
-    port = docker_services.port_for(HOST, PORT)
+    port = docker_services.port_for("dataservice-publisher", HOST_PORT)
     url = "http://{}:{}".format(docker_ip, port)
     docker_services.wait_until_responsive(
         timeout=30.0, pause=0.1, check=lambda: is_responsive(url)

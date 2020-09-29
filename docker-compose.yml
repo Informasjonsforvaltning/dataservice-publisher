@@ -4,7 +4,7 @@ services:
     build: .
     image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test
     environment:
-      - HOST=${HOST}
+      - DATASERVICE_PUBLISHER_URL=${DATASERVICE_PUBLISHER_URL}
       - HOST_PORT=${HOST_PORT}
       - ADMIN_USERNAME=${ADMIN_USERNAME}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}

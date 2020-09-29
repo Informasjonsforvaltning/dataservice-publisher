@@ -9,12 +9,12 @@ from gunicorn import glogging
 
 load_dotenv()
 
-PORT = env.get("HOST_PORT", "8080")
+HOST_PORT = env.get("HOST_PORT", "8080")
 DEBUG_MODE = env.get("DEBUG_MODE", False)
 LOG_LEVEL = env.get("LOG_LEVEL", "info")
 
 # Gunicorn config
-bind = ":" + PORT
+bind = ":" + HOST_PORT
 workers = multiprocessing.cpu_count() * 2 + 1
 threads = 2 * multiprocessing.cpu_count()
 loglevel = str(LOG_LEVEL)

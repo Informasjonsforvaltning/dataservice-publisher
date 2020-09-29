@@ -13,8 +13,7 @@ import yaml
 
 
 load_dotenv()
-HOST = env.get("HOST", "dataservice-publisher")
-PORT = int(env.get("PORT", "8080"))
+DATASERVICE_PUBLISHER_URL = env.get("DATASERVICE_PUBLISHER_URL")
 DATASET = env.get("FUSEKI_DATASET_1", "ds")
 FUSEKI_PASSWORD = env.get("FUSEKI_PASSWORD")
 FUSEKI_HOST = env.get("FUSEKI_HOST", "fuseki")
@@ -112,7 +111,7 @@ def get_catalog_by_id(id: str) -> Graph:
     """Returns a specific catalog objects identified by id."""
     try:
         # Find a specific catalog
-        context = URIRef(f"http://{HOST}:{PORT}/catalogs/{id}")
+        context = URIRef(f"{DATASERVICE_PUBLISHER_URL}/catalogs/{id}")
         query_endpoint = f"http://{FUSEKI_HOST}:{FUSEKI_PORT}/{DATASET}/query"
 
         querystring = """
