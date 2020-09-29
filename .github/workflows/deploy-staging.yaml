@@ -35,6 +35,10 @@ jobs:
           pip install poetry==1.0.5
 
       - name: Test with nox
+        env:
+          SECRET_KEY = ${{ secrets.SECRET_KEY }}
+          ADMIN_PASSWORD = ${{ secrets.ADMIN_PASSWORD }}
+          FUSEKI_PASSWORD = ${{ secrets.FUSEKI_PASSWORD }}
         run: nox
 
       - name: Tag and publish docker image to Google Cloud

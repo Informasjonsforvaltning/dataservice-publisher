@@ -25,8 +25,7 @@ The API is also published as a dataservice in this catalog.
 ### Environment variables
 To run the service locally, you need to supply a set of environment variables. A simple way to solve this is to supply a .env file in the root directory, e.g:
 ```
-HOST=localhost
-HOST_PORT=8080
+DATASERVICE_PUBLISHER_URL=http://dataservice-publisher:8080
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=passw123
 FUSEKI_HOST=localhost
