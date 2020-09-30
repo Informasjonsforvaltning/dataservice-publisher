@@ -132,6 +132,43 @@ def test_create_catalog_failure(client: Flask, mocker: MockerFixture) -> None:
 
 
 @pytest.mark.integration
+def test_create_catalog_KeyError_failure(client: Flask, mocker: MockerFixture) -> None:
+    """Should return status_code 400 and message."""
+    mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
+
+    headers = {"Content-Type": "application/json"}
+    data = dict(identifier="http://dataservice-publisher:8080/catalogs/1")
+
+    response = client.post("/catalogs", headers=headers, data=json.dumps(data))
+
+    assert response.status_code == 400
+    data = json.loads(response.data)
+    assert data["msg"] == "KeyError when processing request body"
+
+
+@pytest.mark.integration
+def test_create_catalog_TypeError_failure(client: Flask, mocker: MockerFixture) -> None:
+    """Should return status_code 400 and message."""
+    mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
+
+    headers = {"Content-Type": "application/json"}
+    # Point here is that apis array should have dicts, not strings as members:
+    data = dict(
+        identifier="http://dataservice-publisher:8080/catalogs/1",
+        title={"en": "Title with language tag"},
+        description={"en": "description with language tag"},
+        publisher="http://example.com/publishers/1",
+        apis=["http://api.url.com"],
+    )
+
+    response = client.post("/catalogs", headers=headers, data=json.dumps(data))
+
+    assert response.status_code == 400
+    data = json.loads(response.data)
+    assert data["msg"] == "TypeError when processing request body"
+
+
+@pytest.mark.integration
 def test_catalogs_fails_with_exception(client: Flask, mocker: MockerFixture) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.

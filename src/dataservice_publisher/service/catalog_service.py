@@ -11,6 +11,7 @@ from SPARQLWrapper import POST, SPARQLWrapper, TURTLE
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 import yaml
 
+from dataservice_publisher.exceptions.exceptions import ErrorInRequstBodyException
 
 load_dotenv()
 DATASERVICE_PUBLISHER_URL = env.get("DATASERVICE_PUBLISHER_URL")
@@ -47,29 +48,43 @@ def fetch_catalogs() -> Graph:
         raise e
 
 
+def _parse_user_input(catalog: dict) -> Graph:
+    _catalog = Catalog()
+    # create a hash based on publisher and id
+    _catalog.identifier = URIRef(catalog["identifier"])
+    _catalog.title = catalog["title"]
+    _catalog.description = catalog["description"]
+    _catalog.publisher = catalog["publisher"]
+    for api in catalog["apis"]:
+        oas = yaml.safe_load(requests.get(api["url"]).text)
+        _dataservice = OASDataService(oas)
+        _dataservice.identifier = api["identifier"]
+        _dataservice.endpointDescription = api["url"]
+        if "publisher" in api:
+            _dataservice.publisher = api["publisher"]
+        #
+        # Add dataservice to catalog:
+        _catalog.services.append(_dataservice)
+
+    return _catalog._to_graph()
+
+
 def create_catalog(catalog: dict) -> Graph:
     """Create a graph based on catalog and persist to store."""
     # Use datacatalogtordf and oastodcat to create a graph and persist:
+    _g = Graph()
     try:
-        _catalog = Catalog()
-        # create a hash based on publisher and id
-        _catalog.identifier = URIRef(catalog["identifier"])
-        _catalog.title = catalog["title"]
-        _catalog.description = catalog["description"]
-        _catalog.publisher = catalog["publisher"]
-        for api in catalog["apis"]:
-            oas = yaml.safe_load(requests.get(api["url"]).text)
-            _dataservice = OASDataService(oas)
-            _dataservice.identifier = api["identifier"]
-            _dataservice.endpointDescription = api["url"]
-            if "publisher" in api:
-                _dataservice.publisher = api["publisher"]
-            #
-            # Add dataservice to catalog:
-            _catalog.services.append(_dataservice)
+        _g = _parse_user_input(catalog)
+    except TypeError:
+        logging.exception("message")
+        # Logs the error appropriately.
+        raise ErrorInRequstBodyException("TypeError when processing request body")
+    except KeyError:
+        logging.exception("message")
+        # Logs the error appropriately.
+        raise ErrorInRequstBodyException("KeyError when processing request body")
 
-        _g = _catalog._to_graph()
-
+    try:
         update_endpoint = f"{FUSEKI_HOST_URL}/{DATASET}/update"
         sparql = SPARQLWrapper(update_endpoint)
         sparql.setCredentials("admin", FUSEKI_PASSWORD)
@@ -85,7 +100,7 @@ def create_catalog(catalog: dict) -> Graph:
                     + """
                     INSERT DATA {GRAPH <%s> {<%s> <%s> "%s"@%s}}
                     """
-                    % (_catalog.identifier, s, p, o, o.language,)
+                    % (URIRef(catalog["identifier"]), s, p, o, o.language,)
                 )
             else:
                 querystring = (
@@ -93,7 +108,7 @@ def create_catalog(catalog: dict) -> Graph:
                     + """
                     INSERT DATA {GRAPH <%s> {<%s> <%s> <%s>}}
                     """
-                    % (_catalog.identifier, s, p, o,)
+                    % (URIRef(catalog["identifier"]), s, p, o,)
                 )
 
             sparql.setQuery(querystring)

@@ -25,10 +25,12 @@ import requests
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from werkzeug.exceptions import HTTPException, InternalServerError
 
+from .exceptions.exceptions import ErrorInRequstBodyException
 from .resources.catalogs import Catalog, Catalogs
 from .resources.login import Login
 from .resources.ping import Ping
 from .resources.ready import Ready
+
 
 __version__ = "0.1.0"
 
@@ -70,7 +72,7 @@ def create_app(test_config: Any = None) -> Flask:
     api.add_resource(Catalog, "/catalogs/<string:id>")
 
     @app.errorhandler(SPARQLWrapperException)
-    def handle_500(e: SPARQLWrapperException) -> Response:
+    def handle_SPARQLWrapperExceptions(e: SPARQLWrapperException) -> Response:
         # replace the body with JSON
         response = make_response()
         response.data = json.dumps({"msg": e.msg})
@@ -79,12 +81,21 @@ def create_app(test_config: Any = None) -> Flask:
         return response
 
     @app.errorhandler(requests.exceptions.RequestException)
-    def handle_request_exception(e: requests.exceptions.RequestException) -> Response:
+    def handle_request_exceptions(e: requests.exceptions.RequestException) -> Response:
         # replace the body with JSON
         response = make_response()
         response.data = json.dumps({"msg": "ConnectionError"})
         response.content_type = "application/json"
         response.status_code = 500
+        return response
+
+    @app.errorhandler(ErrorInRequstBodyException)
+    def handle_exceptions(e: ErrorInRequstBodyException) -> Response:
+        # replace the body with JSON
+        response = make_response()
+        response.data = json.dumps({"msg": e.msg})
+        response.content_type = "application/json"
+        response.status_code = 400
         return response
 
     return app
