@@ -40,7 +40,13 @@ def unit_tests(session: Session) -> None:
     install_with_constraints(
         session, "pytest", "requests-mock", "pytest-mock",
     )
-    session.run("pytest", "-m unit", "-rA", *args)
+    session.run(
+        "pytest",
+        "-m unit",
+        "-rA",
+        *args,
+        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+    )
 
 
 @nox.session(python="3.7")
@@ -56,7 +62,13 @@ def integration_tests(session: Session) -> None:
         "requests-mock",
         "pytest-mock",
     )
-    session.run("pytest", "-m integration", "-rA", *args)
+    session.run(
+        "pytest",
+        "-m integration",
+        "-rA",
+        *args,
+        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+    )
 
 
 @nox.session(python="3.7")
@@ -67,7 +79,13 @@ def contract_tests(session: Session) -> None:
     install_with_constraints(
         session, "pytest", "pytest-docker", "requests_mock", "pytest_mock"
     )
-    session.run("pytest", "-m contract", "-rA", *args)
+    session.run(
+        "pytest",
+        "-m contract",
+        "-rA",
+        *args,
+        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+    )
 
 
 @nox.session(python="3.7")
