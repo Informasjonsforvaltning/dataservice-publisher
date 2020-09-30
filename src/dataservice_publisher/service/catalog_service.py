@@ -16,8 +16,7 @@ load_dotenv()
 DATASERVICE_PUBLISHER_URL = env.get("DATASERVICE_PUBLISHER_URL")
 DATASET = env.get("FUSEKI_DATASET_1", "ds")
 FUSEKI_PASSWORD = env.get("FUSEKI_PASSWORD")
-FUSEKI_HOST = env.get("FUSEKI_HOST", "fuseki")
-FUSEKI_PORT = int(env.get("FUSEKI_PORT", "3030"))
+FUSEKI_HOST_URL = env.get("FUSEKI_HOST_URL", "http://fuseki:3030")
 
 
 def fetch_catalogs() -> Graph:
@@ -25,7 +24,7 @@ def fetch_catalogs() -> Graph:
     try:
         # Find all catalogs from all named graph
         # Find a specific catalog
-        query_endpoint = f"http://{FUSEKI_HOST}:{FUSEKI_PORT}/{DATASET}/query"
+        query_endpoint = f"{FUSEKI_HOST_URL}/{DATASET}/query"
 
         querystring = """
             PREFIX dcat: <http://www.w3.org/ns/dcat#>
@@ -71,7 +70,7 @@ def create_catalog(catalog: dict) -> Graph:
 
         _g = _catalog._to_graph()
 
-        update_endpoint = f"http://{FUSEKI_HOST}:{FUSEKI_PORT}/{DATASET}/update"
+        update_endpoint = f"{FUSEKI_HOST_URL}/{DATASET}/update"
         sparql = SPARQLWrapper(update_endpoint)
         sparql.setCredentials("admin", FUSEKI_PASSWORD)
         sparql.setMethod(POST)
@@ -112,7 +111,7 @@ def get_catalog_by_id(id: str) -> Graph:
     try:
         # Find a specific catalog
         context = URIRef(f"{DATASERVICE_PUBLISHER_URL}/catalogs/{id}")
-        query_endpoint = f"http://{FUSEKI_HOST}:{FUSEKI_PORT}/{DATASET}/query"
+        query_endpoint = f"{FUSEKI_HOST_URL}/{DATASET}/query"
 
         querystring = """
             CONSTRUCT { ?s ?p ?o }

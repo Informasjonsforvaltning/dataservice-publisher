@@ -38,8 +38,7 @@ A full .env:
 DATASERVICE_PUBLISHER_URL=http://dataservice-publisher:8080
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=passw123
-FUSEKI_HOST=localhost
-FUSEKI_PORT=3030
+FUSEKI_HOST_URL=http://localhost:3030
 FUSEKI_PASSWORD=passw123
 SECRET_KEY=super_secret
 TDB=2

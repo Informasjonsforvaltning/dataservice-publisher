@@ -15,8 +15,7 @@ from dataservice_publisher import create_app
 
 load_dotenv()
 HOST_PORT = int(env.get("HOST_PORT", "8080"))
-FUSEKI_HOST = env.get("FUSEKI_HOST", "fuseki")
-FUSEKI_PORT = int(env.get("FUSEKI_PORT", "3030"))
+FUSEKI_HOST_URL = env.get("FUSEKI_HOST_URL", "http://fuseki:3030")
 
 
 def is_responsive(url: Any) -> Any:
