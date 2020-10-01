@@ -1,105 +1,29 @@
-openapi: 3.0.2
-info:
-  title: Dataservice-publisher of Digdir
-  description: Exposes a collection of dataservice-catalogs according to DCAT-AP-NO v2
-  version: '1.0'
-  contact:
-    name: Digitaliseringsdirektoratet
-    url: 'https://digdir.no'
-  license:
-    name: License of API
-    url: 'http://data.norge.no/nlod/no/2.0'
-tags:
-  - name: dataservice-publisher
-    description: publisher operations
-paths:
-  /catalogs:
-    get:
-      tags:
-        - dataservice-publisher
-      summary: Returns a list of dataservice-catalogs including dataservices
-      responses:
-        '200':
-          description: OK
-          content:
-            text/turtle:
-              schema:
-                type: string
-            application/rdf+xml:
-              schema:
-                type: string
-            application/ld+json:
-              schema:
-                type: string
+  /login:
     post:
       tags:
         - dataservice-publisher
-      summary: Adds a catalog to the database and returns a location headre
+      summary: Creates a JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
       responses:
         '200':
           description: OK
           content:
-            text/turtle:
+            application/json:
               schema:
-                type: string
-            application/rdf+xml:
-              schema:
-                type: string
-            application/ld+json:
-              schema:
-                type: string
-  /dataservices:
-    get:
-      tags:
-        - dataservice-publisher
-      summary: Returns a list of dataservices
-      responses:
-        '200':
-          description: OK
-          content:
-            text/turtle:
-              schema:
-                type: string
-            application/rdf+xml:
-              schema:
-                type: string
-            application/ld+json:
-              schema:
-                type: string
-components:
-  schemas:
-    Catalog:
-      properties:
-        id:
-          type: string
-        publisherUrl:
-          type: string
-          format: uri
-        title:
-          type: string
-        description:
-          type: string
-        dataservices:
-          type: array
-          items:
-            $ref: '#/components/schemas/Dataservice'
-    Dataservice:
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        endpointURL:
-          type: string
-          format: uri
-        endpointDescription:
-          type: string
-          format: uri
-        contactpoint:
-          $ref: '#/components/schemas/Contact'
-    Contact:
-      properties:
-        name:
-          type: string
+                type: object
+                properties:
+                  access_token:
+                    type: string
