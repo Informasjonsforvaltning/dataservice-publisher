@@ -7,8 +7,15 @@ from nox.sessions import Session
 
 package = "dataservice_publisher"
 locations = "src", "tests", "noxfile.py", "docs/conf.py"
-# nox.options.sessions = "lint", "mypy", "pytype", "tests", "contract_tests"
-nox.options.sessions = "pytype", "contract_tests"
+nox.options.stop_on_first_error = True
+nox.options.sessions = (
+    "lint",
+    "mypy",
+    "pytype",
+    "unit_tests",
+    "integration_tests",
+    "contract_tests",
+)
 
 
 def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
@@ -26,14 +33,42 @@ def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> Non
 
 
 @nox.session(python="3.7")
-def tests(session: Session) -> None:
+def unit_tests(session: Session) -> None:
+    """Run the test suite."""
+    args = session.posargs
+    session.run("poetry", "install", "--no-dev", external=True)
+    install_with_constraints(
+        session, "pytest", "requests-mock", "pytest-mock",
+    )
+    session.run(
+        "pytest",
+        "-m unit",
+        "-rA",
+        *args,
+        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+    )
+
+
+@nox.session(python="3.7")
+def integration_tests(session: Session) -> None:
     """Run the test suite."""
     args = session.posargs or ["--cov"]
     session.run("poetry", "install", "--no-dev", external=True)
     install_with_constraints(
-        session, "coverage[toml]", "pytest", "pytest-cov", "pytest-docker"
+        session,
+        "coverage[toml]",
+        "pytest",
+        "pytest-cov",
+        "requests-mock",
+        "pytest-mock",
     )
-    session.run("pytest", "-m unit", *args)
+    session.run(
+        "pytest",
+        "-m integration",
+        "-rA",
+        *args,
+        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+    )
 
 
 @nox.session(python="3.7")
@@ -41,8 +76,16 @@ def contract_tests(session: Session) -> None:
     """Run the contract_test suite."""
     args = session.posargs
     session.run("poetry", "install", "--no-dev", external=True)
-    install_with_constraints(session, "pytest", "pytest-docker")
-    session.run("pytest", "-m contract", *args)
+    install_with_constraints(
+        session, "pytest", "pytest-docker", "requests_mock", "pytest_mock"
+    )
+    session.run(
+        "pytest",
+        "-m contract",
+        "-rA",
+        *args,
+        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+    )
 
 
 @nox.session(python="3.7")

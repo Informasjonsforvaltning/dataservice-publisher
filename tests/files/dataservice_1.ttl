@@ -6,7 +6,7 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://localhost:8080/dataservices/1> a dcat:DataService ;
+<http://dataservice-publisher:8080/dataservices/1> a dcat:DataService ;
     dct:description "Exposes a model-catalog"@nb ;
     dct:title "Model-catalog of Digdir"@nb ;
     dcat:contactPoint [ a vcard:Organization ;

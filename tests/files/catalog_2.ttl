@@ -6,16 +6,16 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://localhost:8080/catalogs/2> a dcat:Catalog ;
+<http://dataservice-publisher:8080/catalogs/2> a dcat:Catalog ;
     dct:publisher <https://data.brreg.no/enhetsregisteret/api/enheter/991825827> ;
     dct:title "Dataservicekatalog2 for Digitaliseringsdirektoratet"@nb ;
-    dcat:service <http://localhost:8080/dataservices/3>,
-        <http://localhost:8080/dataservices/4>,
-        <http://localhost:8080/dataservices/5>,
-        <http://localhost:8080/dataservices/6>,
-        <http://localhost:8080/dataservices/7> .
+    dcat:service <http://dataservice-publisher:8080/dataservices/3>,
+        <http://dataservice-publisher:8080/dataservices/4>,
+        <http://dataservice-publisher:8080/dataservices/5>,
+        <http://dataservice-publisher:8080/dataservices/6>,
+        <http://dataservice-publisher:8080/dataservices/7> .
 
-<http://localhost:8080/dataservices/3> a dcat:DataService ;
+<http://dataservice-publisher:8080/dataservices/3> a dcat:DataService ;
     dct:description "Provides a basic search api against the National Information Model Directory of Norway"@nb ;
     dct:title "National Information Model Directory Search API"@nb ;
     dcat:contactPoint [ a vcard:Organization ;
@@ -25,7 +25,7 @@
     dcat:endpointURL <https://fellesdatakatalog.brreg.no/api/informationmodels> ;
     dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-informationmodel-harvester/master/src/main/resources/specification/specification.yaml> .
 
-<http://localhost:8080/dataservices/4> a dcat:DataService ;
+<http://dataservice-publisher:8080/dataservices/4> a dcat:DataService ;
     dct:description "Provides a basic search api against the National API Directory of Norway"@nb ;
     dct:title "National API Directory Search API"@nb ;
     dcat:contactPoint [ a vcard:Organization ;
@@ -35,7 +35,7 @@
     dcat:endpointURL <https://fellesdatakatalog.brreg.no/api/apis> ;
     dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-api-harvester/master/src/main/resources/specification/fdk-api-harvester.yaml> .
 
-<http://localhost:8080/dataservices/5> a dcat:DataService ;
+<http://dataservice-publisher:8080/dataservices/5> a dcat:DataService ;
     dct:description "Tilgjengeliggjør begreper fra Begrepskatalog"@nb ;
     dct:title "Begrepskatalog API"@nb ;
     dcat:contactPoint [ a vcard:Organization ;
@@ -45,7 +45,7 @@
     dcat:endpointURL <https://begrepskatalog.fellesdatakatalog.brreg.no/api> ;
     dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/ConceptRegistrationAPI.yaml> .
 
-<http://localhost:8080/dataservices/6> a dcat:DataService ;
+<http://dataservice-publisher:8080/dataservices/6> a dcat:DataService ;
     dct:description "Tilgjengeliggjør begreper fra en begrepskatalog ihht SKOS-AP-NO"@nb ;
     dct:title "FDK sin begrepssamling"@nb ;
     dcat:contactPoint [ a vcard:Organization ;
@@ -55,7 +55,7 @@
     dcat:endpointURL <https://registrering-begrep-api.fellesdatakatalog.brreg.no/> ;
     dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/skos-ap-no.yaml> .
 
-<http://localhost:8080/dataservices/7> a dcat:DataService ;
+<http://dataservice-publisher:8080/dataservices/7> a dcat:DataService ;
     dct:description "Exposes a basic service which provides information related to the organization catalogue in the National Data Directory"@nb ;
     dct:title "National Data Directory Organization Catalogue"@nb ;
     dcat:contactPoint [ a vcard:Organization ;

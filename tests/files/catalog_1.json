@@ -1,0 +1,25 @@
+{
+  "identifier": "http://dataservice-publisher:8080/catalogs/1",
+  "title": {
+    "en": "Testcatalog",
+    "nb": "Testkatalog",
+    "nn": "Testkatalog"
+  },
+  "description": {
+    "en": "Description",
+    "nb": "Beskrivelse",
+    "nn": "Skildring"
+  },
+  "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399",
+  "apis": [
+    {
+    "identifier": "http://dataservice-publisher:8080/dataservices/1",
+    "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml"
+    },
+    {
+      "identifier": "http://dataservice-publisher:8080/dataservices/2",
+      "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
+      "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399"
+    }
+  ]
+}

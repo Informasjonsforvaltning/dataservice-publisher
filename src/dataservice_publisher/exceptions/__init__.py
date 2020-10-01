@@ -1,0 +1,5 @@
+"""Exceptions package.
+
+Modules:
+    exceptions
+"""
