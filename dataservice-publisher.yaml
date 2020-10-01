@@ -1,3 +1,18 @@
+openapi: 3.0.2
+info:
+  title: Dataservice-publisher of Digdir
+  description: Exposes a collection of dataservice catalogs according to DCAT-AP-NO v2
+  version: '1.0'
+  contact:
+    name: Digitaliseringsdirektoratet
+    url: 'https://digdir.no'
+  license:
+    name: License of API
+    url: 'http://data.norge.no/nlod/no/2.0'
+tags:
+  - name: dataservice-publisher
+    description: publisher operations
+paths:
   /login:
     post:
       tags:
@@ -27,3 +42,113 @@
                 properties:
                   access_token:
                     type: string
+  /catalogs:
+    get:
+      tags:
+        - dataservice-publisher
+      summary: Returns a list of dataservice catalogs
+      responses:
+        '200':
+          description: OK
+          content:
+            text/turtle:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - dataservice-publisher
+      summary: Creates a new catalog resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Catalog'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/turtle:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
+  /catalogs/{id}:
+    get:
+      tags:
+        - dataservice-publisher
+      summary: Returns a list of dataservice catalogs
+      parameters:
+      - name: id
+        in: path
+        description: catalog id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/turtle:
+              schema:
+                type: string
+            application/rdf+xml:
+              schema:
+                type: string
+            application/ld+json:
+              schema:
+                type: string
+components:
+  schemas:
+    Catalog:
+      properties:
+        id:
+          type: string
+        publisherUrl:
+          type: string
+          format: uri
+        title:
+          type: string
+        description:
+          type: string
+        dataservices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dataservice'
+    Dataservice:
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        endpointURL:
+          type: string
+          format: uri
+        endpointDescription:
+          type: string
+          format: uri
+        contactpoint:
+          $ref: '#/components/schemas/Contact'
+    Contact:
+      properties:
+        name:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
