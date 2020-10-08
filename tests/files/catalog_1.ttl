@@ -10,8 +10,10 @@
     dct:publisher <https://data.brreg.no/enhetsregisteret/api/enheter/961181399> ;
     dct:title "Testcatalog"@en, "Testkatalog"@nb, "Testkatalog"@nn ;
     dct:description "Description"@en, "Beskrivelse"@nb, "Skildring"@nn ;
-    dcat:service <http://dataservice-publisher:8080/dataservices/1>,
-        <http://dataservice-publisher:8080/dataservices/2> .
+    dcat:service <http://dataservice-publisher:8080/dataservices/1> ,
+                 <http://dataservice-publisher:8080/dataservices/2> ,
+                 <http://dataservice-publisher:8080/dataservices/3>
+    .
 
 <http://dataservice-publisher:8080/dataservices/1> a dcat:DataService ;
     dct:title "Swagger Petstore"@en ;
@@ -26,4 +28,14 @@
     dcat:endpointDescription <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml> ;
     dcat:endpointURL <http://petstore.swagger.io/v1> ;
     dcat:mediaType <https://www.iana.org/assignments/media-types/application/json> ;
+    .
+
+<http://dataservice-publisher:8080/dataservices/3> a dcat:DataService ;
+    dct:title "Swagger Petstore"@en ;
+    dct:publisher <https://data.brreg.no/enhetsregisteret/api/enheter/961181399> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml> ;
+    dcat:endpointURL <http://petstore.swagger.io/v1> ;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/application/json> ;
+    dct:conformsTo <http://example.com/specifications/kontooppslag> ,
+                   <http://example.com/specifications/saldoopplysninger>
     .

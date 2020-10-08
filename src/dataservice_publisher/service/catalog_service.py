@@ -62,6 +62,9 @@ def _parse_user_input(catalog: dict) -> Graph:
         _dataservice.endpointDescription = api["url"]
         if "publisher" in api:
             _dataservice.publisher = api["publisher"]
+        if "conformsTo" in api:
+            for standard in api["conformsTo"]:
+                _dataservice.conformsTo.append(standard)
         #
         # Add dataservice to catalog:
         _catalog.services.append(_dataservice)
