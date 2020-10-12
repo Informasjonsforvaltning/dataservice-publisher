@@ -14,12 +14,18 @@ The API is also published as a dataservice in this catalog.
 - [poetry](https://python-poetry.org/)
 - [nox](https://nox.thea.codes/en/stable/)
 
+```
+% pipx install nox
+% pipx install poetry
+% pipx inject nox nox-poetry
+```
+
 ### Install software:
 ```
 % git clone https://github.com/Informasjonsforvaltning/dataservice-publisher.git
 % cd dataservice-publisher
-% pyenv install 3.7.7
-% pyenv local 3.7.7
+% pyenv install 3.7.9
+% pyenv local 3.7.9
 % poetry install
 ```
 ### Environment variables

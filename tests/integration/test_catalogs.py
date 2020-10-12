@@ -132,7 +132,7 @@ def test_create_catalog_failure(client: Flask, mocker: MockerFixture) -> None:
 
 
 @pytest.mark.integration
-def test_create_catalog_KeyError_failure(client: Flask, mocker: MockerFixture) -> None:
+def test_create_catalog_key_error_failure(client: Flask, mocker: MockerFixture) -> None:
     """Should return status_code 400 and message."""
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
 
@@ -147,7 +147,9 @@ def test_create_catalog_KeyError_failure(client: Flask, mocker: MockerFixture) -
 
 
 @pytest.mark.integration
-def test_create_catalog_TypeError_failure(client: Flask, mocker: MockerFixture) -> None:
+def test_create_catalog_type_error_failure(
+    client: Flask, mocker: MockerFixture
+) -> None:
     """Should return status_code 400 and message."""
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
 

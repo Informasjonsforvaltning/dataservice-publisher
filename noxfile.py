@@ -111,6 +111,7 @@ def lint(session: Session) -> None:
         "flake8-import-order",
         "darglint",
         "flake8-assertive",
+        "pep8-naming",
     )
     session.run("flake8", *args)
 
