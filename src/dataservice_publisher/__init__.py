@@ -72,7 +72,7 @@ def create_app(test_config: Any = None) -> Flask:
     api.add_resource(Catalog, "/catalogs/<string:id>")
 
     @app.errorhandler(SPARQLWrapperException)
-    def handle_SPARQLWrapperExceptions(e: SPARQLWrapperException) -> Response:
+    def handle_sparql_wrapper_exceptions(e: SPARQLWrapperException) -> Response:
         # replace the body with JSON
         response = make_response()
         response.data = json.dumps({"msg": e.msg})
