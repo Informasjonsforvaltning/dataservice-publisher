@@ -49,27 +49,25 @@ def fetch_catalogs() -> Graph:
 
 
 def _parse_user_input(catalog: dict) -> Graph:
-    _catalog = Catalog()
-    # create a hash based on publisher and id
-    _catalog.identifier = URIRef(catalog["identifier"])
-    _catalog.title = catalog["title"]
-    _catalog.description = catalog["description"]
-    _catalog.publisher = catalog["publisher"]
+    g = Catalog()
+
+    g.identifier = URIRef(catalog["identifier"])
+    g.title = catalog["title"]
+    g.description = catalog["description"]
+    g.publisher = catalog["publisher"]
     for api in catalog["apis"]:
         oas = yaml.safe_load(requests.get(api["url"]).text)
-        _dataservice = OASDataService(oas)
-        _dataservice.identifier = api["identifier"]
-        _dataservice.endpointDescription = api["url"]
-        if "publisher" in api:
-            _dataservice.publisher = api["publisher"]
+        oas_spec = OASDataService(api["url"], oas, api["identifier"])
         if "conformsTo" in api:
-            for standard in api["conformsTo"]:
-                _dataservice.conformsTo.append(standard)
+            oas_spec.conforms_to = api["conformsTo"]
+        if "publisher" in api:
+            oas_spec.publisher = api["publisher"]
         #
-        # Add dataservice to catalog:
-        _catalog.services.append(_dataservice)
+        # Add dataservices to catalog:
+        for dataservice in oas_spec.dataservices:
+            g.services.append(dataservice)
 
-    return _catalog._to_graph()
+    return g._to_graph()
 
 
 def create_catalog(catalog: dict) -> Graph:
