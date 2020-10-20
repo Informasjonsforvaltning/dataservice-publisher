@@ -9,6 +9,7 @@ package = "dataservice_publisher"
 locations = "src", "tests", "noxfile.py", "docs/conf.py"
 nox.options.stop_on_first_error = True
 nox.options.sessions = (
+    "black",
     "lint",
     "mypy",
     "pytype",

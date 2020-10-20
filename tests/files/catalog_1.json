@@ -13,16 +13,16 @@
   "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399",
   "apis": [
     {
-      "identifier": "http://dataservice-publisher:8080/dataservices/1",
+      "identifier": "http://dataservice-publisher:8080/dataservices/{uuid}",
       "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml"
     },
     {
-      "identifier": "http://dataservice-publisher:8080/dataservices/2",
+      "identifier": "http://dataservice-publisher:8080/dataservices/{uuid}",
       "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
       "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399"
     },
     {
-      "identifier": "http://dataservice-publisher:8080/dataservices/3",
+      "identifier": "http://dataservice-publisher:8080/dataservices/{uuid}",
       "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
       "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399",
       "conformsTo": [

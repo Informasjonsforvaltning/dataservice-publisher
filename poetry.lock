@@ -721,8 +721,8 @@ python-versions = "*"
 
 [[package]]
 name = "oastodcat"
-version = "1.0.0"
-description = "A library for to transform an openAPI file to a dcat:DataService"
+version = "2.0.0a3"
+description = "A library for transforming an openAPI file to one or more dcat:DataService"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
@@ -1393,7 +1393,7 @@ testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "357ade0f4fa6cc2332f8c66915d05c17cba401e562e9ce5abc8ecd8da31f9766"
+content-hash = "7c6d98253869ffe1a85d97181637f93935aa91164e7f70f9578445b0052e6187"
 
 [metadata.files]
 alabaster = [
@@ -1771,8 +1771,8 @@ ninja = [
     {file = "ninja-1.10.0.post2.tar.gz", hash = "sha256:621fd73513a9bef0cb82e8c531a29ef96580b4d6e797f833cce167054ad812f8"},
 ]
 oastodcat = [
-    {file = "oastodcat-1.0.0-py3-none-any.whl", hash = "sha256:1d7faf2bea5c5844dc30af56cde143c4b7ae4288a9c67885caf4b3d68c19d00d"},
-    {file = "oastodcat-1.0.0.tar.gz", hash = "sha256:bf015935fb77b1b86ea47be92fd15f264b0c9620de98275efd7054011b2e85fa"},
+    {file = "oastodcat-2.0.0a3-py3-none-any.whl", hash = "sha256:3e6549dced8643852c116ebb04c501f5421cff1b6927b6bc0848ea0d35062ecc"},
+    {file = "oastodcat-2.0.0a3.tar.gz", hash = "sha256:5b459aa2deeeb55632f132de948c448eee76d96dd8f244f2994c4c5a9fba80c0"},
 ]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},

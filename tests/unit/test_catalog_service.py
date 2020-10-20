@@ -21,6 +21,8 @@ def test_create_catalog(mocker: MockerFixture) -> None:
     # Set up the mocks
     mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
     mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=True)
+    ids = [1, 2, 3, 4, 5, 6]
+    mocker.patch("oastodcat.OASDataService._create_uuid", side_effect=ids)
 
     with open("./tests/files/catalog_1.json") as json_file:
         catalog = json.load(json_file)
