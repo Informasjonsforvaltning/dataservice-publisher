@@ -1,4 +1,4 @@
-openapi: 3.0.2
+openapi: 3.0.3
 info:
   title: Dataservice-publisher of Digdir
   description: Exposes a collection of dataservice catalogs according to DCAT-AP-NO v2
@@ -9,6 +9,8 @@ info:
   license:
     name: License of API
     url: 'http://data.norge.no/nlod/no/2.0'
+servers:
+  - url: https://dataservice-publisher.digdir.no
 tags:
   - name: dataservice-publisher
     description: publisher operations
