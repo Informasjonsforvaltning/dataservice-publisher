@@ -92,8 +92,6 @@ def test_create_catalog_success(client: Flask, mocker: MockerFixture) -> None:
         "SPARQLWrapper.SPARQLWrapper.queryAndConvert",
         return_value=_mock_full_queryresult(),
     )
-    ids = [1, 2, 3, 4, 5, 6]
-    mocker.patch("oastodcat.OASDataService._create_uuid", side_effect=ids)
 
     headers = {"Content-Type": "application/json", "Authorizaton": "Bearer dummy"}
     with open("./tests/files/catalog_1.json") as json_file:
