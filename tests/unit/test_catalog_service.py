@@ -3,7 +3,7 @@ import json
 from typing import Any, Dict
 
 import pytest
-from pytest_mock import MockerFixture
+from pytest_mock import MockFixture
 from rdflib import Graph
 from rdflib.compare import graph_diff, isomorphic
 import yaml
@@ -16,7 +16,7 @@ from dataservice_publisher.service.catalog_service import (
 
 
 @pytest.mark.unit
-def test_create_catalog(mocker: MockerFixture) -> None:
+def test_create_catalog(mocker: MockFixture) -> None:
     """Should return True when sucessful."""
     # Set up the mocks
     mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
@@ -38,7 +38,7 @@ def test_create_catalog(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.unit
-def test_fetch_catalogs(mocker: MockerFixture) -> None:
+def test_fetch_catalogs(mocker: MockFixture) -> None:
     """Should return a Graph."""
     # Set up the mock
     mocker.patch(
@@ -51,7 +51,7 @@ def test_fetch_catalogs(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.unit
-def test_get_catalog_by_id(mocker: MockerFixture) -> None:
+def test_get_catalog_by_id(mocker: MockFixture) -> None:
     """Should return a specific graph."""
     # Set up the mock
     mocker.patch(
@@ -63,7 +63,7 @@ def test_get_catalog_by_id(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.unit
-def test_get_catalog_by_id_failure(mocker: MockerFixture) -> None:
+def test_get_catalog_by_id_failure(mocker: MockFixture) -> None:
     """Should return an empty graph."""
     # Set up the mock
     mocker.patch("SPARQLWrapper.SPARQLWrapper.queryAndConvert", return_value="")
