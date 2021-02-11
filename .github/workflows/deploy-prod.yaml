@@ -32,7 +32,7 @@ jobs:
         run: |
           pip install nox==2020.8.22
           pip install poetry==1.1.4
-          pip install nox-poetry
+          pip install nox-poetry==0.7.0
 
       - name: Test with nox
         run: nox
