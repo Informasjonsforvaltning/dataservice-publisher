@@ -24,17 +24,17 @@ jobs:
       - name: Configure docker to use the gcloud command-line tool as a credential helper
         run: gcloud auth configure-docker eu.gcr.io
 
-      - name: Set up Python 3.7
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.8
           architecture: x64
 
       - name: Install dependencies
         run: |
           pip install nox==2020.8.22
           pip install poetry==1.1.4
-          pip install nox-poetry
+          pip install nox-poetry==0.7.0
 
       - name: Test with nox
         run: nox
