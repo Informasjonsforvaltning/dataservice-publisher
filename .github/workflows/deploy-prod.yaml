@@ -20,7 +20,7 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
 
       - name: Configure docker to use the gcloud command-line tool as a credential helper
-        run: gcloud auth configure-docker
+        run: gcloud auth configure-docker eu.gcr.io
 
       - name: Set up Python 3.7
         uses: actions/setup-python@v2
@@ -32,7 +32,7 @@ jobs:
         run: |
           pip install nox==2020.8.22
           pip install poetry==1.1.4
-          pip install nox-poetry
+          pip install nox-poetry==0.7.0
 
       - name: Test with nox
         run: nox
@@ -47,7 +47,7 @@ jobs:
           docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA
           docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:latest
           docker rmi eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test
-          docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher
+          docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher -a
 
       - name: Apply Helm template
         run: |
