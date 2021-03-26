@@ -96,23 +96,20 @@ def create_catalog(catalog: dict) -> Graph:
             prefixes += f"PREFIX {ns[0]}: <{ns[1]}>\n"
         for s, p, o in _g:
             if isinstance(o, Literal):
-                querystring = prefixes + """
+                querystring = (
+                    prefixes
+                    + """
                     INSERT DATA {GRAPH <%s> {<%s> <%s> "%s"@%s}}
-                    """ % (
-                    URIRef(catalog["identifier"]),
-                    s,
-                    p,
-                    o,
-                    o.language,
+                    """
+                    % (URIRef(catalog["identifier"]), s, p, o, o.language,)
                 )
             else:
-                querystring = prefixes + """
+                querystring = (
+                    prefixes
+                    + """
                     INSERT DATA {GRAPH <%s> {<%s> <%s> <%s>}}
-                    """ % (
-                    URIRef(catalog["identifier"]),
-                    s,
-                    p,
-                    o,
+                    """
+                    % (URIRef(catalog["identifier"]), s, p, o,)
                 )
 
             sparql.setQuery(querystring)
