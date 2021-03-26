@@ -60,7 +60,13 @@ def integration_tests(session: Session) -> None:
         "-m integration",
         "-rA",
         *args,
-        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+        env={
+            "DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080",
+            "SECRET_KEY": "super_secret",
+            "ADMIN_USERNAME": "admin",
+            "ADMIN_PASSWORD": "passw123",
+            "FUSEKI_PASSWORD": "passw123",
+        },
     )
 
 
@@ -75,7 +81,13 @@ def contract_tests(session: Session) -> None:
         "-m contract",
         "-rA",
         *args,
-        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+        env={
+            "DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080",
+            "SECRET_KEY": "super_secret",
+            "ADMIN_USERNAME": "admin",
+            "ADMIN_PASSWORD": "passw123",
+            "FUSEKI_PASSWORD": "passw123",
+        },
     )
 
 
