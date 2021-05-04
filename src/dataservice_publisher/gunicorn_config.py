@@ -29,6 +29,7 @@ class StackdriverJsonFormatter(jsonlogger.JsonFormatter, object):
     def __init__(
         self, fmt="%(levelname) %(message)", style="%", *args, **kwargs  # noqa
     ):  # noqa
+        """Instantiate the logger."""
         jsonlogger.JsonFormatter.__init__(self, fmt=fmt, *args, **kwargs)
 
     def process_log_record(self, log_record):  # noqa
