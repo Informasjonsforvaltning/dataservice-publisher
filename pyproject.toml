@@ -27,6 +27,7 @@ oastodcat = "2.0.0-alpha.4"
 sparqlwrapper = "^1.8.5"
 flask-restful = "^0.3.8"
 flask_jwt_extended = "^3.24.1"
+python-json-logger = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
