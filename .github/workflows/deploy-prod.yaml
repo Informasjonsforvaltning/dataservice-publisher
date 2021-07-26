@@ -86,7 +86,7 @@ jobs:
         if: always()
 
       - name: Trigger deploy to demo
-        uses: peter-evans/repository-dispatch@master
+        uses: peter-evans/repository-dispatch@main
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
           event-type: deploy-demo
