@@ -150,6 +150,6 @@ def get_catalog_by_id(id: str) -> Graph:
 
         return Graph().parse(data=data, format="turtle")
     except Exception as e:
-        # logging.exception("message")
+        logging.exception("message")
         # Logs the error appropriately.
         raise e
