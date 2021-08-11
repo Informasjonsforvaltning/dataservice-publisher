@@ -4,7 +4,7 @@ from os import environ as env
 from typing import Any
 
 from dotenv import load_dotenv
-from flask import Response
+from flask import make_response, Response
 from flask_restful import Resource
 import requests
 
@@ -23,9 +23,9 @@ class Ready(Resource):
             if resp.status_code == 200:
                 return Response("OK")
             else:
-                return Response(
-                    f"Got not ok status from {FUSEKI_HOST_URL}: {resp.status_code}"
-                )
+                response = make_response()
+                response.status_code = 500
+                return response
         except requests.exceptions.RequestException as e:
-            logging.critical(f"Got exception from {FUSEKI_HOST_URL}: {e}.")
+            logging.critical(f"Got exception from {FUSEKI_HOST_URL}: {type(e)}.")
             raise e
