@@ -22,8 +22,10 @@ class Ready(Resource):
             resp = requests.get(f"{FUSEKI_HOST_URL}/$/ping")
             if resp.status_code == 200:
                 return Response("OK")
+            else:
+                return Response(
+                    f"Got not ok status from {FUSEKI_HOST_URL}: {resp.status_code}"
+                )
         except requests.exceptions.RequestException as e:
-            logging.critical(
-                f"Got not ok response from {FUSEKI_HOST_URL}: {resp.status_code}."
-            )
+            logging.critical(f"Got exception from {FUSEKI_HOST_URL}: {e}.")
             raise e
