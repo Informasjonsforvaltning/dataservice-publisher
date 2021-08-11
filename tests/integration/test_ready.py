@@ -19,8 +19,20 @@ def test_ready(client: Flask) -> None:
 
 
 @pytest.mark.integration
+def test_ready_not_ok_status(client: Flask) -> None:
+    """Should return 500."""
+    # Configure the mock to return a response with an OK status code.
+    with requests_mock.Mocker() as m:
+        m.get("/$/ping", status_code=400)
+
+        response = client.get("/ready")
+
+        assert response.status_code == 500
+
+
+@pytest.mark.integration
 def test_ready_fails(client: Flask) -> None:
-    """Should return 400."""
+    """Should return 500."""
     # Configure the mock to return a response with an OK status code.
     with requests_mock.Mocker() as m:
         m.get("/$/ping", exc=requests.exceptions.ConnectionError)
