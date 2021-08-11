@@ -23,5 +23,5 @@ class Ready(Resource):
             if resp.status_code == 200:
                 return Response("OK")
         except requests.exceptions.RequestException as e:
-            logging.debug(e.response)
+            logging.critical(e.response)
             raise e
