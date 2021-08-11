@@ -23,5 +23,7 @@ class Ready(Resource):
             if resp.status_code == 200:
                 return Response("OK")
         except requests.exceptions.RequestException as e:
-            logging.critical(e.response)
+            logging.critical(
+                f"Got not ok response from {FUSEKI_HOST_URL}: {resp.status_code}."
+            )
             raise e
