@@ -25,7 +25,7 @@ def fetch_catalogs() -> Graph:
     try:
         # Find all catalogs from all named graph
         # Find a specific catalog
-        query_endpoint = f"{FUSEKI_HOST_URL}/{DATASET}/query"
+        query_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}"
 
         querystring = """
             PREFIX dcat: <http://www.w3.org/ns/dcat#>
@@ -86,7 +86,7 @@ def create_catalog(catalog: dict) -> Graph:
         raise ErrorInRequstBodyException("KeyError when processing request body")
 
     try:
-        update_endpoint = f"{FUSEKI_HOST_URL}/{DATASET}/update"
+        update_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}/update"
         sparql = SPARQLWrapper(update_endpoint)
         sparql.setCredentials("admin", FUSEKI_PASSWORD)
         sparql.setMethod(POST)
@@ -130,7 +130,7 @@ def get_catalog_by_id(id: str) -> Graph:
     try:
         # Find a specific catalog
         context = URIRef(f"{DATASERVICE_PUBLISHER_URL}/catalogs/{id}")
-        query_endpoint = f"{FUSEKI_HOST_URL}/{DATASET}/query"
+        query_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}"
 
         querystring = """
             CONSTRUCT { ?s ?p ?o }

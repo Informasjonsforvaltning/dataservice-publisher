@@ -19,7 +19,7 @@ class Ready(Resource):
     def get(self) -> Any:
         """Ready route function."""
         try:
-            resp = requests.get(f"{FUSEKI_HOST_URL}/$/ping")
+            resp = requests.get(f"{FUSEKI_HOST_URL}/fuseki/$/ping")
             if resp.status_code == 200:
                 return Response("OK")
             else:
