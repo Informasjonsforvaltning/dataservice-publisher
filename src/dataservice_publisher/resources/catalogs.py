@@ -21,12 +21,12 @@ class Catalogs(Resource):
             mimetype="text/turtle",
         )
 
-    @jwt_required
+    @jwt_required()
     def post(self) -> Response:
         """Create a catalog and return the resulting graph."""
         if request.json is None:
             abort(400)
-        catalog = create_catalog(request.json)
+        catalog = create_catalog(request.json)  # type: ignore
         return Response(
             catalog.serialize(format="text/turtle", encoding="utf-8"),
             mimetype="text/turtle",

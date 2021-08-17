@@ -2,7 +2,7 @@
 from typing import Optional
 
 
-class ErrorInRequstBodyException(Exception):
+class RequestBodyError(Exception):
     """Base class for exceptions."""
 
     def __init__(self, msg: Optional[str] = None) -> None:

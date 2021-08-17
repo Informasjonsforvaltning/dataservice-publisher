@@ -11,7 +11,7 @@ from SPARQLWrapper import POST, SPARQLWrapper, TURTLE
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 import yaml
 
-from dataservice_publisher.exceptions.exceptions import ErrorInRequstBodyException
+from dataservice_publisher.exceptions.exceptions import RequestBodyError
 
 load_dotenv()
 DATASERVICE_PUBLISHER_URL = env.get("DATASERVICE_PUBLISHER_URL")
@@ -79,11 +79,11 @@ def create_catalog(catalog: dict) -> Graph:
     except TypeError:
         logging.exception("message")
         # Logs the error appropriately.
-        raise ErrorInRequstBodyException("TypeError when processing request body")
+        raise RequestBodyError("TypeError when processing request body")
     except KeyError:
         logging.exception("message")
         # Logs the error appropriately.
-        raise ErrorInRequstBodyException("KeyError when processing request body")
+        raise RequestBodyError("KeyError when processing request body")
 
     try:
         update_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}/update"
