@@ -25,7 +25,7 @@ import requests
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 from werkzeug.exceptions import HTTPException, InternalServerError
 
-from .exceptions.exceptions import ErrorInRequstBodyException
+from .exceptions.exceptions import RequestBodyError
 from .resources.catalogs import Catalog, Catalogs
 from .resources.login import Login
 from .resources.ping import Ping
@@ -89,8 +89,8 @@ def create_app(test_config: Any = None) -> Flask:
         response.status_code = 500
         return response
 
-    @app.errorhandler(ErrorInRequstBodyException)
-    def handle_exceptions(e: ErrorInRequstBodyException) -> Response:
+    @app.errorhandler(RequestBodyError)
+    def handle_exceptions(e: RequestBodyError) -> Response:
         # replace the body with JSON
         response = make_response()
         response.data = json.dumps({"msg": e.msg})
