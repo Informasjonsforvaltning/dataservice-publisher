@@ -153,3 +153,29 @@ def get_catalog_by_id(id: str) -> Graph:
         logging.exception("message")
         # Logs the error appropriately.
         raise e
+
+
+def delete_catalog(id: str) -> bool:
+    """Delete the graph given by id and return true if successful."""
+    try:
+        context = URIRef(f"{DATASERVICE_PUBLISHER_URL}/catalogs/{id}")
+        update_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}/update"
+        sparql = SPARQLWrapper(update_endpoint)
+        sparql.setCredentials("admin", FUSEKI_PASSWORD)
+        sparql.setMethod(POST)
+        # Prepare query:
+        querystring = """
+            DROP GRAPH <%s>
+        """ % (
+            URIRef(context),
+        )
+
+        sparql.setQuery(querystring)
+        result = sparql.query()
+        if result.response.status == 200:
+            return True
+    except SPARQLWrapperException as e:
+        logging.exception("message")
+        # Logs the error appropriately.
+        raise e
+    return False

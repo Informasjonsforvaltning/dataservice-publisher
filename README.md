@@ -93,4 +93,7 @@ Regardless if you run the app via Docker or not, in another terminal:
   http://localhost:8080/catalogs
 % curl -H "Accept: text/turtle" http://localhost:8080/catalogs
 % curl -H "Accept: text/turtle" http://localhost:8080/catalogs/1
+% curl -H "Authorization: Bearer $ACCESS" \
+  -X DELETE \
+  http://localhost:8080/catalogs/1
 ```
