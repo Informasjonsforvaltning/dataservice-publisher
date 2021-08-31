@@ -91,7 +91,7 @@ paths:
     get:
       tags:
         - dataservice-publisher
-      summary: Returns a list of dataservice catalogs
+      summary: Returns a given dataservice catalog
       parameters:
       - name: id
         in: path
@@ -112,6 +112,22 @@ paths:
             application/ld+json:
               schema:
                 type: string
+    delete:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - dataservice-publisher
+      summary: Deletes a given catalog
+      parameters:
+      - name: id
+        in: path
+        description: catalog id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
 components:
   schemas:
     Catalog:

@@ -108,6 +108,15 @@ def test_catalog_by_id(http_service: Any) -> None:
     assert 0 < len(g)
 
 
+@pytest.mark.contract
+def test_delete_catalog_by_id(http_service: Any) -> None:
+    """Should return status code 204."""
+    url = f"{http_service}/catalogs/1"
+    resp = requests.delete(url)
+    assert 204 == resp.status_code
+    assert 0 == len(resp.content)
+
+
 # - BAD CASES:
 @pytest.mark.contract
 def test_not_found_gives_404(http_service: Any) -> None:

@@ -5,6 +5,7 @@ from flask_restful import Resource
 
 from dataservice_publisher.service.catalog_service import (
     create_catalog,
+    delete_catalog,
     fetch_catalogs,
     get_catalog_by_id,
 )
@@ -47,3 +48,17 @@ class Catalog(Resource):
             catalog.serialize(format="text/turtle", encoding="utf-8"),
             mimetype="text/turtle",
         )
+
+    def delete(self, id: str) -> Response:
+        """Delete catalog given by id."""
+        catalog = get_catalog_by_id(id)
+        response = make_response()
+        if len(catalog) == 0:
+            response.status_code = 404
+            return response
+        result = delete_catalog(id)
+        if result:
+            response.status_code = 204
+            return response
+        response.status_code = 400
+        return response
