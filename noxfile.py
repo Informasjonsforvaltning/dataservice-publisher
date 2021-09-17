@@ -5,7 +5,8 @@ import nox
 from nox.sessions import Session
 import nox_poetry  # noqa: F401
 
-
+nox.options.envdir = ".cache"
+nox.options.reuse_existing_virtualenvs = True
 package = "dataservice_publisher"
 locations = "src", "tests", "noxfile.py", "docs/conf.py"
 nox.options.sessions = (
