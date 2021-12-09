@@ -76,14 +76,14 @@ def create_catalog(catalog: dict) -> Graph:
     _g = Graph()
     try:
         _g = _parse_user_input(catalog)
-    except TypeError:
+    except TypeError as e:
         logging.exception("message")
         # Logs the error appropriately.
-        raise RequestBodyError("TypeError when processing request body")
-    except KeyError:
+        raise RequestBodyError("TypeError when processing request body") from e
+    except KeyError as e:
         logging.exception("message")
         # Logs the error appropriately.
-        raise RequestBodyError("KeyError when processing request body")
+        raise RequestBodyError("KeyError when processing request body") from e
 
     try:
         update_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}/update"
