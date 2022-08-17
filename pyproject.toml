@@ -46,7 +46,7 @@ flake8-annotations = "^2.6.1"
 flake8-docstrings = "^1.6.0"
 darglint = "^1.7.0"
 Pygments = "^2.6.1"
-xdoctest = {extras = ["all"], version = "^0.15.4"}
+xdoctest = "^1.0.1"
 sphinx = "^4.1.2"
 sphinx-autodoc-typehints = "^1.11.1"
 codecov = "^2.1.11"
