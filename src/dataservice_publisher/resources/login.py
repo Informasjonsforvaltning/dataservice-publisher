@@ -1,6 +1,7 @@
 """Repository module for ping."""
 import json
 from os import environ as env
+from typing import Optional
 
 from dotenv import load_dotenv
 from flask import make_response, request, Response
@@ -25,6 +26,9 @@ class Login(Resource):
             return response
 
         data = request.get_json()
+
+        username: Optional[str] = None
+        password: Optional[str] = None
         if data:
             username = data.get("username", None)
             password = data.get("password", None)

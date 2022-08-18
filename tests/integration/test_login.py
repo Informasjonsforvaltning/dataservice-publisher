@@ -26,7 +26,29 @@ def test_login_succeds(client: FlaskClient) -> None:
 
 
 @pytest.mark.integration
-def test_login_without_username_password_fails(client: FlaskClient) -> None:
+def test_login_no_username(client: FlaskClient) -> None:
+    """Should return 401 an WWW-Authenticate header."""
+    headers = {"Content-Type": "application/json"}
+    data = dict(password=ADMIN_PASSWORD)
+
+    response = client.post("/login", headers=headers, data=json.dumps(data))
+
+    assert response.status_code == 401
+
+
+@pytest.mark.integration
+def test_login_no_password(client: FlaskClient) -> None:
+    """Should return 401 an WWW-Authenticate header."""
+    headers = {"Content-Type": "application/json"}
+    data = dict(username=ADMIN_USERNAME)
+
+    response = client.post("/login", headers=headers, data=json.dumps(data))
+
+    assert response.status_code == 401
+
+
+@pytest.mark.integration
+def test_login_without_username_password(client: FlaskClient) -> None:
     """Should return 401 an WWW-Authenticate header."""
     response = client.post("/login")
 
