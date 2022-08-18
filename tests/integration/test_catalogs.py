@@ -4,7 +4,7 @@ from os import environ as env
 from typing import Any, Dict
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask.testing import FlaskClient
 import pytest
 from pytest_mock import MockFixture
 from rdflib import Graph
@@ -17,7 +17,7 @@ DATASET = env.get("FUSEKI_DATASET_1", "ds")
 
 
 @pytest.mark.integration
-def test_catalogs(client: Flask, mocker: MockFixture) -> None:
+def test_catalogs(client: FlaskClient, mocker: MockFixture) -> None:
     """Should return 200 and a turtle serialization."""
     # Set up the mock
     mocker.patch(
@@ -35,7 +35,7 @@ def test_catalogs(client: Flask, mocker: MockFixture) -> None:
 
 
 @pytest.mark.integration
-def test_catalogs_by_id(client: Flask, mocker: MockFixture) -> None:
+def test_catalogs_by_id(client: FlaskClient, mocker: MockFixture) -> None:
     """Should return 200 and a turtle serialization."""
     # Set up the mock
     mocker.patch(
@@ -53,7 +53,7 @@ def test_catalogs_by_id(client: Flask, mocker: MockFixture) -> None:
 
 
 @pytest.mark.integration
-def test_delete_catalog(client: Flask, mocker: MockFixture) -> None:
+def test_delete_catalog(client: FlaskClient, mocker: MockFixture) -> None:
     """Should return 204 No Content."""
     # Set up the mock
     mocker.patch(
@@ -68,7 +68,9 @@ def test_delete_catalog(client: Flask, mocker: MockFixture) -> None:
 
 
 @pytest.mark.integration
-def test_delete_catalog_does_not_exist(client: Flask, mocker: MockFixture) -> None:
+def test_delete_catalog_does_not_exist(
+    client: FlaskClient, mocker: MockFixture
+) -> None:
     """Should return 204 No Content."""
     # Set up the mock
     mocker.patch("SPARQLWrapper.SPARQLWrapper.queryAndConvert", return_value="")
@@ -80,7 +82,9 @@ def test_delete_catalog_does_not_exist(client: Flask, mocker: MockFixture) -> No
 
 
 @pytest.mark.integration
-def test_delete_catalog_unsuccessful_result(client: Flask, mocker: MockFixture) -> None:
+def test_delete_catalog_unsuccessful_result(
+    client: FlaskClient, mocker: MockFixture
+) -> None:
     """Should return 400 Bad Request."""
     # Set up the mock
     mocker.patch(
@@ -99,7 +103,7 @@ def test_delete_catalog_unsuccessful_result(client: Flask, mocker: MockFixture) 
 
 @pytest.mark.integration
 def test_delete_catalog_fails_with_exception(
-    client: Flask, mocker: MockFixture
+    client: FlaskClient, mocker: MockFixture
 ) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
@@ -109,7 +113,7 @@ def test_delete_catalog_fails_with_exception(
     )
     mocker.patch(
         "SPARQLWrapper.SPARQLWrapper.query",
-        side_effect=SPARQLWrapperException,
+        side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
 
     response = client.delete("/catalogs/123")
@@ -118,7 +122,9 @@ def test_delete_catalog_fails_with_exception(
 
 
 @pytest.mark.integration
-def test_get_catalog_by_id_does_not_exist(client: Flask, mocker: MockFixture) -> None:
+def test_get_catalog_by_id_does_not_exist(
+    client: FlaskClient, mocker: MockFixture
+) -> None:
     """Should return 404."""
     # Set up the mock
     mocker.patch(
@@ -134,7 +140,7 @@ def test_get_catalog_by_id_does_not_exist(client: Flask, mocker: MockFixture) ->
 
 @pytest.mark.integration
 def test_create_catalog_unauthenticated_fails(
-    client: Flask, mocker: MockFixture
+    client: FlaskClient, mocker: MockFixture
 ) -> None:
     """Should return 401."""
     # Set up the mocks
@@ -152,7 +158,7 @@ def test_create_catalog_unauthenticated_fails(
 
 
 @pytest.mark.integration
-def test_create_catalog_success(client: Flask, mocker: MockFixture) -> None:
+def test_create_catalog_success(client: FlaskClient, mocker: MockFixture) -> None:
     """Should return 201 and location header."""
     # Set up the mocks
     mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
@@ -192,7 +198,7 @@ def test_create_catalog_success(client: Flask, mocker: MockFixture) -> None:
 
 
 @pytest.mark.integration
-def test_create_catalog_failure(client: Flask, mocker: MockFixture) -> None:
+def test_create_catalog_failure(client: FlaskClient, mocker: MockFixture) -> None:
     """Should return status_code 400."""
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
 
@@ -202,7 +208,9 @@ def test_create_catalog_failure(client: Flask, mocker: MockFixture) -> None:
 
 
 @pytest.mark.integration
-def test_create_catalog_key_error_failure(client: Flask, mocker: MockFixture) -> None:
+def test_create_catalog_key_error_failure(
+    client: FlaskClient, mocker: MockFixture
+) -> None:
     """Should return status_code 400 and message."""
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
 
@@ -217,7 +225,9 @@ def test_create_catalog_key_error_failure(client: Flask, mocker: MockFixture) ->
 
 
 @pytest.mark.integration
-def test_create_catalog_type_error_failure(client: Flask, mocker: MockFixture) -> None:
+def test_create_catalog_type_error_failure(
+    client: FlaskClient, mocker: MockFixture
+) -> None:
     """Should return status_code 400 and message."""
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
 
@@ -239,12 +249,14 @@ def test_create_catalog_type_error_failure(client: Flask, mocker: MockFixture) -
 
 
 @pytest.mark.integration
-def test_get_catalog_fails_with_exception(client: Flask, mocker: MockFixture) -> None:
+def test_get_catalog_fails_with_exception(
+    client: FlaskClient, mocker: MockFixture
+) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
     mocker.patch(
         "SPARQLWrapper.SPARQLWrapper.queryAndConvert",
-        side_effect=SPARQLWrapperException,
+        side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
 
     response = client.get("/catalogs")
@@ -253,12 +265,14 @@ def test_get_catalog_fails_with_exception(client: Flask, mocker: MockFixture) ->
 
 
 @pytest.mark.integration
-def test_catalog_by_id_fails_with_exception(client: Flask, mocker: MockFixture) -> None:
+def test_catalog_by_id_fails_with_exception(
+    client: FlaskClient, mocker: MockFixture
+) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
     mocker.patch(
         "SPARQLWrapper.SPARQLWrapper.queryAndConvert",
-        side_effect=SPARQLWrapperException,
+        side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
 
     response = client.get("/catalogs/123")
@@ -268,13 +282,14 @@ def test_catalog_by_id_fails_with_exception(client: Flask, mocker: MockFixture) 
 
 @pytest.mark.integration
 def test_create_catalog_fails_with_exception(
-    client: Flask, mocker: MockFixture
+    client: FlaskClient, mocker: MockFixture
 ) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
     mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
     mocker.patch(
-        "SPARQLWrapper.SPARQLWrapper.query", side_effect=SPARQLWrapperException
+        "SPARQLWrapper.SPARQLWrapper.query",
+        side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
 
     headers = {"Content-Type": "application/json"}

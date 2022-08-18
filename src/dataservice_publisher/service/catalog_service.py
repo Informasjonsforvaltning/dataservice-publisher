@@ -41,7 +41,7 @@ def fetch_catalogs() -> Graph:
         sparql.setOnlyConneg(True)
         data = sparql.queryAndConvert()
 
-        return Graph().parse(data=data, format="turtle")
+        return Graph().parse(data=data, format="turtle")  # type: ignore
     except SPARQLWrapperException as e:
         logging.exception("message")
         # Logs the error appropriately.
@@ -96,23 +96,31 @@ def create_catalog(catalog: dict) -> Graph:
             prefixes += f"PREFIX {ns[0]}: <{ns[1]}>\n"
         for s, p, o in _g:
             if isinstance(o, Literal):
-                querystring = prefixes + """
+                querystring = (
+                    prefixes
+                    + """
                     INSERT DATA {GRAPH <%s> {<%s> <%s> "%s"@%s}}
-                    """ % (
-                    URIRef(catalog["identifier"]),
-                    s,
-                    p,
-                    o,
-                    o.language,
+                    """
+                    % (
+                        URIRef(catalog["identifier"]),
+                        s,
+                        p,
+                        o,
+                        o.language,
+                    )
                 )
             else:
-                querystring = prefixes + """
+                querystring = (
+                    prefixes
+                    + """
                     INSERT DATA {GRAPH <%s> {<%s> <%s> <%s>}}
-                    """ % (
-                    URIRef(catalog["identifier"]),
-                    s,
-                    p,
-                    o,
+                    """
+                    % (
+                        URIRef(catalog["identifier"]),
+                        s,
+                        p,
+                        o,
+                    )
                 )
 
             sparql.setQuery(querystring)
@@ -148,8 +156,8 @@ def get_catalog_by_id(id: str) -> Graph:
         sparql.setOnlyConneg(True)
         data = sparql.queryAndConvert()
 
-        return Graph().parse(data=data, format="turtle")
-    except Exception as e:
+        return Graph().parse(data=data, format="turtle")  # type: ignore
+    except SPARQLWrapperException as e:
         logging.exception("message")
         # Logs the error appropriately.
         raise e

@@ -1,10 +1,10 @@
 """Unit test cases for the ping route."""
-from flask import Flask
+from flask.testing import FlaskClient
 import pytest
 
 
 @pytest.mark.integration
-def test_ping(client: Flask) -> None:
+def test_ping(client: FlaskClient) -> None:
     """Should return OK."""
     response = client.get("/ping")
 

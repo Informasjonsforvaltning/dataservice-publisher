@@ -24,8 +24,10 @@ class Login(Resource):
             response.status_code = 401
             return response
 
-        username = request.json.get("username", None)
-        password = request.json.get("password", None)
+        data = request.get_json()
+        if data:
+            username = data.get("username", None)
+            password = data.get("password", None)
 
         if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
             response.data = json.dumps({"msg": "Bad username or password"})
