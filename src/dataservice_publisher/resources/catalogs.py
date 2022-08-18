@@ -1,5 +1,7 @@
 """Repository module for catalogs."""
-from flask import abort, make_response, request, Response
+from typing import Any, Dict
+
+from flask import make_response, request, Response
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 
@@ -25,9 +27,8 @@ class Catalogs(Resource):
     @jwt_required()
     def post(self) -> Response:
         """Create a catalog and return the resulting graph."""
-        if request.json is None:
-            abort(400)
-        catalog = create_catalog(request.json)  # type: ignore
+        new_catalog: Dict[str, Any] = request.json  # type: ignore
+        catalog = create_catalog(new_catalog)
         return Response(
             catalog.serialize(format="text/turtle", encoding="utf-8"),
             mimetype="text/turtle",

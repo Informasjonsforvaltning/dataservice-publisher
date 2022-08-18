@@ -3,7 +3,7 @@ import json
 from os import environ as env
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask.testing import FlaskClient
 import pytest
 
 # Get environment
@@ -13,7 +13,7 @@ ADMIN_PASSWORD = env.get("ADMIN_PASSWORD")
 
 
 @pytest.mark.integration
-def test_login_succeds(client: Flask) -> None:
+def test_login_succeds(client: FlaskClient) -> None:
     """Should return 200 and an access_token."""
     headers = {"Content-Type": "application/json"}
     data = dict(username=ADMIN_USERNAME, password=ADMIN_PASSWORD)
@@ -26,7 +26,29 @@ def test_login_succeds(client: Flask) -> None:
 
 
 @pytest.mark.integration
-def test_login_without_username_password_fails(client: Flask) -> None:
+def test_login_no_username(client: FlaskClient) -> None:
+    """Should return 401 an WWW-Authenticate header."""
+    headers = {"Content-Type": "application/json"}
+    data = dict(password=ADMIN_PASSWORD)
+
+    response = client.post("/login", headers=headers, data=json.dumps(data))
+
+    assert response.status_code == 401
+
+
+@pytest.mark.integration
+def test_login_no_password(client: FlaskClient) -> None:
+    """Should return 401 an WWW-Authenticate header."""
+    headers = {"Content-Type": "application/json"}
+    data = dict(username=ADMIN_USERNAME)
+
+    response = client.post("/login", headers=headers, data=json.dumps(data))
+
+    assert response.status_code == 401
+
+
+@pytest.mark.integration
+def test_login_without_username_password(client: FlaskClient) -> None:
     """Should return 401 an WWW-Authenticate header."""
     response = client.post("/login")
 
@@ -34,7 +56,7 @@ def test_login_without_username_password_fails(client: Flask) -> None:
 
 
 @pytest.mark.integration
-def test_login_wrong_username_password_fails(client: Flask) -> None:
+def test_login_wrong_username_password_fails(client: FlaskClient) -> None:
     """Should return 401 an WWW-Authenticate header."""
     headers = {"Content-Type": "application/json"}
     data = dict(username="WRONGUSERNAME", password="WRONGPASSWORD")  # noqa: S106

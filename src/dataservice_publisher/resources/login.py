@@ -1,6 +1,7 @@
 """Repository module for ping."""
 import json
 from os import environ as env
+from typing import Optional
 
 from dotenv import load_dotenv
 from flask import make_response, request, Response
@@ -24,8 +25,13 @@ class Login(Resource):
             response.status_code = 401
             return response
 
-        username = request.json.get("username", None)
-        password = request.json.get("password", None)
+        data = request.get_json()
+
+        username: Optional[str] = None
+        password: Optional[str] = None
+        if data:
+            username = data.get("username", None)
+            password = data.get("password", None)
 
         if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
             response.data = json.dumps({"msg": "Bad username or password"})
