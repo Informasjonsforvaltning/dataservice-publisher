@@ -10,8 +10,8 @@ COPY poetry.lock pyproject.toml /usr/src/app/
 RUN poetry config virtualenvs.create false \
   && poetry install --no-dev --no-interaction --no-ansi
 
-ADD src /usr/src/app/src
+ADD dataservice_publisher /usr/src/app/dataservice_publisher
 
 EXPOSE 8080
 
-CMD gunicorn  --chdir src "dataservice_publisher:create_app()"  --config=src/dataservice_publisher/gunicorn_config.py
+CMD gunicorn "dataservice_publisher:create_app()"  --config=dataservice_publisher/gunicorn_config.py

@@ -4,7 +4,7 @@ import sys
 import nox
 from nox_poetry import Session, session
 
-locations = "src", "tests", "noxfile.py", "docs/conf.py"
+locations = "dataservice_publisher", "tests", "noxfile.py", "docs/conf.py"
 nox.options.envdir = ".cache"
 nox.options.reuse_existing_virtualenvs = True
 package = "dataservice_publisher"
@@ -128,7 +128,7 @@ def mypy(session: Session) -> None:
     args = session.posargs or [
         "--install-types",
         "--non-interactive",
-        "src",
+        "dataservice_publisher",
         "tests",
     ]
     session.install(".")
