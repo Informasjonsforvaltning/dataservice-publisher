@@ -62,7 +62,7 @@ types-requests = "^2.28.8"
 xdoctest = "^1.0.1"
 
 [tool.coverage.paths]
-source = ["src", "*/site-packages"]
+source = ["dataservice_publisher", "*/site-packages"]
 
 [tool.coverage.run]
 branch = false

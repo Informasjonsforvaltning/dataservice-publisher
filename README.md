@@ -72,7 +72,7 @@ FUSEKI_DATASET_1=ds
 
 ```Shell
 % poetry shell
-% gunicorn  --chdir src "dataservice_publisher:create_app()"  --config=src/dataservice_publisher/gunicorn_config.py
+% gunicorn dataservice_publisher:create_app  --config=dataservice_publisher/gunicorn_config.py
 ```
 
 ## Running the wsgi-server in Docker
