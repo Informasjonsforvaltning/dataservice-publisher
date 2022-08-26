@@ -3,8 +3,10 @@ import json
 from os import environ as env
 from typing import Any, Dict
 
+from aiohttp import hdrs
+from aiohttp.test_utils import TestClient as _TestClient
 from dotenv import load_dotenv
-from flask.testing import FlaskClient
+from multidict import MultiDict
 import pytest
 from pytest_mock import MockFixture
 from rdflib import Graph
@@ -17,7 +19,7 @@ DATASET = env.get("FUSEKI_DATASET_1", "ds")
 
 
 @pytest.mark.integration
-def test_catalogs(client: FlaskClient, mocker: MockFixture) -> None:
+async def test_catalogs(client: _TestClient, mocker: MockFixture) -> None:
     """Should return 200 and a turtle serialization."""
     # Set up the mock
     mocker.patch(
@@ -25,17 +27,18 @@ def test_catalogs(client: FlaskClient, mocker: MockFixture) -> None:
         return_value=_mock_query_and_convert_result(),
     )
 
-    response = client.get("/catalogs")
+    response = await client.get("/catalogs")
 
-    assert 200 == response.status_code
+    assert 200 == response.status
     assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
-    assert 0 < len(response.data)
-    g = Graph().parse(data=response.data, format="turtle")
+    data = await response.text()
+    assert 0 < len(data)
+    g = Graph().parse(data=data, format="turtle")
     assert 0 < len(g)
 
 
 @pytest.mark.integration
-def test_catalogs_by_id(client: FlaskClient, mocker: MockFixture) -> None:
+async def test_catalogs_by_id(client: _TestClient, mocker: MockFixture) -> None:
     """Should return 200 and a turtle serialization."""
     # Set up the mock
     mocker.patch(
@@ -43,17 +46,18 @@ def test_catalogs_by_id(client: FlaskClient, mocker: MockFixture) -> None:
         return_value=_mock_query_and_convert_result(),
     )
 
-    response = client.get("/catalogs/123")
+    response = await client.get("/catalogs/123")
 
-    assert 200 == response.status_code
+    assert 200 == response.status
     assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
-    assert 0 < len(response.data)
-    g = Graph().parse(data=response.data, format="turtle")
+    data = await response.text()
+    assert 0 < len(data)
+    g = Graph().parse(data=data, format="turtle")
     assert 0 < len(g)
 
 
 @pytest.mark.integration
-def test_delete_catalog(client: FlaskClient, mocker: MockFixture) -> None:
+async def test_delete_catalog(client: _TestClient, mocker: MockFixture) -> None:
     """Should return 204 No Content."""
     # Set up the mock
     mocker.patch(
@@ -61,29 +65,33 @@ def test_delete_catalog(client: FlaskClient, mocker: MockFixture) -> None:
         return_value=_mock_query_and_convert_result(),
     )
     mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=_mock_query_result())
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
+    headers = MultiDict([(hdrs.AUTHORIZATION, "Bearer blablabla")])
 
-    response = client.delete("/catalogs/123")
+    response = await client.delete("/catalogs/123", headers=headers)
 
-    assert 204 == response.status_code
+    assert 204 == response.status
 
 
 @pytest.mark.integration
-def test_delete_catalog_does_not_exist(
-    client: FlaskClient, mocker: MockFixture
+async def test_delete_catalog_does_not_exist(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 204 No Content."""
     # Set up the mock
     mocker.patch("SPARQLWrapper.SPARQLWrapper.queryAndConvert", return_value="")
     mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=_mock_query_result())
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
+    headers = MultiDict([(hdrs.AUTHORIZATION, "Bearer blablabla")])
 
-    response = client.delete("/catalogs/does_not_exist")
+    response = await client.delete("/catalogs/does_not_exist", headers=headers)
 
-    assert 404 == response.status_code
+    assert 404 == response.status
 
 
 @pytest.mark.integration
-def test_delete_catalog_unsuccessful_result(
-    client: FlaskClient, mocker: MockFixture
+async def test_delete_catalog_unsuccessful_result(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 400 Bad Request."""
     # Set up the mock
@@ -95,15 +103,17 @@ def test_delete_catalog_unsuccessful_result(
         "SPARQLWrapper.SPARQLWrapper.query",
         return_value=_mock_unsuccesfull_query_result(),
     )
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
+    headers = MultiDict([(hdrs.AUTHORIZATION, "Bearer blablabla")])
 
-    response = client.delete("/catalogs/123")
+    response = await client.delete("/catalogs/123", headers=headers)
 
-    assert 400 == response.status_code
+    assert 400 == response.status
 
 
 @pytest.mark.integration
-def test_delete_catalog_fails_with_exception(
-    client: FlaskClient, mocker: MockFixture
+async def test_delete_catalog_fails_with_exception(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
@@ -115,15 +125,17 @@ def test_delete_catalog_fails_with_exception(
         "SPARQLWrapper.SPARQLWrapper.query",
         side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
+    headers = MultiDict([(hdrs.AUTHORIZATION, "Bearer blablabla")])
 
-    response = client.delete("/catalogs/123")
+    response = await client.delete("/catalogs/123", headers=headers)
 
-    assert response.status_code == 500
+    assert response.status == 500
 
 
 @pytest.mark.integration
-def test_get_catalog_by_id_does_not_exist(
-    client: FlaskClient, mocker: MockFixture
+async def test_get_catalog_by_id_does_not_exist(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 404."""
     # Set up the mock
@@ -132,62 +144,89 @@ def test_get_catalog_by_id_does_not_exist(
         return_value="",
     )
 
-    response = client.get("/catalogs/123")
+    response = await client.get("/catalogs/123")
 
-    assert 404 == response.status_code
-    assert 0 == len(response.data)
+    assert 404 == response.status
+    data = await response.text()
+    assert 0 == len(data)
 
 
 @pytest.mark.integration
-def test_create_catalog_unauthenticated_fails(
-    client: FlaskClient, mocker: MockFixture
+async def test_create_catalog_unauthenticated_fails(
+    client: _TestClient, mocker: MockFixture
+) -> None:
+    """Should return 401."""
+    # Set up the mocks
+    mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
+    mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=True)
+    headers = MultiDict(
+        [
+            (hdrs.CONTENT_TYPE, "application/json"),
+            (hdrs.AUTHORIZATION, "Bearer blablabla"),
+        ]
+    )
+    with open("./tests/files/catalog_1.json") as json_file:
+        data = json.load(json_file)
+
+    response = await client.post("/catalogs", headers=headers, data=json.dumps(data))
+
+    assert response.status == 401
+    assert response.headers["WWW-Authenticate"] == 'Bearer token_type="JWT"'
+
+
+@pytest.mark.integration
+async def test_delete_catalog_unauthenticated_fails(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 401."""
     # Set up the mocks
     mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
     mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=True)
 
-    headers = {"Content-Type": "application/json"}
-    with open("./tests/files/catalog_1.json") as json_file:
-        data = json.load(json_file)
+    response = await client.delete("/catalogs")
 
-    response = client.post("/catalogs", headers=headers, data=json.dumps(data))
-
-    assert response.status_code == 401
+    assert response.status == 401
     assert response.headers["WWW-Authenticate"] == 'Bearer token_type="JWT"'
 
 
 @pytest.mark.integration
-def test_create_catalog_success(client: FlaskClient, mocker: MockFixture) -> None:
+async def test_create_catalog_success(client: _TestClient, mocker: MockFixture) -> None:
     """Should return 201 and location header."""
     # Set up the mocks
     mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
     mocker.patch("SPARQLWrapper.SPARQLWrapper.query", return_value=True)
-    mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
     mocker.patch(
         "SPARQLWrapper.SPARQLWrapper.queryAndConvert",
         return_value=_mock_full_query_result(),
     )
+    headers = MultiDict(
+        [
+            (hdrs.CONTENT_TYPE, "application/json"),
+            (hdrs.AUTHORIZATION, "Bearer blablabla"),
+        ]
+    )
 
-    headers = {"Content-Type": "application/json", "Authorizaton": "Bearer dummy"}
     with open("./tests/files/catalog_1.json") as json_file:
         data = json.load(json_file)
 
-    response = client.post("/catalogs", headers=headers, data=json.dumps(data))
+    response = await client.post("/catalogs", headers=headers, data=json.dumps(data))
 
-    assert response.status_code == 200
+    assert response.status == 200
     assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
-    assert 0 < len(response.data)
-    g1 = Graph().parse(data=response.data, format="turtle")
+    data = await response.text()
+    assert 0 < len(data)
+    g1 = Graph().parse(data=data, format="turtle")
     assert 0 < len(g1)
 
     # Verify that all of the input is created:
-    response = client.get("/catalogs/1234")
+    response = await client.get("/catalogs/1234")
 
-    assert 200 == response.status_code
+    assert 200 == response.status
     assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
-    assert 0 < len(response.data)
-    g2 = Graph().parse(data=response.data, format="turtle")
+    data = await response.text()
+    assert 0 < len(data)
+    g2 = Graph().parse(data=data, format="turtle")
     assert 0 < len(g2)
 
     _isomorphic = isomorphic(g1, g2)
@@ -198,59 +237,75 @@ def test_create_catalog_success(client: FlaskClient, mocker: MockFixture) -> Non
 
 
 @pytest.mark.integration
-def test_create_catalog_failure(client: FlaskClient, mocker: MockFixture) -> None:
+async def test_create_catalog_failure(client: _TestClient, mocker: MockFixture) -> None:
     """Should return status_code 400."""
-    mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
+    headers = MultiDict(
+        [
+            (hdrs.CONTENT_TYPE, "application/json"),
+            (hdrs.AUTHORIZATION, "Bearer blablabla"),
+        ]
+    )
 
-    response = client.post("/catalogs")
+    response = await client.post("/catalogs", headers=headers, data="{}")
 
-    assert response.status_code == 400
+    assert response.status == 400
 
 
 @pytest.mark.integration
-def test_create_catalog_key_error_failure(
-    client: FlaskClient, mocker: MockFixture
+async def test_create_catalog_key_error_failure(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return status_code 400 and message."""
-    mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
+    headers = MultiDict(
+        [
+            (hdrs.AUTHORIZATION, "Bearer blablabla"),
+            (hdrs.CONTENT_TYPE, "application/json"),
+        ]
+    )
+    data = dict(identifier="http://localhost:8000/catalogs/1")
 
-    headers = {"Content-Type": "application/json"}
-    data = dict(identifier="http://dataservice-publisher:8080/catalogs/1")
+    response = await client.post("/catalogs", headers=headers, data=json.dumps(data))
 
-    response = client.post("/catalogs", headers=headers, data=json.dumps(data))
+    assert response.status == 400
 
-    assert response.status_code == 400
-    data = json.loads(response.data)
+    data = await response.json()
     assert data["msg"] == "KeyError when processing request body"
 
 
 @pytest.mark.integration
-def test_create_catalog_type_error_failure(
-    client: FlaskClient, mocker: MockFixture
+async def test_create_catalog_type_error_failure(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return status_code 400 and message."""
-    mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
-
-    headers = {"Content-Type": "application/json"}
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
+    headers = MultiDict(
+        [
+            (hdrs.AUTHORIZATION, "Bearer blablabla"),
+            (hdrs.CONTENT_TYPE, "application/json"),
+        ]
+    )
     # Point here is that apis array should have dicts, not strings as members:
     data = dict(
-        identifier="http://dataservice-publisher:8080/catalogs/1",
+        identifier="http://localhost:8000/catalogs/1",
         title={"en": "Title with language tag"},
         description={"en": "description with language tag"},
         publisher="http://example.com/publishers/1",
         apis=["http://api.url.com"],
     )
 
-    response = client.post("/catalogs", headers=headers, data=json.dumps(data))
+    response = await client.post("/catalogs", headers=headers, data=json.dumps(data))
 
-    assert response.status_code == 400
-    data = json.loads(response.data)
+    assert response.status == 400
+
+    data = await response.json()
     assert data["msg"] == "TypeError when processing request body"
 
 
 @pytest.mark.integration
-def test_get_catalog_fails_with_exception(
-    client: FlaskClient, mocker: MockFixture
+async def test_get_catalog_fails_with_exception(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
@@ -259,14 +314,14 @@ def test_get_catalog_fails_with_exception(
         side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
 
-    response = client.get("/catalogs")
+    response = await client.get("/catalogs")
 
-    assert response.status_code == 500
+    assert response.status == 500
 
 
 @pytest.mark.integration
-def test_catalog_by_id_fails_with_exception(
-    client: FlaskClient, mocker: MockFixture
+async def test_catalog_by_id_fails_with_exception(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
@@ -275,30 +330,35 @@ def test_catalog_by_id_fails_with_exception(
         side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
 
-    response = client.get("/catalogs/123")
+    response = await client.get("/catalogs/123")
 
-    assert response.status_code == 500
+    assert response.status == 500
 
 
 @pytest.mark.integration
-def test_create_catalog_fails_with_exception(
-    client: FlaskClient, mocker: MockFixture
+async def test_create_catalog_fails_with_exception(
+    client: _TestClient, mocker: MockFixture
 ) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
-    mocker.patch("flask_jwt_extended.view_decorators.verify_jwt_in_request")
+    mocker.patch("jwt.decode", return_value={"sub": "123"})
     mocker.patch(
         "SPARQLWrapper.SPARQLWrapper.query",
         side_effect=SPARQLWrapperException(response=b"An error occurred"),
     )
 
-    headers = {"Content-Type": "application/json"}
+    headers = MultiDict(
+        [
+            (hdrs.AUTHORIZATION, "Bearer blablabla"),
+            (hdrs.CONTENT_TYPE, "application/json"),
+        ]
+    )
     with open("./tests/files/catalog_1.json") as json_file:
         data = json.load(json_file)
 
-    response = client.post("/catalogs", headers=headers, data=json.dumps(data))
+    response = await client.post("/catalogs", headers=headers, data=json.dumps(data))
 
-    assert response.status_code == 500
+    assert response.status == 500
 
 
 def _mock_query_and_convert_result() -> str:
@@ -312,7 +372,7 @@ def _mock_query_and_convert_result() -> str:
     @prefix xml: <http://www.w3.org/XML/1998/namespace> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-    <http://dataservice-publisher:8080/catalogs/1> a dcat:Catalog .
+    <http://localhost:8000/catalogs/1> a dcat:Catalog .
     """
     return result
 

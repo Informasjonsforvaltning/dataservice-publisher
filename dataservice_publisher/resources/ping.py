@@ -1,11 +1,10 @@
 """Repository module for ping."""
-from flask import Response
-from flask_restful import Resource
+from aiohttp import web
 
 
-class Ping(Resource):
+class Ping(web.View):
     """Class representing ping resource."""
 
-    def get(self) -> Response:
+    async def get(self) -> web.Response:
         """Ping route function."""
-        return Response("OK")
+        return web.Response(text="OK")

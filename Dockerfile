@@ -14,4 +14,4 @@ ADD dataservice_publisher /usr/src/app/dataservice_publisher
 
 EXPOSE 8080
 
-CMD gunicorn "dataservice_publisher:create_app()"  --config=dataservice_publisher/gunicorn_config.py
+CMD gunicorn dataservice_publisher:create_app  --config=dataservice_publisher/gunicorn_config.py --worker-class aiohttp.GunicornWebWorker

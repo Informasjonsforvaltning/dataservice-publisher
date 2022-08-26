@@ -5,18 +5,20 @@ services:
     image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test
     environment:
       - DATASERVICE_PUBLISHER_URL=${DATASERVICE_PUBLISHER_URL}
-      - HOST_PORT=8080
+      - DATASERVICE_PUBLISHER_PORT=8080
       - ADMIN_USERNAME=${ADMIN_USERNAME}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - FUSEKI_HOST_URL=http://fuseki:8080
+      - FUSEKI_HOST=http://fuseki
+      - FUSEKI_PORT=8080
       - FUSEKI_PASSWORD=${FUSEKI_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
+      - LOGGING_LEVEL=${LOGGING_LEVEL}
     ports:
-      - "8080:8080"
+      - "8000:8080"
     depends_on:
       - "fuseki"
 
   fuseki:
-      image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher-sparql-service:staging_latest
-      ports:
-        - "3030:8080"
+    image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher-sparql-service:staging_latest
+    ports:
+      - "8080:8080"

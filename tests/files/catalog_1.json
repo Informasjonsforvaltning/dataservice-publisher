@@ -1,5 +1,5 @@
 {
-  "identifier": "http://dataservice-publisher:8080/catalogs/1",
+  "identifier": "http://localhost:8000/catalogs/1",
   "title": {
     "en": "Testcatalog",
     "nb": "Testkatalog",
@@ -13,17 +13,17 @@
   "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399",
   "apis": [
     {
-      "identifier": "http://dataservice-publisher:8080/dataservices/1/{id}",
-      "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml"
+      "identifier": "http://localhost:8000/dataservices/1/{id}",
+      "url": "https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/main/tests/files/petstore.yaml"
     },
     {
-      "identifier": "http://dataservice-publisher:8080/dataservices/2/{id}",
-      "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
+      "identifier": "http://localhost:8000/dataservices/2/{id}",
+      "url": "https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/main/tests/files/petstore.yaml",
       "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399"
     },
     {
-      "identifier": "http://dataservice-publisher:8080/dataservices/3/{id}",
-      "url": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml",
+      "identifier": "http://localhost:8000/dataservices/3/{id}",
+      "url": "https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/main/tests/files/petstore.yaml",
       "publisher": "https://data.brreg.no/enhetsregisteret/api/enheter/961181399",
       "conformsTo": [
         "http://example.com/specifications/kontooppslag",

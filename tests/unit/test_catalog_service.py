@@ -27,14 +27,17 @@ def test_create_catalog(mocker: MockFixture) -> None:
 
     _result = create_catalog(catalog)
 
-    assert isinstance(_result, Graph)
+    assert isinstance(_result, Graph), "result is not a Graph"
     g2 = Graph().parse("tests/files/catalog_1.ttl", format="turtle")
 
     _isomorphic = isomorphic(_result, g2)
+    _dump_turtle(_result)
+    _dump_turtle(g2)
+    assert len(_result) == len(g2), "Graphs are of unequal length"
     if not _isomorphic:
         _dump_diff(_result, g2)
         pass
-    assert _isomorphic
+    assert _isomorphic, "Graphs are not isomorphic"
 
 
 @pytest.mark.unit
@@ -92,7 +95,7 @@ def _mock_queryresult() -> str:
     @prefix xml: <http://www.w3.org/XML/1998/namespace> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-    <http://dataservice-publisher:8080/catalogs/1> a dcat:Catalog .
+    <http://localhost:8000/catalogs/1> a dcat:Catalog .
     """
     return response
 

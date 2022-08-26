@@ -1,92 +1,90 @@
-"""Package for making catalog of dataservices available in a Flask API."""
-import json
-from os import environ as env
+"""Package for making catalog of dataservices available in an API."""
+import logging
+import os
 from typing import Any
 
+from aiohttp import hdrs, web
+from aiohttp_middlewares import cors_middleware, error_middleware
 from dotenv import load_dotenv
-from flask import (
-    Flask,
-    make_response,
-    Response,
-)
-from flask_jwt_extended import (
-    JWTManager,
-)
-from flask_restful import Api
-import requests
-from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
+import jwt
+from multidict import MultiDict
 
-from .exceptions.exceptions import RequestBodyError
 from .resources.catalogs import Catalog, Catalogs
 from .resources.login import Login
 from .resources.ping import Ping
 from .resources.ready import Ready
 
 
-__version__ = "0.1.0"
+load_dotenv()
+LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
+CONFIG = os.getenv("CONFIG", "production")
+SECRET_KEY = os.getenv("SECRET_KEY")
+JWT_ALGORITHM = "HS256"
 
 
-def create_app(test_config: Any = None) -> Flask:
+async def authenticated(request: web.Request) -> bool:
+    """For relevant methods and paths, check if the user is authenticated."""
+    # All read methods are allowed without authentication.
+    if request.method in ["OPTIONS", "GET", "HEAD"] or request.path == "/login":
+        return True
+    # Extract jwt_token from authorization header in request
+    logging.debug("Verifying authorization token")
+
+    authorization = request.headers.getone(hdrs.AUTHORIZATION, None)
+    if authorization:
+        logging.debug(f"Got authorization header: {authorization}")
+        jwt_token = str.replace(str(authorization), "Bearer ", "")
+        try:
+            jwt.decode(jwt_token, SECRET_KEY, algorithms=[JWT_ALGORITHM])  # type: ignore
+        except (jwt.DecodeError, jwt.ExpiredSignatureError) as e:
+            logging.debug(f"Got exception decoding jwt: {e}")
+            return False
+        return True
+    logging.debug("Got NO auhtorization header!")
+    return False
+
+
+@web.middleware
+async def authenticate_middleware(request: web.Request, handler: Any) -> web.Response:
+    """Middleware to check if the user is authenticated."""
+    logging.debug("authenticate_middleware called")
+
+    if not await authenticated(request):
+        headers = MultiDict([(hdrs.WWW_AUTHENTICATE, 'Bearer token_type="JWT"')])
+
+        return web.HTTPUnauthorized(headers=headers)
+
+    response = await handler(request)
+    logging.debug("authenticate_middleware finished")
+    return response
+
+
+async def create_app() -> web.Application:
     """Create and configure the app."""
-    app = Flask(__name__, instance_relative_config=True)
+    app = web.Application(
+        middlewares=[
+            cors_middleware(allow_all=True),
+            authenticate_middleware,
+            error_middleware(),  # default error handler for whole application
+        ]
+    )
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile("config.py", silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
-
-    # Get environment
-    load_dotenv()
-
-    app.config["SECRET_KEY"] = env.get("SECRET_KEY")
-    app.config["PROPAGATE_EXCEPTIONS"] = True
-
-    jwt = JWTManager(app)
-
-    @jwt.unauthorized_loader
-    def unauthorized_callback(msg: str) -> Response:
-        response = make_response()
-        response.data = json.dumps({"msg": msg})
-        response.content_type = "application/json"
-        response.headers["WWW-Authenticate"] = 'Bearer token_type="JWT"'
-        response.status_code = 401
-        return response
-
-    api = Api(app)
     # Routes
-    api.add_resource(Login, "/login")
-    api.add_resource(Ping, "/ping")
-    api.add_resource(Ready, "/ready")
-    api.add_resource(Catalogs, "/catalogs")
-    api.add_resource(Catalog, "/catalogs/<string:id>")
-
-    @app.errorhandler(SPARQLWrapperException)
-    def handle_sparql_wrapper_exceptions(e: SPARQLWrapperException) -> Response:
-        # replace the body with JSON
-        response = make_response()
-        response.data = json.dumps({"msg": e.msg})
-        response.content_type = "application/json"
-        response.status_code = 500
-        return response
-
-    @app.errorhandler(requests.exceptions.RequestException)
-    def handle_request_exceptions(e: requests.exceptions.RequestException) -> Response:
-        # replace the body with JSON
-        response = make_response()
-        response.data = json.dumps({"msg": "ConnectionError"})
-        response.content_type = "application/json"
-        response.status_code = 500
-        return response
-
-    @app.errorhandler(RequestBodyError)
-    def handle_exceptions(e: RequestBodyError) -> Response:
-        # replace the body with JSON
-        response = make_response()
-        response.data = json.dumps({"msg": e.msg})
-        response.content_type = "application/json"
-        response.status_code = 400
-        return response
+    app.add_routes(
+        [
+            web.view("/login", Login),
+            web.view("/ping", Ping),
+            web.view("/ready", Ready),
+            web.view("/catalogs", Catalogs),
+            web.view("/catalogs/{id}", Catalog),
+        ]
+    )
+    # logging configurataion:
+    logging.basicConfig(
+        format="%(asctime)s,%(msecs)d %(levelname)s - %(module)s:%(lineno)d: %(message)s",
+        datefmt="%H:%M:%S",
+        level=LOGGING_LEVEL,
+    )
+    logging.getLogger("chardet.charsetprober").setLevel(LOGGING_LEVEL)
 
     return app

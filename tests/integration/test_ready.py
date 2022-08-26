@@ -1,42 +1,54 @@
-"""Unit test cases for the ready route."""
-from flask.testing import FlaskClient
+"""Integration test cases for the ready route."""
+from typing import Any
+
+from aiohttp import ClientConnectionError
+from aiohttp.test_utils import TestClient as _TestClient
+from aioresponses import aioresponses
 import pytest
-import requests
-import requests_mock
+
+
+@pytest.fixture
+def mock_aioresponse() -> Any:
+    """Set up aioresponses as fixture."""
+    with aioresponses(passthrough=["http://127.0.0.1"]) as m:
+        yield m
 
 
 @pytest.mark.integration
-def test_ready(client: FlaskClient) -> None:
+async def test_ready(client: _TestClient, mock_aioresponse: Any) -> None:
     """Should return OK."""
     # Configure the mock to return a response with an OK status code.
-    with requests_mock.Mocker() as m:
-        m.get("/fuseki/$/ping", status_code=200)
+    mock_aioresponse.get("http://fuseki:8080/fuseki/$/ping", status=200)
 
-        response = client.get("/ready")
+    response = await client.get("/ready")
 
-        assert response.status_code == 200
-        assert response.data.decode() == "OK"
-
-
-@pytest.mark.integration
-def test_ready_not_ok_status(client: FlaskClient) -> None:
-    """Should return 500."""
-    # Configure the mock to return a response with an OK status code.
-    with requests_mock.Mocker() as m:
-        m.get("/fuseki/$/ping", status_code=400)
-
-        response = client.get("/ready")
-
-        assert response.status_code == 500
+    assert response.status == 200
+    data = await response.text()
+    assert data == "OK"
 
 
 @pytest.mark.integration
-def test_ready_fails(client: FlaskClient) -> None:
+async def test_ready_not_ok_status(client: _TestClient, mock_aioresponse: Any) -> None:
     """Should return 500."""
     # Configure the mock to return a response with an OK status code.
-    with requests_mock.Mocker() as m:
-        m.get("/fuseki/$/ping", exc=requests.exceptions.ConnectionError)
+    mock_aioresponse.get("http://localhost:8080/fuseki/$/ping", status=400)
 
-        response = client.get("/ready")
+    response = await client.get("/ready")
 
-        assert response.status_code == 500
+    assert response.status == 500
+
+
+@pytest.mark.integration
+async def test_ready_raises_client_connection_error(
+    client: _TestClient, mock_aioresponse: Any
+) -> None:
+    """Should return 500."""
+    # Configure the mock to return a response with an OK status code.
+    mock_aioresponse.get(
+        "http://localhost:8080/fuseki/$/ping",
+        exception=ClientConnectionError(),
+    )
+
+    response = await client.get("/ready")
+
+    assert response.status == 500
