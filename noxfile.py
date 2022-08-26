@@ -30,13 +30,15 @@ def unit_tests(session: Session) -> None:
         "pyyaml",
         "requests-mock",
         "pytest-mock",
+        "pytest-aiohttp",
+        "aioresponses",
     )
     session.run(
         "pytest",
         "-m unit",
-        "-rA",
+        "-rfE",
         *args,
-        env={"DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080"},
+        env={"DATASERVICE_PUBLISHER_URL": "http://localhost:8000"},
     )
 
 
@@ -52,18 +54,23 @@ def integration_tests(session: Session) -> None:
         "pyyaml",
         "requests-mock",
         "pytest-mock",
+        "pytest-aiohttp",
+        "aioresponses",
     )
     session.run(
         "pytest",
         "-m integration",
-        "-rA",
+        "-rfE",
         *args,
         env={
-            "DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080",
+            "DATASERVICE_PUBLISHER_URL": "http://localhost:8000",
             "SECRET_KEY": "super_secret",
             "ADMIN_USERNAME": "admin",
             "ADMIN_PASSWORD": "passw123",
             "FUSEKI_PASSWORD": "passw123",
+            "FUSEKI_HOST": "http://fuseki",
+            "FUSEKI_PORT": "8080",
+            "LOGGING_LEVEL": "INFO",
         },
     )
 
@@ -72,18 +79,29 @@ def integration_tests(session: Session) -> None:
 def contract_tests(session: Session) -> None:
     """Run the contract_test suite."""
     args = session.posargs
-    session.install(".", "pytest", "pytest-docker", "requests_mock", "pytest_mock")
+    session.install(
+        ".",
+        "pytest",
+        "pytest-docker",
+        "requests_mock",
+        "pytest_mock",
+        "aioresponses",
+    )
     session.run(
         "pytest",
         "-m contract",
-        "-rA",
+        "-rfE",
         *args,
         env={
-            "DATASERVICE_PUBLISHER_URL": "http://dataservice-publisher:8080",
+            "DATASERVICE_PUBLISHER_URL": "http://localhost:8000",
+            "DATASERVICE_PUBLISHER_PORT": "8080",
             "SECRET_KEY": "super_secret",
             "ADMIN_USERNAME": "admin",
             "ADMIN_PASSWORD": "passw123",
             "FUSEKI_PASSWORD": "passw123",
+            "FUSEKI_HOST": "http://fuseki",
+            "FUSEKI_PORT": "8080",
+            "LOGGING_LEVEL": "INFO",
         },
     )
 

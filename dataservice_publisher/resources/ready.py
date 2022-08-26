@@ -3,29 +3,29 @@ import logging
 from os import environ as env
 from typing import Any
 
+from aiohttp import ClientConnectionError, ClientSession
+from aiohttp import web
 from dotenv import load_dotenv
-from flask import make_response, Response
-from flask_restful import Resource
-import requests
 
 # Get environment
 load_dotenv()
-FUSEKI_HOST_URL = env.get("FUSEKI_HOST_URL", "http://fuseki:3030")
+FUSEKI_HOST = env.get("FUSEKI_HOST", "http://fuseki")
+FUSEKI_PORT = int(env.get("FUSEKI_PORT", 8080))
 
 
-class Ready(Resource):
+class Ready(web.View):
     """Class representing ready resource."""
 
-    def get(self) -> Any:
+    async def get(self) -> Any:
         """Ready route function."""
+        url = f"{FUSEKI_HOST}:{FUSEKI_PORT}/fuseki/$/ping"
         try:
-            resp = requests.get(f"{FUSEKI_HOST_URL}/fuseki/$/ping")
-            if resp.status_code == 200:
-                return Response("OK")
-            else:
-                response = make_response()
-                response.status_code = 500
-                return response
-        except requests.exceptions.RequestException as e:
-            logging.critical(f"Got exception from {FUSEKI_HOST_URL}: {type(e)}.")
-            raise e
+            # Get ready status from fuseki
+            async with ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status == 200:
+                        return web.Response(text="OK")
+        except ClientConnectionError as e:
+            logging.critical(f"Got exception from {url}: {type(e)}\n{e}.")
+            pass
+        return web.Response(status=500)

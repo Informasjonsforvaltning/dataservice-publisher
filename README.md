@@ -39,24 +39,28 @@ To run the service locally, you need to supply a set of environment variables. A
 A minimal .env:
 
 ```Shell
-DATASERVICE_PUBLISHER_URL=http://dataservice-publisher:8080
+DATASERVICE_PUBLISHER_URL=http://localhost:8000
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=passw123
 FUSEKI_PASSWORD=passw123
 SECRET_KEY=super_secret
+LOGGING_LEVEL=DEBUG
 ```
 
 A full .env:
 
 ```Shell
-DATASERVICE_PUBLISHER_URL=http://dataservice-publisher:8080
+DATASERVICE_PUBLISHER_URL=http://localhost:8000
+DATASERVICE_PUBLISHER_PORT=8080
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=passw123
-FUSEKI_HOST_URL=http://localhost:3030
+FUSEKI_HOST=http://localhost
+FUSEKI_PORT=8080
 FUSEKI_PASSWORD=passw123
 SECRET_KEY=super_secret
 TDB=2
 FUSEKI_DATASET_1=ds
+LOGGING_LEVEL=DEBUG
 ```
 
 ### Running the API locally
@@ -64,15 +68,14 @@ FUSEKI_DATASET_1=ds
  Start the endpoint:
 
 ```Shell
-% poetry shell
-% FLASK_APP=dataservice_publisher FLASK_ENV=development flask run --port=8080
+% poetry run adev runserver dataservice_publisher
 ```
 
 ## Running the API in a wsgi-server (gunicorn)
 
 ```Shell
 % poetry shell
-% gunicorn dataservice_publisher:create_app  --config=dataservice_publisher/gunicorn_config.py
+% gunicorn dataservice_publisher:create_app  --config=dataservice_publisher/gunicorn_config.py --worker-class aiohttp.GunicornWebWorker
 ```
 
 ## Running the wsgi-server in Docker
@@ -81,7 +84,7 @@ To build and run the api in a Docker container:
 
 ```Shell
 % docker build -t digdir/dataservice-publisher:latest .
-% docker run --env-file .env -p 8080:8080 -d digdir/dataservice-publisher:latest
+% docker run --env-file .env -p 8080:8000 -d digdir/dataservice-publisher:latest
 ```
 
 The easier way would be with docker-compose:
@@ -108,16 +111,16 @@ Regardless if you run the app via Docker or not, in another terminal:
 % curl -H "Content-Type: application/json" \
   -X POST \
   --data '{"username":"admin","password":"passw123"}' \
-  http://localhost:8080/login
+  http://localhost:8000/login
 % export ACCESS="" #token from response
 % curl -H "Content-Type: application/json" \
   -H "Authorization: Bearer $ACCESS" \
   -X POST \
   --data @tests/files/catalog_1.json \
-  http://localhost:8080/catalogs
-% curl -H "Accept: text/turtle" http://localhost:8080/catalogs
-% curl -H "Accept: text/turtle" http://localhost:8080/catalogs/1
+  http://localhost:8000/catalogs
+% curl -H "Accept: text/turtle" http://localhost:8000/catalogs
+% curl -H "Accept: text/turtle" http://localhost:8000/catalogs/1
 % curl -H "Authorization: Bearer $ACCESS" \
   -X DELETE \
-  http://localhost:8080/catalogs/1
+  http://localhost:8000/catalogs/1
 ```

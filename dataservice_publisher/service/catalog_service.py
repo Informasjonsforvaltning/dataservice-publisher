@@ -17,15 +17,17 @@ load_dotenv()
 DATASERVICE_PUBLISHER_URL = env.get("DATASERVICE_PUBLISHER_URL")
 DATASET = env.get("FUSEKI_DATASET_1", "ds")
 FUSEKI_PASSWORD = env.get("FUSEKI_PASSWORD")
-FUSEKI_HOST_URL = env.get("FUSEKI_HOST_URL", "http://fuseki:3030")
+FUSEKI_HOST = env.get("FUSEKI_HOST", "http://fuseki")
+FUSEKI_PORT = int(env.get("FUSEKI_PORT", 8080))
 
 
 def fetch_catalogs() -> Graph:
     """Returns a list of Catalog objects."""
+    logging.debug("Fetch catalogs")
     try:
         # Find all catalogs from all named graph
         # Find a specific catalog
-        query_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}"
+        query_endpoint = f"{FUSEKI_HOST}:{FUSEKI_PORT}/fuseki/{DATASET}"
 
         querystring = """
             PREFIX dcat: <http://www.w3.org/ns/dcat#>
@@ -86,7 +88,7 @@ def create_catalog(catalog: dict) -> Graph:
         raise RequestBodyError("KeyError when processing request body") from e
 
     try:
-        update_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}/update"
+        update_endpoint = f"{FUSEKI_HOST}:{FUSEKI_PORT}/fuseki/{DATASET}/update"
         sparql = SPARQLWrapper(update_endpoint)
         sparql.setCredentials("admin", FUSEKI_PASSWORD)
         sparql.setMethod(POST)
@@ -135,10 +137,11 @@ def create_catalog(catalog: dict) -> Graph:
 
 def get_catalog_by_id(id: str) -> Graph:
     """Returns a specific catalog objects identified by id."""
+    logging.debug(f"Get catalog by id: {id}")
     try:
         # Find a specific catalog
         context = URIRef(f"{DATASERVICE_PUBLISHER_URL}/catalogs/{id}")
-        query_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}"
+        query_endpoint = f"{FUSEKI_HOST}:{FUSEKI_PORT}/fuseki/{DATASET}"
 
         querystring = """
             CONSTRUCT { ?s ?p ?o }
@@ -151,10 +154,12 @@ def get_catalog_by_id(id: str) -> Graph:
         sparql = SPARQLWrapper(query_endpoint)
 
         sparql.setQuery(querystring)
+        logging.debug(f"querystring: {querystring}")
 
         sparql.setReturnFormat(TURTLE)
         sparql.setOnlyConneg(True)
         data = sparql.queryAndConvert()
+        logging.debug(f"data: {data!r}")
 
         return Graph().parse(data=data, format="turtle")  # type: ignore
     except SPARQLWrapperException as e:
@@ -167,7 +172,7 @@ def delete_catalog(id: str) -> bool:
     """Delete the graph given by id and return true if successful."""
     try:
         context = URIRef(f"{DATASERVICE_PUBLISHER_URL}/catalogs/{id}")
-        update_endpoint = f"{FUSEKI_HOST_URL}/fuseki/{DATASET}/update"
+        update_endpoint = f"{FUSEKI_HOST}:{FUSEKI_PORT}/fuseki/{DATASET}/update"
         sparql = SPARQLWrapper(update_endpoint)
         sparql.setCredentials("admin", FUSEKI_PASSWORD)
         sparql.setMethod(POST)

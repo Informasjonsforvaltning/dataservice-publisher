@@ -3,43 +3,50 @@ import json
 from os import environ as env
 from typing import Optional
 
+from aiohttp import hdrs, web
 from dotenv import load_dotenv
-from flask import make_response, request, Response
-from flask_jwt_extended import create_access_token
-from flask_restful import Resource
+import jwt
+from multidict import MultiDict
 
 # Get environment
 load_dotenv()
 ADMIN_USERNAME = env.get("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = env.get("ADMIN_PASSWORD")
+SHARED_SECRET = env.get("SECRET_KEY", None)
 
 
-class Login(Resource):
-    """Class representing ping resource."""
+class Login(web.View):
+    """Class representing login resource."""
 
-    def post(self) -> Response:
+    async def post(self) -> web.Response:
         """Login to create a jwt token."""
-        response = make_response()
-        if not request.is_json:
-            response.data = json.dumps({"msg": "Missing JSON in request"})
-            response.status_code = 401
-            return response
+        try:
+            body = await self.request.json()
+        except json.decoder.JSONDecodeError as e:
+            raise web.HTTPUnauthorized() from e
 
-        data = request.get_json()
-
-        username: Optional[str] = None
-        password: Optional[str] = None
-        if data:
-            username = data.get("username", None)
-            password = data.get("password", None)
+        username = body.get("username", None)
+        password = body.get("password", None)
 
         if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
-            response.data = json.dumps({"msg": "Bad username or password"})
-            response.status_code = 401
-            return response
+            data = json.dumps({"msg": "Bad username or password"})
+            return web.HTTPUnauthorized(body=data)
 
         # Identity can be any data that is json serializable
-        access_token = create_access_token(identity=username)
-        response.data = json.dumps({"access_token": access_token})
-        response.status_code = 200
-        return response
+        access_token = await _get_token(identity=username)
+        if not access_token:
+            headers = MultiDict([(hdrs.CONTENT_TYPE, "application/json")])
+
+            return web.HTTPInternalServerError(
+                headers=headers,
+                body=json.dumps({"msg": "Could not create token"}),
+            )
+
+        body = json.dumps({"access_token": access_token})
+        return web.Response(status=200, content_type="application/json", body=body)
+
+
+async def _get_token(identity: str) -> Optional[str]:
+    if not SHARED_SECRET:
+        return None
+    return jwt.encode({"username": identity}, SHARED_SECRET)

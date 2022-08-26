@@ -14,13 +14,14 @@ repository = "https://github.com/Informasjonsforvaltning/dataservice-publisher"
 version = "0.1.0"
 
 [tool.poetry.dependencies]
+PyJWT = "^2.4.0"
 PyYAML = "^5.4.1"
 SPARQLWrapper = "^2.0.0"
-flask = "^2.0.1"
-flask-restful = "^0.3.8"
-flask_jwt_extended = "^4.2.3"
+aiohttp = "^3.8.1"
+aiohttp-middlewares = "^2.1.0"
 gunicorn = "^20.0.4"
 jsonpickle = "^2.0.0"
+multidict = "^6.0.2"
 oastodcat = "^2.0.1"
 python = ">=3.9,<3.11"
 python-dotenv = "^0.20.0"
@@ -31,6 +32,8 @@ requests = "^2.25.1"
 [tool.poetry.dev-dependencies]
 Pygments = "^2.6.1"
 Sphinx = "^5.1.1"
+aiohttp-devtools = "^1.0.post0"
+aioresponses = "^0.7.3"
 black = "^22.6.0"
 codecov = "^2.1.11"
 coverage = "^6.4.4"
@@ -49,6 +52,8 @@ nox = "^2022.8.7"
 nox-poetry = "^1.0.1"
 pep8-naming = "^0.13.1"
 pytest = "^7.1.2"
+pytest-aiohttp = "^1.0.4"
+pytest-asyncio = "^0.19.0"
 pytest-cov = "^3.0.0"
 pytest-docker = "^1.0.0"
 pytest-dotenv = "^0.5.2"
@@ -86,14 +91,15 @@ ignore_missing_imports = true
 module = [
   "oastodcat.*",
   "datacatalogtordf.*",
-  "flask_restful.*",
   "pytest_mock.*",
   "requests_mock.*",
   "pythonjsonlogger.*",
   "gunicorn.*",
+  "aioresponses.*",
 ]
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 markers = [
   "unit: marks tests as unit (fast)",
   "integration: marks tests as integration (slower)",

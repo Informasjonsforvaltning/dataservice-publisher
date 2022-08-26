@@ -2,11 +2,10 @@
 import os
 from os import environ as env
 import time
-from typing import Any, Generator
+from typing import Any
 
+from aiohttp.test_utils import TestClient as _TestClient
 from dotenv import load_dotenv
-from flask import Flask
-from flask.testing import FlaskClient
 import pytest
 import requests
 from requests.exceptions import ConnectionError
@@ -14,8 +13,7 @@ from requests.exceptions import ConnectionError
 from dataservice_publisher import create_app
 
 load_dotenv()
-HOST_PORT = int(env.get("HOST_PORT", "8080"))
-FUSEKI_HOST_URL = env.get("FUSEKI_HOST_URL", "http://fuseki:3030")
+DATASERVICE_PUBLISHER_PORT = int(env.get("DATASERVICE_PUBLISHER_PORT", 8080))
 
 
 def is_responsive(url: Any) -> Any:
@@ -35,7 +33,7 @@ def is_responsive(url: Any) -> Any:
 def http_service(docker_ip: Any, docker_services: Any) -> Any:
     """Ensure that HTTP service is up and responsive."""
     # `port_for` takes a container port and returns the corresponding host port
-    port = docker_services.port_for("dataservice-publisher", HOST_PORT)
+    port = docker_services.port_for("dataservice-publisher", DATASERVICE_PUBLISHER_PORT)
     url = "http://{}:{}".format(docker_ip, port)
     docker_services.wait_until_responsive(
         timeout=30.0, pause=0.1, check=lambda: is_responsive(url)
@@ -50,17 +48,16 @@ def docker_compose_file(pytestconfig: Any) -> Any:
     return os.path.join(str(pytestconfig.rootdir), "./", "docker-compose.yml")
 
 
-@pytest.mark.unit
+@pytest.mark.contract
+@pytest.fixture(scope="session")
+def docker_cleanup(pytestconfig: Any) -> Any:
+    """Override cleanup: do not remove containers in order to inspect logs."""
+    return "stop"
+
+
+@pytest.mark.integration
 @pytest.fixture
-def app() -> Generator:
-    """Returns a Flask app for unit testing."""
-    app = create_app({"TESTING": True})
-
-    yield app
-
-
-@pytest.mark.unit
-@pytest.fixture
-def client(app: Flask) -> FlaskClient:
-    """Returns a client for unit testing."""
-    return app.test_client()
+async def client(aiohttp_client: Any) -> _TestClient:
+    """Instantiate server and start it."""
+    app = await create_app()
+    return await aiohttp_client(app)

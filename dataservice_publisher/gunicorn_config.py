@@ -11,15 +11,15 @@ from pythonjsonlogger import jsonlogger
 
 load_dotenv()
 
-HOST_PORT = env.get("HOST_PORT", "8080")
+DATASERVICE_PUBLISHER_PORT = int(env.get("DATASERVICE_PUBLISHER_PORT", 8080))
 DEBUG_MODE = env.get("DEBUG_MODE", False)
-LOG_LEVEL = env.get("LOG_LEVEL", "INFO")
+LOGGING_LEVEL = env.get("LOGGING_LEVEL", "INFO")
 
 # Gunicorn config
-bind = ":" + HOST_PORT
+bind = ":" + str(DATASERVICE_PUBLISHER_PORT)
 workers = multiprocessing.cpu_count() * 2 + 1
 threads = 2 * multiprocessing.cpu_count()
-loglevel = str(LOG_LEVEL)
+loglevel = str(LOGGING_LEVEL)
 accesslog = "-"
 
 

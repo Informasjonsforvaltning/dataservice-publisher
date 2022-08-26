@@ -1,12 +1,13 @@
 """Unit test cases for the ping route."""
-from flask.testing import FlaskClient
+from aiohttp.test_utils import TestClient as _TestClient
 import pytest
 
 
 @pytest.mark.integration
-def test_ping(client: FlaskClient) -> None:
+async def test_ping(client: _TestClient) -> None:
     """Should return OK."""
-    response = client.get("/ping")
+    response = await client.get("/ping")
 
-    assert response.status_code == 200
-    assert response.data.decode() == "OK"
+    assert response.status == 200
+    data = await response.text()
+    assert data == "OK"
