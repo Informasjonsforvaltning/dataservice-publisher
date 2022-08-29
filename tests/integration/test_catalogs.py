@@ -68,6 +68,16 @@ async def test_catalogs_serializers(client: _TestClient, mocker: MockFixture) ->
     g = Graph().parse(data=data, format="text/turtle")
     assert 0 < len(g), "*/* has no triples"
 
+    headers = MultiDict(
+        [(hdrs.ACCEPT, "text/turtle"), (hdrs.ACCEPT, "application/ld+json")]
+    )
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, "*/* failed"
+    assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    data = await response.text()
+    g = Graph().parse(data=data, format="text/turtle")
+    assert 0 < len(g), "*/* has no triples"
+
     headers = MultiDict([(hdrs.ACCEPT, "not/acceptable")])
     response = await client.get("/catalogs", headers=headers)
     assert 406 == response.status, "not/acceptable failed"

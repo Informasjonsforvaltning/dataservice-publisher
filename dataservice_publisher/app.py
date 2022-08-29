@@ -54,7 +54,10 @@ async def content_negotiation_middleware(
     if not request.headers.getone(hdrs.ACCEPT, None):
         pass  # pragma: no cover
     elif "catalogs" in request.path:
-        content_types = request.headers.getone(hdrs.ACCEPT).split(",")
+        breakpoint()
+        content_types = (
+            ",".join(request.headers.getall(hdrs.ACCEPT)).replace(" ", "").split(",")
+        )
         if "text/turtle" in content_types:
             pass
         elif "application/ld+json" in content_types:
