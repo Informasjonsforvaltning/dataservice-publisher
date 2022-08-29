@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Any, Dict
 
-from aiohttp import web
+from aiohttp import hdrs, web
 
 from dataservice_publisher.service.catalog_service import (
     create_catalog,
@@ -19,22 +19,26 @@ class Catalogs(web.View):
 
     async def get(self) -> web.Response:
         """Get all catalogs."""
-        catalogs = fetch_catalogs()
+        format = self.request.headers.getone(hdrs.ACCEPT, "text/turtle")
+        format = "text/turtle" if "*/*" in format else format
+        catalogs = fetch_catalogs().serialize(format=format, encoding="utf-8")
         return web.Response(
-            body=catalogs.serialize(format="text/turtle", encoding="utf-8"),
-            content_type="text/turtle",
+            body=catalogs,
+            content_type=format,
             charset="utf-8",
         )
 
     async def post(self) -> web.Response:
         """Create a catalog and return the resulting graph."""
+        format = self.request.headers.getone(hdrs.ACCEPT, "text/turtle")
+        format = "text/turtle" if "*/*" in format else format
         new_catalog: Dict[str, Any] = await self.request.json()
         if new_catalog and "identifier" in new_catalog:
             try:
                 catalog = create_catalog(new_catalog)
                 return web.Response(
-                    body=catalog.serialize(format="text/turtle", encoding="utf-8"),
-                    content_type="text/turtle",
+                    body=catalog.serialize(format=format, encoding="utf-8"),
+                    content_type=format,
                     charset="utf-8",
                 )
             except RequestBodyError as e:
@@ -55,6 +59,8 @@ class Catalog(web.View):
 
     async def get(self) -> web.Response:
         """Get catalog by id."""
+        format = self.request.headers.getone(hdrs.ACCEPT, "text/turtle")
+        format = "text/turtle" if "*/*" in format else format
         id = self.request.match_info["id"]
         logging.debug(f"Getting catalog with id {id}")
 
@@ -62,8 +68,8 @@ class Catalog(web.View):
         if len(catalog) == 0:
             return web.Response(status=404)
         return web.Response(
-            body=catalog.serialize(format="text/turtle", encoding="utf-8"),
-            content_type="text/turtle",
+            body=catalog.serialize(format=format, encoding="utf-8"),
+            content_type=format,
             charset="utf-8",
         )
 

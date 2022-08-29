@@ -110,6 +110,29 @@ def test_get_catalog_by_id(http_service: Any) -> None:
 
 
 @pytest.mark.contract
+def test_get_catalog_by_id_json_ld(http_service: Any) -> None:
+    """Should return status code 200 and single catalog in a json-ld body."""
+    url = f"{http_service}/catalogs/1"
+    headers = {"Accept": "application/ld+json"}
+    resp = requests.get(url, headers=headers)
+    assert 200 == resp.status_code
+    assert 0 < len(resp.content)
+    assert "application/ld+json; charset=utf-8" == resp.headers["Content-Type"]
+    g = Graph()
+    g.parse(data=resp.text, format="json-ld")
+    assert 0 < len(g)
+
+
+@pytest.mark.contract
+def test_get_catalog_by_id_json(http_service: Any) -> None:
+    """Should return status code 406."""
+    url = f"{http_service}/catalogs/1"
+    headers = {"Accept": "application/json"}
+    resp = requests.get(url, headers=headers)
+    assert 406 == resp.status_code
+
+
+@pytest.mark.contract
 def test_delete_catalog_unauthenticated(http_service: Any) -> None:
     """Should return status code 401."""
     url = f"{http_service}/catalogs/1"

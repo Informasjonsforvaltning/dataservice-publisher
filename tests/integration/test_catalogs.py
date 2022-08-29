@@ -38,6 +38,42 @@ async def test_catalogs(client: _TestClient, mocker: MockFixture) -> None:
 
 
 @pytest.mark.integration
+async def test_catalogs_serializers(client: _TestClient, mocker: MockFixture) -> None:
+    """Should return 200 and a turtle serialization."""
+    # Set up the mock
+    mocker.patch(
+        "SPARQLWrapper.SPARQLWrapper.queryAndConvert",
+        return_value=_mock_query_and_convert_result(),
+    )
+    serializers = [
+        "text/turtle",
+        "application/n-triples",
+        "application/ld+json",
+        "application/rdf+xml",
+    ]
+    for serializer in serializers:
+        headers = MultiDict([(hdrs.ACCEPT, serializer)])
+        response = await client.get("/catalogs", headers=headers)
+        assert 200 == response.status, f"{serializer} failed"
+        assert f"{serializer}; charset=utf-8" == response.headers["Content-Type"]
+        data = await response.text()
+        g = Graph().parse(data=data, format=serializer)
+        assert 0 < len(g), f"{serializer} has no triples"
+
+    headers = MultiDict([(hdrs.ACCEPT, "*/*")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, "*/* failed"
+    assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    data = await response.text()
+    g = Graph().parse(data=data, format="text/turtle")
+    assert 0 < len(g), "*/* has no triples"
+
+    headers = MultiDict([(hdrs.ACCEPT, "not/acceptable")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 406 == response.status, "not/acceptable failed"
+
+
+@pytest.mark.integration
 async def test_catalogs_by_id(client: _TestClient, mocker: MockFixture) -> None:
     """Should return 200 and a turtle serialization."""
     # Set up the mock

@@ -45,6 +45,35 @@ async def authenticated(request: web.Request) -> bool:
 
 
 @web.middleware
+async def content_negotiation_middleware(
+    request: web.Request, handler: Any
+) -> web.Response:
+    """Middleware to check if we can respond in accordance to the user's accept-header."""
+    logging.debug("content_negotiation_middleware called")
+
+    if not request.headers.getone(hdrs.ACCEPT, None):
+        pass  # pragma: no cover
+    elif "catalogs" in request.path:
+        content_types = request.headers.getone(hdrs.ACCEPT).split(",")
+        if "text/turtle" in content_types:
+            pass
+        elif "application/ld+json" in content_types:
+            pass
+        elif "application/rdf+xml" in content_types:
+            pass
+        elif "application/n-triples" in content_types:
+            pass
+        elif "*/*" in content_types:
+            pass
+        else:
+            raise web.HTTPNotAcceptable()
+
+    response = await handler(request)
+    logging.debug("content_negotiation_middleware finished")
+    return response
+
+
+@web.middleware
 async def authenticate_middleware(request: web.Request, handler: Any) -> web.Response:
     """Middleware to check if the user is authenticated."""
     logging.debug("authenticate_middleware called")
@@ -52,7 +81,7 @@ async def authenticate_middleware(request: web.Request, handler: Any) -> web.Res
     if not await authenticated(request):
         headers = MultiDict([(hdrs.WWW_AUTHENTICATE, 'Bearer token_type="JWT"')])
 
-        return web.HTTPUnauthorized(headers=headers)
+        raise web.HTTPUnauthorized(headers=headers)
 
     response = await handler(request)
     logging.debug("authenticate_middleware finished")
@@ -64,6 +93,7 @@ async def create_app() -> web.Application:
     app = web.Application(
         middlewares=[
             cors_middleware(allow_all=True),
+            content_negotiation_middleware,
             authenticate_middleware,
             error_middleware(),  # default error handler for whole application
         ]
