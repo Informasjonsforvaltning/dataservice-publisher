@@ -29,15 +29,14 @@ class Login(web.View):
         password = body.get("password", None)
 
         if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
-            data = json.dumps({"msg": "Bad username or password"})
-            return web.HTTPUnauthorized(body=data)
+            raise web.HTTPUnauthorized()
 
         # Identity can be any data that is json serializable
         access_token = await _get_token(identity=username)
         if not access_token:
             headers = MultiDict([(hdrs.CONTENT_TYPE, "application/json")])
 
-            return web.HTTPInternalServerError(
+            raise web.HTTPInternalServerError(
                 headers=headers,
                 body=json.dumps({"msg": "Could not create token"}),
             )
