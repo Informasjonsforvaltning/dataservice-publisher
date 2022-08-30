@@ -166,13 +166,14 @@ async def test_catalogs_content_negotiation(
         "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
     ), f"For header-value '{header_value}', content-Type in response-header should be application/ld+json."  # noqa: B950
 
-    header_value = "*/*,application/ld+json;v=b3"
+    header_value = "application/ld+json;v=b3,*/*"
     headers = MultiDict([(hdrs.ACCEPT, header_value)])
     response = await client.get("/catalogs", headers=headers)
     assert 200 == response.status, f"'{header_value}' failed"
     assert (
         "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
     ), f"For header-value '{header_value}', content-Type in response-header should be application/ld+json."  # noqa: B950
+
 
 @pytest.mark.integration
 async def test_catalogs_by_id(client: _TestClient, mocker: MockFixture) -> None:
