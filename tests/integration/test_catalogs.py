@@ -80,7 +80,7 @@ async def test_catalogs_serializers(client: _TestClient, mocker: MockFixture) ->
         [(hdrs.ACCEPT, "text/turtle"), (hdrs.ACCEPT, "application/ld+json")]
     )
     response = await client.get("/catalogs", headers=headers)
-    assert 200 == response.status, "*/* failed"
+    assert 200 == response.status, "Multiple headers failed"
     assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
     data = await response.text()
     g = Graph().parse(data=data, format="text/turtle")
@@ -115,6 +115,24 @@ async def test_catalogs_content_negotiation(
     assert (
         "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
     ), " Content-Type in response-header should be application/ld+json."
+
+    headers = MultiDict([(hdrs.ACCEPT, "not/acceptable, */*")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, "'not/acceptable,*/*' failed"
+
+    headers = MultiDict([(hdrs.ACCEPT, "text/plain,*/*")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, "'text/plain,*/*' failed"
+    assert (
+        "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    ), " Content-Type in response-header should be text/turtle."
+
+    headers = MultiDict([(hdrs.ACCEPT, "*/*,text/plain")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, "'*/*,text/plain' failed"
+    assert (
+        "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    ), " Content-Type in response-header should be text/turtle."
 
 
 @pytest.mark.integration
