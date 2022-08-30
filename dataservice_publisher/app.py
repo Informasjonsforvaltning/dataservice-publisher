@@ -54,7 +54,6 @@ async def content_negotiation_middleware(
     if not request.headers.getone(hdrs.ACCEPT, None):
         pass  # pragma: no cover
     elif "catalogs" in request.path:
-        breakpoint()
         content_types = (
             ",".join(request.headers.getall(hdrs.ACCEPT)).replace(" ", "").split(",")
         )
