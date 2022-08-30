@@ -1,7 +1,7 @@
 """Package for making catalog of dataservices available in an API."""
 import logging
 import os
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from aiohttp import hdrs, web
 from aiohttp_middlewares import cors_middleware, error_middleware
@@ -14,7 +14,7 @@ from .resources.login import Login
 from .resources.ping import Ping
 from .resources.ready import Ready
 
-DEFAULT_CONTENT_TYPE = "text/turtle"
+DEFAULT_CONTENT_TYPE = {"text": "text/turtle", "application": "application/ld+json"}
 SUPPORTED_CONTENT_TYPES = [
     "text/turtle",
     "application/ld+json",
@@ -51,27 +51,57 @@ async def authenticated(request: web.Request) -> bool:
     return False
 
 
+async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
+    """Prepare the accept mime types and sort on q-parameter."""
+    logging.debug(f"Prcoessing accept mime types: {accept_mime_types}")
+    accept_mime_types_sorted: List[Dict[str, str]] = []
+    for mime_type in accept_mime_types:
+        mime_type_split = mime_type.split(";")
+        if len(mime_type_split) == 1:
+            accept_mime_types_sorted.append({"type": mime_type_split[0], "q": "1"})
+        elif len(mime_type_split) == 2:
+            if mime_type_split[1].startswith("q="):
+                accept_mime_types_sorted.append(
+                    {"type": mime_type_split[0], "q": mime_type_split[1][2:]}
+                )
+        else:  # len is 3
+            if mime_type_split[1].startswith("q="):
+                accept_mime_types_sorted.append(
+                    {"type": mime_type_split[0], "q": mime_type_split[1][2:]}
+                )
+            elif mime_type_split[2].startswith("q="):
+                accept_mime_types_sorted.append(
+                    {"type": mime_type_split[0], "q": mime_type_split[2][2:]}
+                )
+
+    accept_mime_types_sorted.sort(key=lambda x: x["q"], reverse=True)
+    logging.debug(f"Prcoessing accept mime types sorted: {accept_mime_types_sorted}")
+    return [mime_type_dict["type"] for mime_type_dict in accept_mime_types_sorted]
+
+
 async def decide_content_type(request: web.Request) -> Optional[str]:
     """Decide the content type of the response."""
     logging.debug("Deciding content type")
     if not request.headers.getone(hdrs.ACCEPT, None):
-        content_type = DEFAULT_CONTENT_TYPE  # pragma: no cover
+        content_type = DEFAULT_CONTENT_TYPE["text"]  # pragma: no cover
     elif "catalogs" in request.path:
         accept_mime_types: List[str] = (
             ",".join(request.headers.getall(hdrs.ACCEPT)).replace(" ", "").split(",")
         )
-        for mime_type in accept_mime_types:
+        accept_mime_types_sorted = await prepare_mime_types(accept_mime_types)
+        for mime_type in accept_mime_types_sorted:
+            logging.debug(f"Processing mime type: {mime_type}")
             if mime_type in SUPPORTED_CONTENT_TYPES:
                 content_type = mime_type
                 break
             elif mime_type == "*/*":
-                content_type = DEFAULT_CONTENT_TYPE
+                content_type = DEFAULT_CONTENT_TYPE["text"]
                 break
             elif mime_type == "text/*":
-                content_type = DEFAULT_CONTENT_TYPE
+                content_type = DEFAULT_CONTENT_TYPE["text"]
                 break
             elif mime_type == "application/*":
-                content_type = "application/ld+json"
+                content_type = DEFAULT_CONTENT_TYPE["application"]
                 break
             else:
                 content_type = None

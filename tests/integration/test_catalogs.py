@@ -102,44 +102,70 @@ async def test_catalogs_content_negotiation(
         return_value=_mock_query_and_convert_result(),
     )
 
-    headers = MultiDict([(hdrs.ACCEPT, "text/turtle, application/ld+json")])
+    header_value = "text/turtle, application/ld+json"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
     response = await client.get("/catalogs", headers=headers)
-    assert 200 == response.status
+    assert 200 == response.status, f"'{header_value}' failed"
     assert (
         "text/turtle; charset=utf-8" == response.headers["Content-Type"]
-    ), " Content-Type in response-header should be text/turtle."
+    ), f"For header-value '{header_value}', content-Type in response-header should be text/turtle."  # noqa: B950
 
-    headers = MultiDict([(hdrs.ACCEPT, "application/ld+json, text/turtle")])
+    header_value = "application/ld+json, text/turtle"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
     response = await client.get("/catalogs", headers=headers)
-    assert 200 == response.status
+    assert 200 == response.status, f"'{header_value}' failed"
     assert (
         "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
-    ), " Content-Type in response-header should be application/ld+json."
+    ), f"For '{header_value}', content-Type in response-header should be application/ld+json."
 
-    headers = MultiDict([(hdrs.ACCEPT, "not/acceptable, */*")])
+    header_value = "not/acceptable, */*"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
     response = await client.get("/catalogs", headers=headers)
-    assert 200 == response.status, "'not/acceptable,*/*' failed"
-
-    headers = MultiDict([(hdrs.ACCEPT, "text/plain,*/*")])
-    response = await client.get("/catalogs", headers=headers)
-    assert 200 == response.status, "'text/plain,*/*' failed"
+    assert 200 == response.status, f"'{header_value}' failed"
     assert (
         "text/turtle; charset=utf-8" == response.headers["Content-Type"]
-    ), " Content-Type in response-header should be text/turtle."
+    ), f"For header-value '{header_value}', content-Type in response-header should be text/turtle."  # noqa: B950
 
-    headers = MultiDict([(hdrs.ACCEPT, "*/*,text/plain")])
+    header_value = "text/plain,*/*"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
     response = await client.get("/catalogs", headers=headers)
-    assert 200 == response.status, "'*/*,text/plain' failed"
+    assert 200 == response.status, f"'{header_value}' failed"
     assert (
         "text/turtle; charset=utf-8" == response.headers["Content-Type"]
-    ), " Content-Type in response-header should be text/turtle."
+    ), f"For header-value '{header_value}', content-Type in response-header should be text/turtle."  # noqa: B950
 
-    headers = MultiDict([(hdrs.ACCEPT, "*/*, application/ld+json")])
+    header_value = "*/*,text/plain"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
     response = await client.get("/catalogs", headers=headers)
-    assert 200 == response.status, "'*/*, application/ld+json' failed"
+    assert 200 == response.status, f"'{header_value}' failed"
+    assert (
+        "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    ), f"For header-value '{header_value}', content-Type in response-header should be text/turtle."  # noqa: B950
+
+    header_value = "application/json,application/*,*/*"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, f"'{header_value}' failed"
     assert (
         "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
-    ), " Content-Type in response-header should be application/ld+json."
+    ), f"For header-value '{header_value}', content-Type in response-header should be application/ld+json."  # noqa: B950
+
+    header_value = "*/*;q=0.8,text/plain,application/signed-exchange;q=0.9,application/ld+json"  # noqa: B950
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, f"'{header_value}' failed"
+    assert (
+        "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
+    ), f"For header-value '{header_value}', content-Type in response-header should be application/ld+json."  # noqa: B950
+
+    header_value = "*/*;q=0.8;v=b3,text/plain,application/signed-exchange;v=b3;q=0.9,application/ld+json"  # noqa: B950
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, f"'{header_value}' failed"
+    assert (
+        "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
+    ), f"For header-value '{header_value}', content-Type in response-header should be application/ld+json."  # noqa: B950
+
 
 @pytest.mark.integration
 async def test_catalogs_by_id(client: _TestClient, mocker: MockFixture) -> None:
