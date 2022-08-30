@@ -70,6 +70,9 @@ async def decide_content_type(request: web.Request) -> Optional[str]:
             elif mime_type == "text/*":
                 content_type = DEFAULT_CONTENT_TYPE
                 break
+            elif mime_type == "application/*":
+                content_type = "application/ld+json"
+                break
             else:
                 content_type = None
     else:
