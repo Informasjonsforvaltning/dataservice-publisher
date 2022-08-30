@@ -1,7 +1,7 @@
 """Package for making catalog of dataservices available in an API."""
 import logging
 import os
-from typing import Any
+from typing import Any, List, Optional
 
 from aiohttp import hdrs, web
 from aiohttp_middlewares import cors_middleware, error_middleware
@@ -14,6 +14,13 @@ from .resources.login import Login
 from .resources.ping import Ping
 from .resources.ready import Ready
 
+DEFAULT_CONTENT_TYPE = "text/turtle"
+SUPPORTED_CONTENT_TYPES = [
+    "text/turtle",
+    "application/ld+json",
+    "application/rdf+xml",
+    "application/n-triples",
+]
 
 load_dotenv()
 LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
@@ -44,31 +51,41 @@ async def authenticated(request: web.Request) -> bool:
     return False
 
 
+async def decide_content_type(request: web.Request) -> Optional[str]:
+    """Decide the content type of the response."""
+    logging.debug("Deciding content type")
+    if not request.headers.getone(hdrs.ACCEPT, None):
+        content_type = DEFAULT_CONTENT_TYPE  # pragma: no cover
+    elif "catalogs" in request.path:
+        accept_mime_types: List[str] = (
+            ",".join(request.headers.getall(hdrs.ACCEPT)).replace(" ", "").split(",")
+        )
+        for mime_type in accept_mime_types:
+            if mime_type in SUPPORTED_CONTENT_TYPES:
+                content_type = mime_type
+                break
+            elif "*/*" in mime_type:
+                content_type = DEFAULT_CONTENT_TYPE
+            elif "text/*" == mime_type:
+                content_type = DEFAULT_CONTENT_TYPE
+            else:
+                content_type = None
+    else:
+        content_type = "application/json"
+    return content_type
+
+
 @web.middleware
 async def content_negotiation_middleware(
     request: web.Request, handler: Any
 ) -> web.Response:
     """Middleware to check if we can respond in accordance to the user's accept-header."""
     logging.debug("content_negotiation_middleware called")
-
-    if not request.headers.getone(hdrs.ACCEPT, None):
-        pass  # pragma: no cover
-    elif "catalogs" in request.path:
-        content_types = (
-            ",".join(request.headers.getall(hdrs.ACCEPT)).replace(" ", "").split(",")
-        )
-        if "text/turtle" in content_types:
-            pass
-        elif "application/ld+json" in content_types:
-            pass
-        elif "application/rdf+xml" in content_types:
-            pass
-        elif "application/n-triples" in content_types:
-            pass
-        elif "*/*" in content_types:
-            pass
-        else:
-            raise web.HTTPNotAcceptable()
+    content_type = await decide_content_type(request)
+    if content_type:
+        request.app["content_type"] = content_type
+    else:
+        raise web.HTTPNotAcceptable()
 
     response = await handler(request)
     logging.debug("content_negotiation_middleware finished")

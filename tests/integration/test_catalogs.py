@@ -60,6 +60,14 @@ async def test_catalogs_serializers(client: _TestClient, mocker: MockFixture) ->
         g = Graph().parse(data=data, format=serializer)
         assert 0 < len(g), f"{serializer} has no triples"
 
+    headers = MultiDict([(hdrs.ACCEPT, "text/*")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, "*/* failed"
+    assert "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    data = await response.text()
+    g = Graph().parse(data=data, format="text/turtle")
+    assert 0 < len(g), "*/* has no triples"
+
     headers = MultiDict([(hdrs.ACCEPT, "*/*")])
     response = await client.get("/catalogs", headers=headers)
     assert 200 == response.status, "*/* failed"
@@ -81,6 +89,32 @@ async def test_catalogs_serializers(client: _TestClient, mocker: MockFixture) ->
     headers = MultiDict([(hdrs.ACCEPT, "not/acceptable")])
     response = await client.get("/catalogs", headers=headers)
     assert 406 == response.status, "not/acceptable failed"
+
+
+@pytest.mark.integration
+async def test_catalogs_content_negotiation(
+    client: _TestClient, mocker: MockFixture
+) -> None:
+    """Should return 200 and correct content-type."""
+    # Set up the mock
+    mocker.patch(
+        "SPARQLWrapper.SPARQLWrapper.queryAndConvert",
+        return_value=_mock_query_and_convert_result(),
+    )
+
+    headers = MultiDict([(hdrs.ACCEPT, "text/turtle, application/ld+json")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status
+    assert (
+        "text/turtle; charset=utf-8" == response.headers["Content-Type"]
+    ), " Content-Type in response-header should be text/turtle."
+
+    headers = MultiDict([(hdrs.ACCEPT, "application/ld+json, text/turtle")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status
+    assert (
+        "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
+    ), " Content-Type in response-header should be application/ld+json."
 
 
 @pytest.mark.integration
