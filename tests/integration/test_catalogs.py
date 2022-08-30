@@ -134,6 +134,12 @@ async def test_catalogs_content_negotiation(
         "text/turtle; charset=utf-8" == response.headers["Content-Type"]
     ), " Content-Type in response-header should be text/turtle."
 
+    headers = MultiDict([(hdrs.ACCEPT, "*/*, application/ld+json")])
+    response = await client.get("/catalogs", headers=headers)
+    assert 200 == response.status, "'*/*, application/ld+json' failed"
+    assert (
+        "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
+    ), " Content-Type in response-header should be application/ld+json."
 
 @pytest.mark.integration
 async def test_catalogs_by_id(client: _TestClient, mocker: MockFixture) -> None:
