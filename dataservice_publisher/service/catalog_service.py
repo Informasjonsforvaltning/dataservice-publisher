@@ -154,12 +154,12 @@ def get_catalog_by_id(id: str) -> Graph:
         sparql = SPARQLWrapper(query_endpoint)
 
         sparql.setQuery(querystring)
-        logging.debug(f"querystring: {querystring}")
+        # logging.debug(f"querystring: {querystring}")
 
         sparql.setReturnFormat(TURTLE)
         sparql.setOnlyConneg(True)
         data = sparql.queryAndConvert()
-        logging.debug(f"data: {data!r}")
+        # logging.debug(f"data: {data!r}")
 
         return Graph().parse(data=data, format="turtle")  # type: ignore
     except SPARQLWrapperException as e:

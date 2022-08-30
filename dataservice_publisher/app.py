@@ -54,6 +54,7 @@ async def authenticated(request: web.Request) -> bool:
 async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
     """Prepare the accept mime types and sort on q-parameter."""
     logging.debug(f"Prcoessing accept mime types: {accept_mime_types}")
+    # Assign q-parameter:
     accept_mime_types_sorted: List[Dict[str, str]] = []
     for mime_type in accept_mime_types:
         mime_type_split = mime_type.split(";")
@@ -74,6 +75,16 @@ async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
 
             accept_mime_types_sorted.append(mime_type_with_q)
 
+    # Adjust q-parameters with regard to specificity:
+    for mime_type_with_q in accept_mime_types_sorted:
+        if mime_type_with_q["type"].split("/")[0] == "*":
+            pass
+        elif mime_type_with_q["type"].split("/")[1] == "*":
+            mime_type_with_q["q"] = str(float(mime_type_with_q["q"]) * 10)
+        else:
+            mime_type_with_q["q"] = str(float(mime_type_with_q["q"]) * 100)
+
+    # Sort on q-parameter:
     accept_mime_types_sorted.sort(key=lambda x: x["q"], reverse=True)
     logging.debug(f"Prcoessing accept mime types sorted: {accept_mime_types_sorted}")
     return [mime_type_dict["type"] for mime_type_dict in accept_mime_types_sorted]
