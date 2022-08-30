@@ -57,22 +57,22 @@ async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
     accept_mime_types_sorted: List[Dict[str, str]] = []
     for mime_type in accept_mime_types:
         mime_type_split = mime_type.split(";")
+        mime_type_with_q = {
+            "type": mime_type_split[0],
+            "q": "1",
+        }
         if len(mime_type_split) == 1:
-            accept_mime_types_sorted.append({"type": mime_type_split[0], "q": "1"})
-        elif len(mime_type_split) == 2:
-            if mime_type_split[1].startswith("q="):
-                accept_mime_types_sorted.append(
-                    {"type": mime_type_split[0], "q": mime_type_split[1][2:]}
-                )
-        else:  # len is 3
-            if mime_type_split[1].startswith("q="):
-                accept_mime_types_sorted.append(
-                    {"type": mime_type_split[0], "q": mime_type_split[1][2:]}
-                )
-            elif mime_type_split[2].startswith("q="):
-                accept_mime_types_sorted.append(
-                    {"type": mime_type_split[0], "q": mime_type_split[2][2:]}
-                )
+            accept_mime_types_sorted.append(mime_type_with_q)
+        else:
+            for mime_type_part in mime_type_split:
+
+                if mime_type_part.startswith("q="):
+                    mime_type_with_q = {
+                        "type": mime_type_split[0],
+                        "q": mime_type_part.replace("q=", ""),
+                    }
+
+            accept_mime_types_sorted.append(mime_type_with_q)
 
     accept_mime_types_sorted.sort(key=lambda x: x["q"], reverse=True)
     logging.debug(f"Prcoessing accept mime types sorted: {accept_mime_types_sorted}")
