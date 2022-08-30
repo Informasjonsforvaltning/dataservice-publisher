@@ -52,9 +52,30 @@ async def test_login_no_password(client: _TestClient) -> None:
 @pytest.mark.integration
 async def test_login_without_username_password(client: _TestClient) -> None:
     """Should return 401 an WWW-Authenticate header."""
-    response = await client.post("/login")
+    headers = {"Content-Type": "application/json"}
+    response = await client.post("/login", headers=headers)
 
     assert response.status == 401
+
+
+@pytest.mark.integration
+async def test_login_without_content_type_header(client: _TestClient) -> None:
+    """Should return 415."""
+    data = dict(username=ADMIN_USERNAME, password=ADMIN_PASSWORD)
+    response = await client.post("/login", data=json.dumps(data))
+
+    assert response.status == 415
+
+
+@pytest.mark.integration
+async def test_login_unsupported_media_type(client: _TestClient) -> None:
+    """Should return 415."""
+    headers = {"Content-Type": "unsupported/media-type"}
+    data = dict(username=ADMIN_USERNAME, password=ADMIN_PASSWORD)
+
+    response = await client.post("/login", headers=headers, data=json.dumps(data))
+
+    assert response.status == 415
 
 
 @pytest.mark.integration

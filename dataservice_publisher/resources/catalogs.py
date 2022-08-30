@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Any, Dict
 
-from aiohttp import hdrs, web
+from aiohttp import web
 
 from dataservice_publisher.service.catalog_service import (
     create_catalog,
@@ -19,8 +19,7 @@ class Catalogs(web.View):
 
     async def get(self) -> web.Response:
         """Get all catalogs."""
-        format = self.request.headers.getone(hdrs.ACCEPT, "text/turtle")
-        format = "text/turtle" if "*/*" in format else format
+        format = self.request.app["content_type"]
         catalogs = fetch_catalogs().serialize(format=format, encoding="utf-8")
         return web.Response(
             body=catalogs,
@@ -30,8 +29,7 @@ class Catalogs(web.View):
 
     async def post(self) -> web.Response:
         """Create a catalog and return the resulting graph."""
-        format = self.request.headers.getone(hdrs.ACCEPT, "text/turtle")
-        format = "text/turtle" if "*/*" in format else format
+        format = self.request.app["content_type"]
         new_catalog: Dict[str, Any] = await self.request.json()
         if new_catalog and "identifier" in new_catalog:
             try:
@@ -59,8 +57,7 @@ class Catalog(web.View):
 
     async def get(self) -> web.Response:
         """Get catalog by id."""
-        format = self.request.headers.getone(hdrs.ACCEPT, "text/turtle")
-        format = "text/turtle" if "*/*" in format else format
+        format = self.request.app["content_type"]
         id = self.request.match_info["id"]
         logging.debug(f"Getting catalog with id {id}")
 

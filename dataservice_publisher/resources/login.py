@@ -20,6 +20,8 @@ class Login(web.View):
 
     async def post(self) -> web.Response:
         """Login to create a jwt token."""
+        if not self.request.headers.getone("Content-Type") == "application/json":
+            raise web.HTTPUnsupportedMediaType()
         try:
             body = await self.request.json()
         except json.decoder.JSONDecodeError as e:
