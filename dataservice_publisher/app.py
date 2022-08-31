@@ -51,12 +51,21 @@ async def authenticated(request: web.Request) -> bool:
     return False
 
 
+class InvalidMediaRangeError(ValueError):
+    """Exception for invalid media ranges."""
+
+    pass
+
+
 class WeightedMediaRange:
     """Class for handling weighted media ranges."""
 
-    def __init__(self, type: str, q: float = 1.0) -> None:
+    def __init__(self, media_range: str, q: float = 1.0) -> None:
         """Initialize the weighted media range."""
-        self.type,  self.sub_type = type.split("/")
+        try:
+            self.type, self.sub_type = media_range.split("/")
+        except ValueError as e:
+            raise InvalidMediaRangeError(f"Invalid media range: {media_range}") from e
         self.q = q
 
     def __eq__(self, other: Any) -> bool:  # pragma: no cover
@@ -98,11 +107,14 @@ async def prepare_weighted_media_ranges(
             for weighted_media_range_part in weighted_media_range_split[1:]:
                 if weighted_media_range_part.startswith("q="):
                     weighted_media_range.q = float(
+                        # RFC specifies only 3 decimals may be used in q value.
+                        # Must strip additional decimals so that q bonus from specificity
+                        # results in correct sorting.
                         weighted_media_range_part.split("=")[1][0:5]
                     )
 
             accept_weighted_media_ranges_sorted.append(weighted_media_range)
-        except IndexError:
+        except InvalidMediaRangeError:
             logging.debug(
                 "Ignoring invalid weighted media range: %s", accept_weighted_media_range
             )
