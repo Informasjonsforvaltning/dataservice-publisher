@@ -14,7 +14,7 @@ from .resources.login import Login
 from .resources.ping import Ping
 from .resources.ready import Ready
 
-DEFAULT_CONTENT_TYPE = {"text": "text/turtle", "application": "application/ld+json"}
+DEFAULT_CONTENT_TYPE = {"text": "text/turtle", "application": "application/rdf+xml"}
 SUPPORTED_CONTENT_TYPES = [
     "text/turtle",
     "application/ld+json",
