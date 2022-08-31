@@ -96,9 +96,9 @@ async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
         if mime_type.content_type.split("/")[0] == "*":
             pass
         elif mime_type.content_type.split("/")[1] == "*":
-            mime_type.q = float(mime_type.q) + 0.0001
+            mime_type.q = mime_type.q + 0.0001
         else:
-            mime_type.q = float(mime_type.q) + 0.0002
+            mime_type.q = mime_type.q + 0.0002
 
     # Sort on q-parameter and return list of mime types:
     accept_mime_types_sorted.sort(key=lambda x: x.q, reverse=True)
