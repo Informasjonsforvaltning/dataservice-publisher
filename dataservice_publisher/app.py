@@ -51,87 +51,118 @@ async def authenticated(request: web.Request) -> bool:
     return False
 
 
-class MimeType:
-    """Class for handling mime types."""
+class WeightedMediaRange:
+    """Class for handling weighted media ranges."""
 
-    def __init__(self, content_type: str, q: float = 1.0) -> None:
-        """Initialize the mime type."""
-        self.content_type = content_type
+    def __init__(self, type: str, q: float = 1.0) -> None:
+        """Initialize the weighted media range."""
+        self.type = type.split("/")[0]
+        self.sub_type = type.split("/")[1]
         self.q = q
 
     def __eq__(self, other: Any) -> bool:  # pragma: no cover
-        """Compare two mime types."""
+        """Compare two weighted media ranges."""
         if isinstance(other, str):
-            return self.content_type == other
-        if isinstance(other, MimeType):
-            return self.content_type == other.content_type
+            return f"{self.type}/{self.sub_type}" == other
+        if isinstance(other, WeightedMediaRange):
+            return self.type == other.type and self.sub_type == other.sub_type
         return False
 
     def __str__(self) -> str:
-        """Return the mime type as a string."""
-        return self.content_type
+        """Return the weighted media range as a string."""
+        return f"{self.type}/{self.sub_type};q={self.q}"
+
+    def media_range(self) -> str:
+        """Return the media range."""
+        return f"{self.type}/{self.sub_type}"
 
 
-async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
-    """Prepare the accept mime types and sort on q-parameter."""
-    logging.debug(f"Prcoessing accept mime types: {accept_mime_types}")
+async def prepare_weighted_media_ranges(
+    accept_weighted_media_ranges: List[str],
+) -> List[str]:
+    """Prepare the accept weighted media ranges and sort on q-parameter."""
+    logging.debug(
+        f"Preparing accept weighted media ranges: {accept_weighted_media_ranges}"
+    )
     # Assign q-parameter:
-    accept_mime_types_sorted: List[MimeType] = []
+    accept_weighted_media_ranges_sorted: List[WeightedMediaRange] = []
 
-    for accept_mime_type in accept_mime_types:
-        mime_type_split = accept_mime_type.split(";")
-        mime_type = MimeType(mime_type_split[0])
+    for accept_weighted_media_range in accept_weighted_media_ranges:
+        weighted_media_range_split = accept_weighted_media_range.split(";")
+        # Instantiate weighted media range:
+        try:
+            weighted_media_range = WeightedMediaRange(weighted_media_range_split[0])
+            logging.debug(
+                f"Assigning q-parameter for weighted media range: {accept_weighted_media_range}"
+            )
+            # If q-parameter is present, assign it:
+            for weighted_media_range_part in weighted_media_range_split[1:]:
+                if weighted_media_range_part.startswith("q="):
+                    weighted_media_range.q = float(
+                        weighted_media_range_part.split("=")[1][0:5]
+                    )
 
-        # If q-parameter is present, assign it:
-        for mime_type_part in mime_type_split[1:]:
-            if mime_type_part.startswith("q="):
-                mime_type.q = float(mime_type_part.split("=")[1][0:5])
-
-        accept_mime_types_sorted.append(mime_type)
+            accept_weighted_media_ranges_sorted.append(weighted_media_range)
+        except IndexError:
+            logging.debug(
+                "Ignoring invalid weighted media range: %s", accept_weighted_media_range
+            )
+            pass  # ignore invalid media range
 
     # Adjust q-parameters with regard to specificity:
     # Highest q-parameter is the most specific:
-    for mime_type in accept_mime_types_sorted:
-        logging.debug(f"Ajusting q-parameter for mime type: {mime_type}")
-        if mime_type.content_type.split("/")[0] == "*":
+    for weighted_media_range in accept_weighted_media_ranges_sorted:
+        logging.debug(
+            f"Ajusting q-parameter for weighted media range: {weighted_media_range}"
+        )
+        if weighted_media_range.type == "*":
             pass
-        elif mime_type.content_type.split("/")[1] == "*":
-            mime_type.q = mime_type.q + 0.0001
+        elif weighted_media_range.sub_type == "*":
+            weighted_media_range.q = weighted_media_range.q + 0.0001
         else:
-            mime_type.q = mime_type.q + 0.0002
+            weighted_media_range.q = weighted_media_range.q + 0.0002
 
-    # Sort on q-parameter and return list of mime types:
-    accept_mime_types_sorted.sort(key=lambda x: x.q, reverse=True)
-    logging.debug(f"Prcoessing accept mime types sorted: {accept_mime_types_sorted}")
-    return [mime_type.content_type for mime_type in accept_mime_types_sorted]
+    # Sort on q-parameter and return list of weighted media ranges:
+    accept_weighted_media_ranges_sorted.sort(key=lambda x: x.q, reverse=True)
+    logging.debug(
+        f"Accept weighted media ranges sorted: {', '.join(str(p) for p in accept_weighted_media_ranges_sorted)}"  # noqa: B950
+    )
+    return [
+        str(weighted_media_range.media_range())
+        for weighted_media_range in accept_weighted_media_ranges_sorted
+    ]
 
 
 async def decide_content_type(request: web.Request) -> Optional[str]:
     """Decide the content type of the response."""
     logging.debug("Deciding content type")
-    if not request.headers.getone(hdrs.ACCEPT, None):
+    content_type = None
+    if hdrs.ACCEPT not in request.headers:
         content_type = DEFAULT_CONTENT_TYPE["text"]  # pragma: no cover
     elif "catalogs" in request.path:
-        accept_mime_types: List[str] = (
+        accept_weighted_media_ranges: List[str] = (
             ",".join(request.headers.getall(hdrs.ACCEPT)).replace(" ", "").split(",")
         )
-        accept_mime_types_sorted = await prepare_mime_types(accept_mime_types)
-        for mime_type in accept_mime_types_sorted:
-            logging.debug(f"Processing mime type: {mime_type}")
-            if mime_type in SUPPORTED_CONTENT_TYPES:
-                content_type = mime_type
+        accept_weighted_media_ranges_sorted = await prepare_weighted_media_ranges(
+            accept_weighted_media_ranges
+        )
+        for weighted_media_range in accept_weighted_media_ranges_sorted:
+            logging.debug(f"Checking weighted media range: {weighted_media_range}")
+            if weighted_media_range in SUPPORTED_CONTENT_TYPES:
+                content_type = weighted_media_range
                 break
-            elif mime_type == "*/*":
+            elif weighted_media_range == "*/*":
                 content_type = DEFAULT_CONTENT_TYPE["text"]
                 break
-            elif mime_type == "text/*":
+            elif weighted_media_range == "text/*":
                 content_type = DEFAULT_CONTENT_TYPE["text"]
                 break
-            elif mime_type == "application/*":
+            elif weighted_media_range == "application/*":
                 content_type = DEFAULT_CONTENT_TYPE["application"]
                 break
             else:
-                content_type = None
+                logging.debug(f"Ignoring media range: {weighted_media_range}")
+                pass
     else:
         content_type = "application/json"
     return content_type
