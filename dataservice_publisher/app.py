@@ -103,7 +103,7 @@ async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
     # Sort on q-parameter and return list of mime types:
     accept_mime_types_sorted.sort(key=lambda x: x.q, reverse=True)
     logging.debug(f"Prcoessing accept mime types sorted: {accept_mime_types_sorted}")
-    return [mime_type_dict.content_type for mime_type_dict in accept_mime_types_sorted]
+    return [mime_type.content_type for mime_type in accept_mime_types_sorted]
 
 
 async def decide_content_type(request: web.Request) -> Optional[str]:
