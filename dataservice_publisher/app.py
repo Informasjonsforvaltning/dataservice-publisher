@@ -1,7 +1,7 @@
 """Package for making catalog of dataservices available in an API."""
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from aiohttp import hdrs, web
 from aiohttp_middlewares import cors_middleware, error_middleware
@@ -51,40 +51,59 @@ async def authenticated(request: web.Request) -> bool:
     return False
 
 
+class MimeType:
+    """Class for handling mime types."""
+
+    def __init__(self, content_type: str, q: float = 1.0) -> None:
+        """Initialize the mime type."""
+        self.content_type = content_type
+        self.q = q
+
+    def __eq__(self, other: Any) -> bool:  # pragma: no cover
+        """Compare two mime types."""
+        if isinstance(other, str):
+            return self.content_type == other
+        if isinstance(other, MimeType):
+            return self.content_type == other.content_type
+        return False
+
+    def __str__(self) -> str:
+        """Return the mime type as a string."""
+        return self.content_type
+
+
 async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
     """Prepare the accept mime types and sort on q-parameter."""
     logging.debug(f"Prcoessing accept mime types: {accept_mime_types}")
     # Assign q-parameter:
-    accept_mime_types_sorted: List[Dict[str, str]] = []
-    for mime_type in accept_mime_types:
-        mime_type_split = mime_type.split(";")
-        mime_type_with_q = {
-            "type": mime_type_split[0],
-            "q": "1",
-        }
+    accept_mime_types_sorted: List[MimeType] = []
+
+    for accept_mime_type in accept_mime_types:
+        mime_type_split = accept_mime_type.split(";")
+        mime_type = MimeType(mime_type_split[0])
+
+        # If q-parameter is present, assign it:
         for mime_type_part in mime_type_split[1:]:
-
             if mime_type_part.startswith("q="):
-                mime_type_with_q = {
-                    "type": mime_type_split[0],
-                    "q": mime_type_part[2:],
-                }
+                mime_type.q = float(mime_type_part.split("=")[1])
 
-        accept_mime_types_sorted.append(mime_type_with_q)
+        accept_mime_types_sorted.append(mime_type)
 
     # Adjust q-parameters with regard to specificity:
-    for mime_type_with_q in accept_mime_types_sorted:
-        if mime_type_with_q["type"].split("/")[0] == "*":
+    # Highest q-parameter is the most specific:
+    for mime_type in accept_mime_types_sorted:
+        logging.debug(f"Ajusting q-parameter for mime type: {mime_type}")
+        if mime_type.content_type.split("/")[0] == "*":
             pass
-        elif mime_type_with_q["type"].split("/")[1] == "*":
-            mime_type_with_q["q"] = str(float(mime_type_with_q["q"]) * 10)
+        elif mime_type.content_type.split("/")[1] == "*":
+            mime_type.q = float(mime_type.q) + 0.01
         else:
-            mime_type_with_q["q"] = str(float(mime_type_with_q["q"]) * 100)
+            mime_type.q = float(mime_type.q) + 0.02
 
-    # Sort on q-parameter:
-    accept_mime_types_sorted.sort(key=lambda x: x["q"], reverse=True)
+    # Sort on q-parameter and return list of mime types:
+    accept_mime_types_sorted.sort(key=lambda x: x.q, reverse=True)
     logging.debug(f"Prcoessing accept mime types sorted: {accept_mime_types_sorted}")
-    return [mime_type_dict["type"] for mime_type_dict in accept_mime_types_sorted]
+    return [mime_type_dict.content_type for mime_type_dict in accept_mime_types_sorted]
 
 
 async def decide_content_type(request: web.Request) -> Optional[str]:
