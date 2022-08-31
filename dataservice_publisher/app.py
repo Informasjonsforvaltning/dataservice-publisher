@@ -56,8 +56,7 @@ class WeightedMediaRange:
 
     def __init__(self, type: str, q: float = 1.0) -> None:
         """Initialize the weighted media range."""
-        self.type = type.split("/")[0]
-        self.sub_type = type.split("/")[1]
+        self.type,  self.sub_type = type.split("/")
         self.q = q
 
     def __eq__(self, other: Any) -> bool:  # pragma: no cover
