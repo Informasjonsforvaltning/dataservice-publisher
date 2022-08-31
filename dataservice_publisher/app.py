@@ -154,15 +154,17 @@ async def decide_content_type(request: web.Request) -> Optional[str]:
             elif weighted_media_range == "*/*":
                 content_type = DEFAULT_CONTENT_TYPE["text"]
                 break
-            elif weighted_media_range == "text/*":
-                content_type = DEFAULT_CONTENT_TYPE["text"]
-                break
-            elif weighted_media_range == "application/*":
-                content_type = DEFAULT_CONTENT_TYPE["application"]
-                break
             else:
-                logging.debug(f"Ignoring media range: {weighted_media_range}")
-                pass
+                # Assumes valid mimetypes from `prepare_mime_types`
+                media_range_type, media_range_subtype = weighted_media_range.split("/")
+                if (
+                    media_range_subtype == "*"
+                    and media_range_type in DEFAULT_CONTENT_TYPE
+                ):
+                    content_type = DEFAULT_CONTENT_TYPE[media_range_type]
+                    break
+                else:
+                    content_type = None
     else:
         content_type = "application/json"
     return content_type
