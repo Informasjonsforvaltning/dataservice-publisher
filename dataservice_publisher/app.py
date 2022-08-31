@@ -62,9 +62,6 @@ async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
             "type": mime_type_split[0],
             "q": "1",
         }
-        if len(mime_type_split) == 1:
-            accept_mime_types_sorted.append(mime_type_with_q)
-        else:
             for mime_type_part in mime_type_split:
 
                 if mime_type_part.startswith("q="):
