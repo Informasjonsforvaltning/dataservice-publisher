@@ -139,7 +139,7 @@ async def prepare_weighted_media_ranges(
         f"Accept weighted media ranges sorted: {', '.join(str(p) for p in accept_weighted_media_ranges_sorted)}"  # noqa: B950
     )
     return [
-        str(weighted_media_range.media_range())
+        weighted_media_range.media_range()
         for weighted_media_range in accept_weighted_media_ranges_sorted
     ]
 
