@@ -85,7 +85,7 @@ async def prepare_mime_types(accept_mime_types: List[str]) -> List[str]:
         # If q-parameter is present, assign it:
         for mime_type_part in mime_type_split[1:]:
             if mime_type_part.startswith("q="):
-                mime_type.q = float(mime_type_part.split("=")[1])
+                mime_type.q = float(mime_type_part.split("=")[1][0:5])
 
         accept_mime_types_sorted.append(mime_type)
 
