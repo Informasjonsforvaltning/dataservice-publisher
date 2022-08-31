@@ -147,8 +147,8 @@ async def test_catalogs_content_negotiation(
     response = await client.get("/catalogs", headers=headers)
     assert 200 == response.status, f"'{header_value}' failed"
     assert (
-        "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
-    ), f"For header-value '{header_value}', content-Type in response-header should be application/ld+json."  # noqa: B950
+        "application/rdf+xml; charset=utf-8" == response.headers["Content-Type"]
+    ), f"For header-value '{header_value}', content-Type in response-header should be application/rdf+xml."  # noqa: B950
 
     header_value = "*/*;q=0.8,text/plain,application/signed-exchange;q=0.9,application/ld+json"  # noqa: B950
     headers = MultiDict([(hdrs.ACCEPT, header_value)])
@@ -187,8 +187,23 @@ async def test_catalogs_content_negotiation(
     response = await client.get("/catalogs", headers=headers)
     assert 200 == response.status, f"'{header_value}' failed"
     assert (
-        "application/ld+json; charset=utf-8" == response.headers["Content-Type"]
-    ), f"For header-value '{header_value}', content-Type in response-header should be application/ld+json."  # noqa: B950
+        "application/rdf+xml; charset=utf-8" == response.headers["Content-Type"]
+    ), f"For header-value '{header_value}', content-Type in response-header should be application/rdf+xml."  # noqa: B950
+
+    header_value = "text/"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
+    response = await client.get("/catalogs", headers=headers)
+    assert 406 == response.status, f"'{header_value}' failed"
+
+    header_value = "text"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
+    response = await client.get("/catalogs", headers=headers)
+    assert 406 == response.status, f"'{header_value}' failed"
+
+    header_value = "audio/*"
+    headers = MultiDict([(hdrs.ACCEPT, header_value)])
+    response = await client.get("/catalogs", headers=headers)
+    assert 406 == response.status
 
 
 @pytest.mark.integration
