@@ -14,6 +14,13 @@ from dataservice_publisher.service.catalog_service import (
 )
 from dataservice_publisher.utils import decide_content_type
 
+SUPPORTED_CONTENT_TYPES = [
+    "text/turtle",
+    "application/rdf+xml",
+    "application/ld+json",
+    "application/n-triples",
+]
+
 
 class Catalogs(web.View):
     """Class representing catalogs resoweb.urce."""
@@ -25,7 +32,9 @@ class Catalogs(web.View):
             .replace(" ", "")
             .split(",")
         )
-        content_type = await decide_content_type(accept_weighted_media_ranges)
+        content_type = await decide_content_type(
+            accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
+        )
         if not content_type:
             raise web.HTTPNotAcceptable()
 
@@ -43,7 +52,9 @@ class Catalogs(web.View):
             .replace(" ", "")
             .split(",")
         )
-        content_type = await decide_content_type(accept_weighted_media_ranges)
+        content_type = await decide_content_type(
+            accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
+        )
         if not content_type:
             raise web.HTTPNotAcceptable()
 
@@ -79,7 +90,9 @@ class Catalog(web.View):
             .replace(" ", "")
             .split(",")
         )
-        content_type = await decide_content_type(accept_weighted_media_ranges)
+        content_type = await decide_content_type(
+            accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
+        )
         if not content_type:
             raise web.HTTPNotAcceptable()
 
