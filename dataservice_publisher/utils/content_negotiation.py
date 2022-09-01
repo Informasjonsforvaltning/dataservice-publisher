@@ -1,15 +1,6 @@
-"""Package for making catalog of dataservices available in an API."""
+"""Package for function determining content-type based on accept header."""
 import logging
 from typing import Any, List, Optional
-
-
-DEFAULT_CONTENT_TYPE = {"text": "text/turtle", "application": "application/rdf+xml"}
-SUPPORTED_CONTENT_TYPES = [
-    "text/turtle",
-    "application/ld+json",
-    "application/rdf+xml",
-    "application/n-triples",
-]
 
 
 class InvalidMediaRangeError(ValueError):
@@ -21,13 +12,30 @@ class InvalidMediaRangeError(ValueError):
 class WeightedMediaRange:
     """Class for handling weighted media ranges."""
 
-    def __init__(self, media_range: str, q: float = 1.0) -> None:
+    type: str
+    sub_type: str
+    q: float = 1.0
+
+    def __init__(self, media_range: str) -> None:
         """Initialize the weighted media range."""
+        weighted_media_range_split = media_range.split(";")
+        # Instantiate weighted media range:
         try:
-            self.type, self.sub_type = media_range.split("/")
+            logging.debug(
+                f"Assigning q-parameter for weighted media range: {media_range}"
+            )
+            self.type, self.sub_type = weighted_media_range_split[0].split("/")
+            # If q-parameter is present, assign it:
+            for weighted_media_range_part in weighted_media_range_split[1:]:
+                if weighted_media_range_part.startswith("q="):
+                    self.q = float(
+                        # RFC specifies only 3 decimals may be used in q value.
+                        # Must strip additional decimals so that q bonus from specificity
+                        # results in correct sorting.
+                        weighted_media_range_part.split("=")[1][0:5]
+                    )
         except ValueError as e:
             raise InvalidMediaRangeError(f"Invalid media range: {media_range}") from e
-        self.q = q
 
     def __eq__(self, other: Any) -> bool:  # pragma: no cover
         """Compare two weighted media ranges."""
@@ -48,7 +56,7 @@ class WeightedMediaRange:
 
 async def prepare_weighted_media_ranges(
     accept_weighted_media_ranges: List[str],
-) -> List[str]:
+) -> List[WeightedMediaRange]:
     """Prepare the accept weighted media ranges and sort on q-parameter."""
     logging.debug(
         f"Preparing accept weighted media ranges: {accept_weighted_media_ranges}"
@@ -57,22 +65,9 @@ async def prepare_weighted_media_ranges(
     accept_weighted_media_ranges_sorted: List[WeightedMediaRange] = []
 
     for accept_weighted_media_range in accept_weighted_media_ranges:
-        weighted_media_range_split = accept_weighted_media_range.split(";")
         # Instantiate weighted media range:
         try:
-            weighted_media_range = WeightedMediaRange(weighted_media_range_split[0])
-            logging.debug(
-                f"Assigning q-parameter for weighted media range: {accept_weighted_media_range}"
-            )
-            # If q-parameter is present, assign it:
-            for weighted_media_range_part in weighted_media_range_split[1:]:
-                if weighted_media_range_part.startswith("q="):
-                    weighted_media_range.q = float(
-                        # RFC specifies only 3 decimals may be used in q value.
-                        # Must strip additional decimals so that q bonus from specificity
-                        # results in correct sorting.
-                        weighted_media_range_part.split("=")[1][0:5]
-                    )
+            weighted_media_range = WeightedMediaRange(accept_weighted_media_range)
 
             accept_weighted_media_ranges_sorted.append(weighted_media_range)
         except InvalidMediaRangeError:
@@ -99,32 +94,62 @@ async def prepare_weighted_media_ranges(
     logging.debug(
         f"Accept weighted media ranges sorted: {', '.join(str(p) for p in accept_weighted_media_ranges_sorted)}"  # noqa: B950
     )
-    return [
-        weighted_media_range.media_range()
-        for weighted_media_range in accept_weighted_media_ranges_sorted
-    ]
+    return accept_weighted_media_ranges_sorted
 
 
-async def decide_content_type(accept_weighted_media_ranges: List[str]) -> Optional[str]:
+def get_default_content_type(
+    supported_content_types: List[str], type: Optional[str] = None
+) -> str:
+    """Return the default content type."""
+    if type is None:
+        return supported_content_types[0]
+
+    return next(
+        media_type
+        for media_type in supported_content_types
+        if type == media_type.split("/")[0]
+    )
+
+
+def is_media_range_type_in_supported_content_types(
+    media_range_type: str, supported_content_types: List[str]
+) -> bool:
+    """Return True if media range type is in supported content types."""
+    return any(
+        media_range_type == media_type.split("/")[0]
+        for media_type in supported_content_types
+    )
+
+
+async def decide_content_type(
+    accept_weighted_media_ranges: List[str], supported_content_types: List[str]
+) -> Optional[str]:
     """Decide the content type of the response."""
     logging.debug("Deciding content type")
-    content_type = None
+    content_type: Optional[str] = None
     accept_weighted_media_ranges_sorted = await prepare_weighted_media_ranges(
         accept_weighted_media_ranges
     )
     for weighted_media_range in accept_weighted_media_ranges_sorted:
         logging.debug(f"Checking weighted media range: {weighted_media_range}")
-        if weighted_media_range in SUPPORTED_CONTENT_TYPES:
-            content_type = weighted_media_range
+        if weighted_media_range in supported_content_types:
+            content_type = weighted_media_range.media_range()
             break
-        elif weighted_media_range == "*/*":
-            content_type = DEFAULT_CONTENT_TYPE["text"]
+        elif weighted_media_range.type == "*" and weighted_media_range.sub_type == "*":
+            content_type = get_default_content_type(supported_content_types)
             break
         else:
             # Assumes valid mimetypes from `prepare_mime_types`
-            media_range_type, media_range_subtype = weighted_media_range.split("/")
-            if media_range_subtype == "*" and media_range_type in DEFAULT_CONTENT_TYPE:
-                content_type = DEFAULT_CONTENT_TYPE[media_range_type]
+            if (
+                weighted_media_range.sub_type == "*"
+                and is_media_range_type_in_supported_content_types(
+                    weighted_media_range.type,
+                    supported_content_types,
+                )
+            ):
+                content_type = get_default_content_type(
+                    supported_content_types, type=weighted_media_range.type
+                )
                 break
             else:
                 content_type = None
