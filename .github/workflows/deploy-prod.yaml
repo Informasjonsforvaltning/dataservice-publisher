@@ -39,9 +39,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install nox==2020.12.31
-          pip install poetry==1.1.4
-          pip install nox-poetry==0.8.4
+          pipx install nox==2022.8.7
+          pipx install poetry==1.1.14
+          pipx inject nox nox-poetry==1.0.1
 
       - name: Build image and test with nox
         run: nox
@@ -81,15 +81,15 @@ jobs:
           kubectl --namespace=prod rollout undo deployment dataservice-publisher
           kubectl --namespace=prod rollout status deployment dataservice-publisher
           exit 1
-          fi          
+          fi
 
       - name: Notify slack
         uses: 8398a7/action-slack@v3
         with:
-          mention: 'channel'
+          mention: "channel"
           if_mention: failure
           status: ${{ job.status }}
-          author_name: 'Application: dataservice-publisher | Environment: prod'
+          author_name: "Application: dataservice-publisher | Environment: prod"
           fields: commit,author,workflow,message
         env:
           GITHUB_TOKEN: ${{ github.token }}
