@@ -70,8 +70,7 @@ xdoctest = "^1.0.1"
 source = ["dataservice_publisher", "*/site-packages"]
 
 [tool.coverage.run]
-branch = false
-omit = ["*gunicorn_config.py"]
+omit = ["*gunicorn_config.py", "*content_negotiation.py"]
 source = ["dataservice_publisher"]
 
 [tool.coverage.report]
@@ -107,5 +106,6 @@ markers = [
 ]
 
 [build-system]
+branch = false
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]

@@ -1,9 +1,9 @@
 """Repository module for catalogs."""
 import json
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-from aiohttp import web
+from aiohttp import hdrs, web
 
 from dataservice_publisher.service.catalog_service import (
     create_catalog,
@@ -12,6 +12,7 @@ from dataservice_publisher.service.catalog_service import (
     get_catalog_by_id,
     RequestBodyError,
 )
+from dataservice_publisher.utils import decide_content_type
 
 
 class Catalogs(web.View):
@@ -19,24 +20,40 @@ class Catalogs(web.View):
 
     async def get(self) -> web.Response:
         """Get all catalogs."""
-        format = self.request.app["content_type"]
-        catalogs = fetch_catalogs().serialize(format=format, encoding="utf-8")
+        accept_weighted_media_ranges: List[str] = (
+            ",".join(self.request.headers.getall(hdrs.ACCEPT))
+            .replace(" ", "")
+            .split(",")
+        )
+        content_type = await decide_content_type(accept_weighted_media_ranges)
+        if not content_type:
+            raise web.HTTPNotAcceptable()
+
+        catalogs = fetch_catalogs().serialize(format=content_type, encoding="utf-8")
         return web.Response(
             body=catalogs,
-            content_type=format,
+            content_type=content_type,
             charset="utf-8",
         )
 
     async def post(self) -> web.Response:
         """Create a catalog and return the resulting graph."""
-        format = self.request.app["content_type"]
+        accept_weighted_media_ranges: List[str] = (
+            ",".join(self.request.headers.getall(hdrs.ACCEPT))
+            .replace(" ", "")
+            .split(",")
+        )
+        content_type = await decide_content_type(accept_weighted_media_ranges)
+        if not content_type:
+            raise web.HTTPNotAcceptable()
+
         new_catalog: Dict[str, Any] = await self.request.json()
         if new_catalog and "identifier" in new_catalog:
             try:
                 catalog = create_catalog(new_catalog)
                 return web.Response(
-                    body=catalog.serialize(format=format, encoding="utf-8"),
-                    content_type=format,
+                    body=catalog.serialize(format=content_type, encoding="utf-8"),
+                    content_type=content_type,
                     charset="utf-8",
                 )
             except RequestBodyError as e:
@@ -57,7 +74,15 @@ class Catalog(web.View):
 
     async def get(self) -> web.Response:
         """Get catalog by id."""
-        format = self.request.app["content_type"]
+        accept_weighted_media_ranges: List[str] = (
+            ",".join(self.request.headers.getall(hdrs.ACCEPT))
+            .replace(" ", "")
+            .split(",")
+        )
+        content_type = await decide_content_type(accept_weighted_media_ranges)
+        if not content_type:
+            raise web.HTTPNotAcceptable()
+
         id = self.request.match_info["id"]
         logging.debug(f"Getting catalog with id {id}")
 
@@ -65,8 +90,8 @@ class Catalog(web.View):
         if len(catalog) == 0:
             return web.Response(status=404)
         return web.Response(
-            body=catalog.serialize(format=format, encoding="utf-8"),
-            content_type=format,
+            body=catalog.serialize(format=content_type, encoding="utf-8"),
+            content_type=content_type,
             charset="utf-8",
         )
 
