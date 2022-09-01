@@ -3,10 +3,9 @@ import json
 from os import environ as env
 from typing import Optional
 
-from aiohttp import hdrs, web
+from aiohttp import web
 from dotenv import load_dotenv
 import jwt
-from multidict import MultiDict
 
 # Get environment
 load_dotenv()
@@ -36,12 +35,7 @@ class Login(web.View):
         # Identity can be any data that is json serializable
         access_token = await _get_token(identity=username)
         if not access_token:
-            headers = MultiDict([(hdrs.CONTENT_TYPE, "application/json")])
-
-            raise web.HTTPInternalServerError(
-                headers=headers,
-                body=json.dumps({"msg": "Could not create token"}),
-            )
+            raise web.HTTPInternalServerError(reason="Could not create token")
 
         body = json.dumps({"access_token": access_token})
         return web.Response(status=200, content_type="application/json", body=body)
