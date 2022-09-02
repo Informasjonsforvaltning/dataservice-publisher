@@ -32,7 +32,7 @@ class Catalogs(web.View):
             .replace(" ", "")
             .split(",")
         )
-        content_type = await decide_content_type(
+        content_type = decide_content_type(
             accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
         )
         if not content_type:
@@ -52,7 +52,7 @@ class Catalogs(web.View):
             .replace(" ", "")
             .split(",")
         )
-        content_type = await decide_content_type(
+        content_type = decide_content_type(
             accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
         )
         if not content_type:
@@ -90,7 +90,7 @@ class Catalog(web.View):
             .replace(" ", "")
             .split(",")
         )
-        content_type = await decide_content_type(
+        content_type = decide_content_type(
             accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
         )
         if not content_type:

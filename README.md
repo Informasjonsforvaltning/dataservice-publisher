@@ -103,6 +103,12 @@ To run linters, checkers and tests:
 % nox
 ```
 
+To run unit tests with logging set to DEBUG:
+
+```Shell
+% nox -s unit_tests -- --log-cli-level=DEBUG
+```
+
 ## Test the endpoint
 
 Regardless if you run the app via Docker or not, in another terminal:
