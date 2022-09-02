@@ -54,7 +54,7 @@ class WeightedMediaRange:
         return f"{self.type}/{self.sub_type}"
 
 
-async def prepare_weighted_media_ranges(
+def prepare_weighted_media_ranges(
     accept_weighted_media_ranges: List[str],
 ) -> List[WeightedMediaRange]:
     """Prepare the accept weighted media ranges and sort on q-parameter."""
@@ -121,13 +121,20 @@ def is_media_range_type_in_supported_content_types(
     )
 
 
-async def decide_content_type(
+def decide_content_type(
     accept_weighted_media_ranges: List[str], supported_content_types: List[str]
 ) -> Optional[str]:
     """Decide the content type of the response."""
-    logging.debug("Deciding content type")
+    logging.debug(
+        f"Deciding content types {accept_weighted_media_ranges} "
+        f"against {supported_content_types}"
+    )
+    # Checking a couple of corner cases:
+    if len(supported_content_types) == 0 or len(accept_weighted_media_ranges) == 0:
+        return None
+
     content_type: Optional[str] = None
-    accept_weighted_media_ranges_sorted = await prepare_weighted_media_ranges(
+    accept_weighted_media_ranges_sorted = prepare_weighted_media_ranges(
         accept_weighted_media_ranges
     )
     for weighted_media_range in accept_weighted_media_ranges_sorted:
