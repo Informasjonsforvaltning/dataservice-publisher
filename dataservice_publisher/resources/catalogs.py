@@ -4,6 +4,7 @@ import logging
 from typing import Any, Dict
 
 from aiohttp import hdrs, web
+from content_negotiation import decide_content_type, NoAgreeableContentTypeError
 
 from dataservice_publisher.service.catalog_service import (
     create_catalog,
@@ -12,7 +13,6 @@ from dataservice_publisher.service.catalog_service import (
     get_catalog_by_id,
     RequestBodyError,
 )
-from dataservice_publisher.utils import decide_content_type
 
 SUPPORTED_CONTENT_TYPES = [
     "text/turtle",
@@ -27,11 +27,12 @@ class Catalogs(web.View):
 
     async def get(self) -> web.Response:
         """Get all catalogs."""
-        content_type = decide_content_type(
-            self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
-        )
-        if not content_type:
-            raise web.HTTPNotAcceptable()
+        try:
+            content_type = decide_content_type(
+                self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
+            )
+        except NoAgreeableContentTypeError as e:
+            raise web.HTTPNotAcceptable() from e
 
         catalogs = fetch_catalogs().serialize(format=content_type, encoding="utf-8")
         return web.Response(
@@ -42,11 +43,12 @@ class Catalogs(web.View):
 
     async def post(self) -> web.Response:
         """Create a catalog and return the resulting graph."""
-        content_type = decide_content_type(
-            self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
-        )
-        if not content_type:
-            raise web.HTTPNotAcceptable()
+        try:
+            content_type = decide_content_type(
+                self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
+            )
+        except NoAgreeableContentTypeError as e:
+            raise web.HTTPNotAcceptable() from e
 
         new_catalog: Dict[str, Any] = await self.request.json()
         if new_catalog and "identifier" in new_catalog:
@@ -75,11 +77,12 @@ class Catalog(web.View):
 
     async def get(self) -> web.Response:
         """Get catalog by id."""
-        content_type = decide_content_type(
-            self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
-        )
-        if not content_type:
-            raise web.HTTPNotAcceptable()
+        try:
+            content_type = decide_content_type(
+                self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
+            )
+        except NoAgreeableContentTypeError as e:
+            raise web.HTTPNotAcceptable() from e
 
         id = self.request.match_info["id"]
         logging.debug(f"Getting catalog with id {id}")
