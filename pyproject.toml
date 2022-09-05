@@ -96,6 +96,7 @@ module = [
   "pythonjsonlogger.*",
   "gunicorn.*",
   "aioresponses.*",
+  "content_negotiation.*",
 ]
 
 [tool.pytest.ini_options]
