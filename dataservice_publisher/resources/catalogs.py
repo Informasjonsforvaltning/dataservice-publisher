@@ -1,7 +1,7 @@
 """Repository module for catalogs."""
 import json
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from aiohttp import hdrs, web
 
@@ -27,13 +27,8 @@ class Catalogs(web.View):
 
     async def get(self) -> web.Response:
         """Get all catalogs."""
-        accept_weighted_media_ranges: List[str] = (
-            ",".join(self.request.headers.getall(hdrs.ACCEPT))
-            .replace(" ", "")
-            .split(",")
-        )
         content_type = decide_content_type(
-            accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
+            self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
         )
         if not content_type:
             raise web.HTTPNotAcceptable()
@@ -47,13 +42,8 @@ class Catalogs(web.View):
 
     async def post(self) -> web.Response:
         """Create a catalog and return the resulting graph."""
-        accept_weighted_media_ranges: List[str] = (
-            ",".join(self.request.headers.getall(hdrs.ACCEPT))
-            .replace(" ", "")
-            .split(",")
-        )
         content_type = decide_content_type(
-            accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
+            self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
         )
         if not content_type:
             raise web.HTTPNotAcceptable()
@@ -85,13 +75,8 @@ class Catalog(web.View):
 
     async def get(self) -> web.Response:
         """Get catalog by id."""
-        accept_weighted_media_ranges: List[str] = (
-            ",".join(self.request.headers.getall(hdrs.ACCEPT))
-            .replace(" ", "")
-            .split(",")
-        )
         content_type = decide_content_type(
-            accept_weighted_media_ranges, SUPPORTED_CONTENT_TYPES
+            self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
         )
         if not content_type:
             raise web.HTTPNotAcceptable()

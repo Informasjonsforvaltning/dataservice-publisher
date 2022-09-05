@@ -55,21 +55,19 @@ class WeightedMediaRange:
 
 
 def prepare_weighted_media_ranges(
-    accept_weighted_media_ranges: List[str],
+    weighted_media_ranges: List[str],
 ) -> List[WeightedMediaRange]:
     """Prepare the accept weighted media ranges and sort on q-parameter."""
-    logging.debug(
-        f"Preparing accept weighted media ranges: {accept_weighted_media_ranges}"
-    )
+    logging.debug(f"Preparing accept weighted media ranges: {weighted_media_ranges}")
     # Assign q-parameter:
-    accept_weighted_media_ranges_sorted: List[WeightedMediaRange] = []
+    weighted_media_ranges_sorted: List[WeightedMediaRange] = []
 
-    for accept_weighted_media_range in accept_weighted_media_ranges:
+    for accept_weighted_media_range in weighted_media_ranges:
         # Instantiate weighted media range:
         try:
             weighted_media_range = WeightedMediaRange(accept_weighted_media_range)
 
-            accept_weighted_media_ranges_sorted.append(weighted_media_range)
+            weighted_media_ranges_sorted.append(weighted_media_range)
         except InvalidMediaRangeError:
             logging.debug(
                 "Ignoring invalid weighted media range: %s", accept_weighted_media_range
@@ -78,7 +76,7 @@ def prepare_weighted_media_ranges(
 
     # Adjust q-parameters with regard to specificity:
     # Highest q-parameter is the most specific:
-    for weighted_media_range in accept_weighted_media_ranges_sorted:
+    for weighted_media_range in weighted_media_ranges_sorted:
         logging.debug(
             f"Ajusting q-parameter for weighted media range: {weighted_media_range}"
         )
@@ -90,11 +88,11 @@ def prepare_weighted_media_ranges(
             weighted_media_range.q = weighted_media_range.q + 0.0002
 
     # Sort on q-parameter and return list of weighted media ranges:
-    accept_weighted_media_ranges_sorted.sort(key=lambda x: x.q, reverse=True)
+    weighted_media_ranges_sorted.sort(key=lambda x: x.q, reverse=True)
     logging.debug(
-        f"Accept weighted media ranges sorted: {', '.join(str(p) for p in accept_weighted_media_ranges_sorted)}"  # noqa: B950
+        f"Accept weighted media ranges sorted: {', '.join(str(p) for p in weighted_media_ranges_sorted)}"  # noqa: B950
     )
-    return accept_weighted_media_ranges_sorted
+    return weighted_media_ranges_sorted
 
 
 def get_default_content_type(
@@ -129,15 +127,16 @@ def decide_content_type(
         f"Deciding content types {accept_weighted_media_ranges} "
         f"against {supported_content_types}"
     )
+    weighted_media_ranges: List[str] = (
+        ",".join(accept_weighted_media_ranges).replace(" ", "").split(",")
+    )
     # Checking a couple of corner cases:
-    if len(supported_content_types) == 0 or len(accept_weighted_media_ranges) == 0:
+    if len(supported_content_types) == 0 or len(weighted_media_ranges) == 0:
         return None
 
     content_type: Optional[str] = None
-    accept_weighted_media_ranges_sorted = prepare_weighted_media_ranges(
-        accept_weighted_media_ranges
-    )
-    for weighted_media_range in accept_weighted_media_ranges_sorted:
+    weighted_media_ranges_sorted = prepare_weighted_media_ranges(weighted_media_ranges)
+    for weighted_media_range in weighted_media_ranges_sorted:
         logging.debug(f"Checking weighted media range: {weighted_media_range}")
         if weighted_media_range in supported_content_types:
             content_type = weighted_media_range.media_range()
