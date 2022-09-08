@@ -7,90 +7,29 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    name: Build, test, publish and deploy to staging environment
-    runs-on: ubuntu-latest
+  build-and-deploy-staging:
+    name: Call reusable workflow when pull request is created
     if: github.event.pull_request.draft == false
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Auth gcloud CLI for image-store
-        uses: google-github-actions/auth@main
-        with:
-          credentials_json: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
-
-      - name: Configure docker to use the gcloud command-line tool as a credential helper
-        run: gcloud auth configure-docker eu.gcr.io
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: .cache
-          key: ${{ runner.os }}-nox-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-nox-
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-          architecture: x64
-
-      - name: Install dependencies
-        run: |
-          pipx install nox==2022.8.7
-          pipx install poetry==1.2.0
-          pipx inject nox nox-poetry==1.0.1
-
-      - name: Build image and test with nox
-        run: nox
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          FUSEKI_PASSWORD: ${{ secrets.FUSEKI_PASSWORD }}
-
-      - name: Tag and publish docker image to Google Cloud
-        run: |
-          docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA
-          docker tag eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test eu.gcr.io/digdir-fdk-infra/dataservice-publisher:staging_latest
-          docker rmi eu.gcr.io/digdir-fdk-infra/dataservice-publisher:test
-          docker -- push eu.gcr.io/digdir-fdk-infra/dataservice-publisher -a
-
-      - name: Apply Helm template
-        run: |
-          helm repo add fdk https://informasjonsforvaltning.github.io/helm-chart/
-          helm fetch --untar --untardir ./helm fdk/dataservice-publisher
-          helm template --set DOCKER_IMAGE_NAME="eu.gcr.io/digdir-fdk-infra/dataservice-publisher:$GITHUB_SHA" \
-          -f ./helm/dataservice-publisher/values/staging.yaml \
-          ./helm/dataservice-publisher/ > ./kubectlapply.yaml
-          chmod o+w ./kubectlapply.yaml
-          cat kubectlapply.yaml
-
-      - name: Auth gcloud CLI for deploy
-        uses: google-github-actions/auth@main
-        with:
-          credentials_json: ${{ secrets.DIGDIR_FDK_DEV_AUTODEPLOY }}
-
-      - name: Deploy to GCP
-        run: |
-          gcloud container clusters get-credentials digdir-fdk-dev --region europe-north1-a --project digdir-fdk-dev
-          kubectl apply -f ./kubectlapply.yaml --force
-          if ! kubectl --namespace=staging rollout status deployment dataservice-publisher; then
-          kubectl --namespace=staging rollout undo deployment dataservice-publisher
-          kubectl --namespace=staging rollout status deployment dataservice-publisher
-          exit 1
-          fi
-
-      - name: Notify slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: "Application: dataservice-publisher | Environment: staging"
-          fields: commit,author,workflow
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
+    uses: Informasjonsforvaltning/workflows/.github/workflows/build-deploy-nox.yaml@chore/hos/debug
+    with:
+      app_name: dataservice-publisher
+      python_version: '3.10'
+      python_architecture: x64
+      environment: staging
+      cluster: digdir-fdk-dev
+      nox_image: True
+      nox_env: 4
+      nox_env_1_name: SECRET_KEY
+      nox_env_2_name: ADMIN_USERNAME
+      nox_env_3_name: ADMIN_PASSWORD
+      nox_env_4_name: FUSEKI_USERNAME
+      run_safety: true
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GCP_SA_DIGDIR_FDK_GCR_KEY: ${{ secrets.GCP_SA_DIGDIR_FDK_GCR_KEY }}
+      DIGDIR_FDK_AUTODEPLOY: ${{ secrets.DIGDIR_FDK_DEV_AUTODEPLOY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      NOX_ENV_1_VALUE: ${{ secrets.SECRET_KEY }}
+      NOX_ENV_2_VALUE: ${{ secrets.ADMIN_USERNAME }}
+      NOX_ENV_3_VALUE: ${{ secrets.ADMIN_PASSWORD }}
+      NOX_ENV_4_VALUE: ${{ secrets.FUSEKI_PASSWORD }}
