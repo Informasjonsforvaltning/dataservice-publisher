@@ -16,7 +16,7 @@ from dataservice_publisher.service.catalog_service import (
 
 
 @pytest.mark.unit
-def test_create_catalog(mocker: MockFixture) -> None:
+async def test_create_catalog(mocker: MockFixture) -> None:
     """Should return True when sucessful."""
     # Set up the mocks
     mocker.patch("yaml.safe_load", return_value=_mock_yaml_load())
@@ -25,7 +25,7 @@ def test_create_catalog(mocker: MockFixture) -> None:
     with open("./tests/files/catalog_1.json") as json_file:
         catalog = json.load(json_file)
 
-    _result = create_catalog(catalog)
+    _result = await create_catalog(catalog)
 
     assert isinstance(_result, Graph), "result is not a Graph"
     g2 = Graph().parse("tests/files/catalog_1.ttl", format="turtle")
@@ -41,36 +41,36 @@ def test_create_catalog(mocker: MockFixture) -> None:
 
 
 @pytest.mark.unit
-def test_fetch_catalogs(mocker: MockFixture) -> None:
+async def test_fetch_catalogs(mocker: MockFixture) -> None:
     """Should return a Graph."""
     # Set up the mock
     mocker.patch(
         "SPARQLWrapper.SPARQLWrapper.queryAndConvert", return_value=_mock_queryresult()
     )
 
-    g = fetch_catalogs()
+    g = await fetch_catalogs()
     assert isinstance(g, Graph)
     assert len(g) > 0
 
 
 @pytest.mark.unit
-def test_get_catalog_by_id(mocker: MockFixture) -> None:
+async def test_get_catalog_by_id(mocker: MockFixture) -> None:
     """Should return a specific graph."""
     # Set up the mock
     mocker.patch(
         "SPARQLWrapper.SPARQLWrapper.queryAndConvert", return_value=_mock_queryresult()
     )
-    g = get_catalog_by_id("1")
+    g = await get_catalog_by_id("1")
     assert isinstance(g, Graph)
     assert len(g) > 0
 
 
 @pytest.mark.unit
-def test_get_catalog_by_id_failure(mocker: MockFixture) -> None:
+async def test_get_catalog_by_id_failure(mocker: MockFixture) -> None:
     """Should return an empty graph."""
     # Set up the mock
     mocker.patch("SPARQLWrapper.SPARQLWrapper.queryAndConvert", return_value="")
-    g = get_catalog_by_id("non-existent")
+    g = await get_catalog_by_id("non-existent")
     assert isinstance(g, Graph)
     assert len(g) == 0
 

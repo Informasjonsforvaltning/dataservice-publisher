@@ -28,9 +28,9 @@ def unit_tests(session: Session) -> None:
         "pytest",
         "pytest-cov",
         "pyyaml",
-        "requests-mock",
         "pytest-mock",
         "pytest-aiohttp",
+        "pytest-asyncio",
         "aioresponses",
     )
     session.run(
@@ -52,7 +52,6 @@ def integration_tests(session: Session) -> None:
         "pytest",
         "pytest-cov",
         "pyyaml",
-        "requests-mock",
         "pytest-mock",
         "pytest-aiohttp",
         "aioresponses",
@@ -83,9 +82,9 @@ def contract_tests(session: Session) -> None:
         ".",
         "pytest",
         "pytest-docker",
-        "requests_mock",
         "pytest_mock",
         "aioresponses",
+        "pytest-asyncio",
     )
     session.run(
         "pytest",

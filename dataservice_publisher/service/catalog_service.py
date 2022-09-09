@@ -21,7 +21,7 @@ FUSEKI_HOST = env.get("FUSEKI_HOST", "http://fuseki")
 FUSEKI_PORT = int(env.get("FUSEKI_PORT", 8080))
 
 
-def fetch_catalogs() -> Graph:
+async def fetch_catalogs() -> Graph:
     """Returns a list of Catalog objects."""
     logging.debug("Fetch catalogs")
     try:
@@ -50,7 +50,7 @@ def fetch_catalogs() -> Graph:
         raise e
 
 
-def _parse_user_input(catalog: dict) -> Graph:
+async def _parse_user_input(catalog: dict) -> Graph:
     g = Catalog()
 
     g.identifier = URIRef(catalog["identifier"])
@@ -72,12 +72,12 @@ def _parse_user_input(catalog: dict) -> Graph:
     return g._to_graph()
 
 
-def create_catalog(catalog: dict) -> Graph:
+async def create_catalog(catalog: dict) -> Graph:
     """Create a graph based on catalog and persist to store."""
     # Use datacatalogtordf and oastodcat to create a graph and persist:
     _g = Graph()
     try:
-        _g = _parse_user_input(catalog)
+        _g = await _parse_user_input(catalog)
     except TypeError as e:
         logging.exception("message")
         # Logs the error appropriately.
@@ -135,7 +135,7 @@ def create_catalog(catalog: dict) -> Graph:
         raise e
 
 
-def get_catalog_by_id(id: str) -> Graph:
+async def get_catalog_by_id(id: str) -> Graph:
     """Returns a specific catalog objects identified by id."""
     logging.debug(f"Get catalog by id: {id}")
     try:
@@ -168,7 +168,7 @@ def get_catalog_by_id(id: str) -> Graph:
         raise e
 
 
-def delete_catalog(id: str) -> bool:
+async def delete_catalog(id: str) -> bool:
     """Delete the graph given by id and return true if successful."""
     try:
         context = URIRef(f"{DATASERVICE_PUBLISHER_URL}/catalogs/{id}")

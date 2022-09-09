@@ -34,9 +34,11 @@ class Catalogs(web.View):
         except NoAgreeableContentTypeError as e:
             raise web.HTTPNotAcceptable() from e
 
-        catalogs = fetch_catalogs().serialize(format=content_type, encoding="utf-8")
+        catalogs = await fetch_catalogs()
+        body = catalogs.serialize(format=content_type, encoding="utf-8")
+
         return web.Response(
-            body=catalogs,
+            body=body,
             content_type=content_type,
             charset="utf-8",
         )
@@ -53,7 +55,7 @@ class Catalogs(web.View):
         new_catalog: Dict[str, Any] = await self.request.json()
         if new_catalog and "identifier" in new_catalog:
             try:
-                catalog = create_catalog(new_catalog)
+                catalog = await create_catalog(new_catalog)
                 return web.Response(
                     body=catalog.serialize(format=content_type, encoding="utf-8"),
                     content_type=content_type,
@@ -87,7 +89,7 @@ class Catalog(web.View):
         id = self.request.match_info["id"]
         logging.debug(f"Getting catalog with id {id}")
 
-        catalog = get_catalog_by_id(id)
+        catalog = await get_catalog_by_id(id)
         if len(catalog) == 0:
             return web.Response(status=404)
         return web.Response(
@@ -101,10 +103,10 @@ class Catalog(web.View):
         id = self.request.match_info["id"]
         logging.debug(f"Delete catalog with id {id}")
 
-        catalog = get_catalog_by_id(id)
+        catalog = await get_catalog_by_id(id)
         if len(catalog) == 0:
             return web.Response(status=404)
-        result = delete_catalog(id)
+        result = await delete_catalog(id)
         if result:
             return web.Response(status=204)
         return web.Response(status=400)
