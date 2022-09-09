@@ -13,4 +13,4 @@
   - [ ] Service layer pattern
   - [ ] Unit of Work (UoW) pattern
   - [ ] Aggregate pattern
-- [ ] Refactor to aiohttp framework
+- [x] Refactor to aiohttp framework

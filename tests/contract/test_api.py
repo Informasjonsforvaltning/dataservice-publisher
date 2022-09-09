@@ -1,21 +1,26 @@
 """Test cases for ping and ready."""
 from typing import Any
 
+from aiohttp import ClientSession
 import pytest
-import requests
 
 
 @pytest.mark.contract
-def test_ping(http_service: Any) -> None:
+@pytest.mark.asyncio
+async def test_ping(http_service: Any) -> None:
     """Should return status code 200."""
     url = f"{http_service}/ping"
-    resp = requests.get(url)
-    assert 200 == resp.status_code
+    async with ClientSession() as session:
+        async with session.get(url) as resp:
+            assert 200 == resp.status
 
 
 @pytest.mark.contract
-def test_ready(http_service: Any) -> None:
+@pytest.mark.asyncio
+async def test_ready(http_service: Any) -> None:
     """Should return status code 200."""
     url = f"{http_service}/ready"
-    resp = requests.get(url)
-    assert 200 == resp.status_code
+
+    async with ClientSession() as session:
+        async with session.get(url) as resp:
+            assert 200 == resp.status

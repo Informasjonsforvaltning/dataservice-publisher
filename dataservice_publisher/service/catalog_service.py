@@ -2,11 +2,11 @@
 import logging
 from os import environ as env
 
+from aiohttp import ClientSession
 from datacatalogtordf import Catalog
 from dotenv import load_dotenv
 from oastodcat import OASDataService
 from rdflib.graph import Graph, Literal, URIRef
-import requests
 from SPARQLWrapper import POST, SPARQLWrapper, TURTLE
 from SPARQLWrapper.SPARQLExceptions import SPARQLWrapperException
 import yaml
@@ -57,8 +57,14 @@ async def _parse_user_input(catalog: dict) -> Graph:
     g.title = catalog["title"]
     g.description = catalog["description"]
     g.publisher = catalog["publisher"]
+    # TODO: consider doing the request in parallel
     for api in catalog["apis"]:
-        oas = yaml.safe_load(requests.get(api["url"]).text)
+        async with ClientSession() as session:
+            async with session.get(api["url"]) as response:
+                if response.status == 200:
+                    api_spec = await response.text()
+                    oas = yaml.safe_load(api_spec)
+
         oas_spec = OASDataService(api["url"], oas, api["identifier"])
         if "conformsTo" in api:
             oas_spec.conforms_to = api["conformsTo"]
