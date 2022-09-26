@@ -292,7 +292,7 @@ rdflib = ">=6.0.0,<7.0.0"
 
 [[package]]
 name = "content-negotiation"
-version = "1.1.0"
+version = "1.1.1"
 description = "A library for deciding content-type based on media ranges in HTTP Accept headers."
 category = "main"
 optional = false
@@ -1287,22 +1287,6 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
-name = "requests-mock"
-version = "1.10.0"
-description = "Mock out responses from the requests package"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-requests = ">=2.3,<3"
-six = "*"
-
-[package.extras]
-fixture = ["fixtures"]
-test = ["fixtures", "mock", "purl", "pytest", "requests-futures", "sphinx", "testrepository (>=0.0.18)", "testtools"]
-
-[[package]]
 name = "ruamel.yaml"
 version = "0.17.21"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
@@ -1731,7 +1715,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "9cfbc387b6a08892b08253880862258697a83398a462acfa3479b28780e22c25"
+content-hash = "6dcabecde096e2e07f2fa0b2bdd860cba7f3b62abefa3a06f2425ff855812512"
 
 [metadata.files]
 aiohttp = [
@@ -1975,7 +1959,6 @@ click = [
 ]
 codecov = [
     {file = "codecov-2.1.12-py2.py3-none-any.whl", hash = "sha256:585dc217dc3d8185198ceb402f85d5cb5dbfa0c5f350a5abcdf9e347776a5b47"},
-    {file = "codecov-2.1.12-py3.8.egg", hash = "sha256:782a8e5352f22593cbc5427a35320b99490eb24d9dcfa2155fd99d2b75cfb635"},
     {file = "codecov-2.1.12.tar.gz", hash = "sha256:a0da46bb5025426da895af90938def8ee12d37fcbcbbbc15b6dc64cf7ebc51c1"},
 ]
 colorama = [
@@ -1991,8 +1974,8 @@ concepttordf = [
     {file = "concepttordf-2.0.2.tar.gz", hash = "sha256:284c8116f3b2083d47dcfbd4f867407d5cd01b597d7a92aec55f0555ff222168"},
 ]
 content-negotiation = [
-    {file = "content-negotiation-1.1.0.tar.gz", hash = "sha256:732acd83102dc9b73b46f075b7fe1bce0236a0b61db0e622f1ecaa108164e45e"},
-    {file = "content_negotiation-1.1.0-py3-none-any.whl", hash = "sha256:4201133d7204ffd9ceea4d9f286dbb531d7ec85389889127e40adbba674f1fdf"},
+    {file = "content-negotiation-1.1.1.tar.gz", hash = "sha256:b41c8353e5dc34ffea77bd1c3325c518b0693c362b14b6cab50d700fb2a72268"},
+    {file = "content_negotiation-1.1.1-py3-none-any.whl", hash = "sha256:e770cad11187b47977b201ae67820c0d3307b9e270efc7a3c9c3e0ec3c7daf1a"},
 ]
 coverage = [
     {file = "coverage-6.4.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:e7b4da9bafad21ea45a714d3ea6f3e1679099e420c8741c74905b92ee9bfa7cc"},
@@ -2667,10 +2650,6 @@ requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
     {file = "requests-2.28.1.tar.gz", hash = "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983"},
 ]
-requests-mock = [
-    {file = "requests-mock-1.10.0.tar.gz", hash = "sha256:59c9c32419a9fb1ae83ec242d98e889c45bd7d7a65d48375cc243ec08441658b"},
-    {file = "requests_mock-1.10.0-py2.py3-none-any.whl", hash = "sha256:2fdbb637ad17ee15c06f33d31169e71bf9fe2bdb7bc9da26185be0dd8d842699"},
-]
 "ruamel.yaml" = [
     {file = "ruamel.yaml-0.17.21-py3-none-any.whl", hash = "sha256:742b35d3d665023981bd6d16b3d24248ce5df75fdb4e2924e93a05c1f8b61ca7"},
     {file = "ruamel.yaml-0.17.21.tar.gz", hash = "sha256:8b7ce697a2f212752a35c1ac414471dc16c424c9573be4926b56ff3f5d23b7af"},
@@ -2777,7 +2756,6 @@ stevedore = [
 ]
 tabulate = [
     {file = "tabulate-0.8.10-py3-none-any.whl", hash = "sha256:0ba055423dbaa164b9e456abe7920c5e8ed33fcc16f6d1b2f2d152c8e1e8b4fc"},
-    {file = "tabulate-0.8.10-py3.8.egg", hash = "sha256:436f1c768b424654fce8597290d2764def1eea6a77cfa5c33be00b1bc0f4f63d"},
     {file = "tabulate-0.8.10.tar.gz", hash = "sha256:6c57f3f3dd7ac2782770155f3adb2db0b1a269637e42f27599925e64b114f519"},
 ]
 texttable = [
