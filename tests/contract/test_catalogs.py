@@ -27,6 +27,7 @@ def event_loop(request: Any) -> Any:
 @pytest.mark.contract
 @pytest.mark.asyncio
 @pytest.fixture(scope="session")
+@pytest.skip
 async def access_token(http_service: Any) -> Any:
     """Ensure that HTTP service is up and responsive."""
     """Should return status code 200 and an access_token."""
@@ -45,6 +46,7 @@ async def access_token(http_service: Any) -> Any:
 
 @pytest.mark.contract
 @pytest.mark.asyncio
+@pytest.skip
 async def test_create_catalog_unauthenticated(http_service: Any) -> None:
     """Should return status code 401."""
     url = f"{http_service}/catalogs"
@@ -59,6 +61,7 @@ async def test_create_catalog_unauthenticated(http_service: Any) -> None:
 
 @pytest.mark.contract
 @pytest.mark.asyncio
+@pytest.skip
 async def test_create_catalog(http_service: Any, access_token: str) -> None:
     """Should return status code 201 and a valid location header."""
     url = f"{http_service}/catalogs"

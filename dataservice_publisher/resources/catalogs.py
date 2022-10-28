@@ -1,4 +1,5 @@
 """Repository module for catalogs."""
+import asyncio
 import json
 import logging
 from typing import Any, Dict
@@ -45,20 +46,13 @@ class Catalogs(web.View):
 
     async def post(self) -> web.Response:
         """Create a catalog and return the resulting graph."""
-        try:
-            content_type = decide_content_type(
-                self.request.headers.getall(hdrs.ACCEPT), SUPPORTED_CONTENT_TYPES
-            )
-        except NoAgreeableContentTypeError as e:
-            raise web.HTTPNotAcceptable() from e
-
         new_catalog: Dict[str, Any] = await self.request.json()
         if new_catalog and "identifier" in new_catalog:
             try:
-                catalog = await create_catalog(new_catalog)
+                asyncio.create_task(create_catalog(new_catalog))
                 return web.Response(
-                    body=catalog.serialize(format=content_type, encoding="utf-8"),
-                    content_type=content_type,
+                    body="started catalog creation",
+                    content_type="text/plain",
                     charset="utf-8",
                 )
             except RequestBodyError as e:
