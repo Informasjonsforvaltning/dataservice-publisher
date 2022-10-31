@@ -52,15 +52,16 @@ async def fetch_catalogs() -> Graph:
 
 async def _parse_user_input(catalog: dict) -> Graph:
     g = Catalog()
-
     g.identifier = URIRef(catalog["identifier"])
     g.title = catalog["title"]
     g.description = catalog["description"]
     g.publisher = catalog["publisher"]
     # TODO: consider doing the request in parallel
     for api in catalog["apis"]:
+        logging.debug(f"""getting ${api["url"]}""")
         async with ClientSession() as session:
             async with session.get(api["url"]) as response:
+                logging.debug(f"""${api["url"]}: ${response.status}""")
                 if response.status == 200:
                     api_spec = await response.text()
                     oas = yaml.safe_load(api_spec)
@@ -82,6 +83,7 @@ async def create_catalog(catalog: dict) -> Graph:
     """Create a graph based on catalog and persist to store."""
     # Use datacatalogtordf and oastodcat to create a graph and persist:
     _g = Graph()
+    logging.info("creating and persisting graph from catalog")
     try:
         _g = await _parse_user_input(catalog)
     except TypeError as e:
