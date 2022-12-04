@@ -138,7 +138,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "Babel"
@@ -232,7 +232,7 @@ optional = false
 python-versions = ">=3.6.0"
 
 [package.extras]
-unicode_backport = ["unicodedata2"]
+unicode-backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
@@ -726,16 +726,16 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "jsonpickle"
-version = "2.2.0"
+version = "3.0.0"
 description = "Python library for serializing any arbitrary object graph into JSON"
 category = "main"
 optional = false
-python-versions = ">=2.7"
+python-versions = ">=3.7"
 
 [package.extras]
 docs = ["jaraco.packaging (>=3.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["ecdsa", "enum34", "feedparser", "jsonlib", "numpy", "pandas", "pymongo", "pytest (>=3.5,!=3.7.3)", "pytest-black-multipy", "pytest-checkdocs (>=1.2.3)", "pytest-cov", "pytest-flake8 (<1.1.0)", "pytest-flake8 (>=1.1.1)", "scikit-learn", "sqlalchemy"]
-"testing.libs" = ["simplejson", "ujson", "yajl"]
+testing = ["ecdsa", "feedparser", "gmpy2", "numpy", "pandas", "pymongo", "pytest (>=3.5,!=3.7.3)", "pytest-black-multipy", "pytest-checkdocs (>=1.2.3)", "pytest-cov", "pytest-flake8 (>=1.1.1)", "scikit-learn", "sqlalchemy"]
+testing-libs = ["simplejson", "ujson"]
 
 [[package]]
 name = "jsonschema"
@@ -753,7 +753,7 @@ six = ">=1.11.0"
 
 [package.extras]
 format = ["idna", "jsonpointer (>1.13)", "rfc3987", "strict-rfc3339", "webcolors"]
-format_nongpl = ["idna", "jsonpointer (>1.13)", "rfc3339-validator", "rfc3986-validator (>0.1.0)", "webcolors"]
+format-nongpl = ["idna", "jsonpointer (>1.13)", "rfc3339-validator", "rfc3986-validator (>0.1.0)", "webcolors"]
 
 [[package]]
 name = "libcst"
@@ -863,7 +863,7 @@ py = ">=1.4,<2.0.0"
 virtualenv = ">=14"
 
 [package.extras]
-tox_to_nox = ["jinja2", "tox"]
+tox-to-nox = ["jinja2", "tox"]
 
 [[package]]
 name = "nox-poetry"
@@ -1295,7 +1295,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "ruamel.yaml"
@@ -1731,7 +1731,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "43026d191cf26678832d20848e533dd54792569717d3d3bd26f4bccbce79279b"
+content-hash = "2d9872f01bd76092361415e1cc60d2705781bee12ffa53965d0e1b4ff944789f"
 
 [metadata.files]
 aiohttp = [
@@ -2283,8 +2283,8 @@ Jinja2 = [
     {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
 ]
 jsonpickle = [
-    {file = "jsonpickle-2.2.0-py2.py3-none-any.whl", hash = "sha256:de7f2613818aa4f234138ca11243d6359ff83ae528b2185efdd474f62bcf9ae1"},
-    {file = "jsonpickle-2.2.0.tar.gz", hash = "sha256:7b272918b0554182e53dc340ddd62d9b7f902fec7e7b05620c04f3ccef479a0e"},
+    {file = "jsonpickle-3.0.0-py2.py3-none-any.whl", hash = "sha256:7c4b13d595ff3520148ed870b9f5917023ebdc55c9ec0cb695688fdc16e90c3e"},
+    {file = "jsonpickle-3.0.0.tar.gz", hash = "sha256:504586e5c0fd52fd76a56f86c36f8c4d29778bdef92dc06d38ca6e2e9fc4f090"},
 ]
 jsonschema = [
     {file = "jsonschema-3.2.0-py2.py3-none-any.whl", hash = "sha256:4e5b3cf8216f577bee9ce139cbe72eca3ea4f292ec60928ff24758ce626cd163"},
