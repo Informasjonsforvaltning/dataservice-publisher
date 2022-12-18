@@ -138,7 +138,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "Babel"
@@ -232,7 +232,7 @@ optional = false
 python-versions = ">=3.6.0"
 
 [package.extras]
-unicode_backport = ["unicodedata2"]
+unicode-backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
@@ -726,16 +726,16 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "jsonpickle"
-version = "2.2.0"
+version = "3.0.1"
 description = "Python library for serializing any arbitrary object graph into JSON"
 category = "main"
 optional = false
-python-versions = ">=2.7"
+python-versions = ">=3.7"
 
 [package.extras]
 docs = ["jaraco.packaging (>=3.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["ecdsa", "enum34", "feedparser", "jsonlib", "numpy", "pandas", "pymongo", "pytest (>=3.5,!=3.7.3)", "pytest-black-multipy", "pytest-checkdocs (>=1.2.3)", "pytest-cov", "pytest-flake8 (<1.1.0)", "pytest-flake8 (>=1.1.1)", "scikit-learn", "sqlalchemy"]
-"testing.libs" = ["simplejson", "ujson", "yajl"]
+testing = ["ecdsa", "feedparser", "gmpy2", "numpy", "pandas", "pymongo", "pytest (>=3.5,!=3.7.3)", "pytest-black-multipy", "pytest-checkdocs (>=1.2.3)", "pytest-cov", "pytest-flake8 (>=1.1.1)", "scikit-learn", "sqlalchemy"]
+testing-libs = ["simplejson", "ujson"]
 
 [[package]]
 name = "jsonschema"
@@ -753,7 +753,7 @@ six = ">=1.11.0"
 
 [package.extras]
 format = ["idna", "jsonpointer (>1.13)", "rfc3987", "strict-rfc3339", "webcolors"]
-format_nongpl = ["idna", "jsonpointer (>1.13)", "rfc3339-validator", "rfc3986-validator (>0.1.0)", "webcolors"]
+format-nongpl = ["idna", "jsonpointer (>1.13)", "rfc3339-validator", "rfc3986-validator (>0.1.0)", "webcolors"]
 
 [[package]]
 name = "libcst"
@@ -863,7 +863,7 @@ py = ">=1.4,<2.0.0"
 virtualenv = ">=14"
 
 [package.extras]
-tox_to_nox = ["jinja2", "tox"]
+tox-to-nox = ["jinja2", "tox"]
 
 [[package]]
 name = "nox-poetry"
@@ -1295,7 +1295,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "ruamel.yaml"
@@ -1731,7 +1731,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "43026d191cf26678832d20848e533dd54792569717d3d3bd26f4bccbce79279b"
+content-hash = "2d2e9c70003c62a1bba72d2c6549a5d9ca3dee8a1defbfc62e32be1be2dca8fa"
 
 [metadata.files]
 aiohttp = [
@@ -2283,8 +2283,8 @@ Jinja2 = [
     {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
 ]
 jsonpickle = [
-    {file = "jsonpickle-2.2.0-py2.py3-none-any.whl", hash = "sha256:de7f2613818aa4f234138ca11243d6359ff83ae528b2185efdd474f62bcf9ae1"},
-    {file = "jsonpickle-2.2.0.tar.gz", hash = "sha256:7b272918b0554182e53dc340ddd62d9b7f902fec7e7b05620c04f3ccef479a0e"},
+    {file = "jsonpickle-3.0.1-py2.py3-none-any.whl", hash = "sha256:130d8b293ea0add3845de311aaba55e6d706d0bb17bc123bd2c8baf8a39ac77c"},
+    {file = "jsonpickle-3.0.1.tar.gz", hash = "sha256:032538804795e73b94ead410800ac387fdb6de98f8882ac957fcd247e3a85200"},
 ]
 jsonschema = [
     {file = "jsonschema-3.2.0-py2.py3-none-any.whl", hash = "sha256:4e5b3cf8216f577bee9ce139cbe72eca3ea4f292ec60928ff24758ce626cd163"},
@@ -2708,6 +2708,7 @@ requests = [
     {file = "ruamel.yaml.clib-0.2.7-cp310-cp310-win_amd64.whl", hash = "sha256:d000f258cf42fec2b1bbf2863c61d7b8918d31ffee905da62dede869254d3b8a"},
     {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:045e0626baf1c52e5527bd5db361bc83180faaba2ff586e763d3d5982a876a9e"},
     {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-macosx_12_6_arm64.whl", hash = "sha256:721bc4ba4525f53f6a611ec0967bdcee61b31df5a56801281027a3a6d1c2daf5"},
+    {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:41d0f1fa4c6830176eef5b276af04c89320ea616655d01327d5ce65e50575c94"},
     {file = "ruamel.yaml.clib-0.2.7-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:4b3a93bb9bc662fc1f99c5c3ea8e623d8b23ad22f861eb6fce9377ac07ad6072"},
     {file = "ruamel.yaml.clib-0.2.7-cp36-cp36m-macosx_12_0_arm64.whl", hash = "sha256:a234a20ae07e8469da311e182e70ef6b199d0fbeb6c6cc2901204dd87fb867e8"},
     {file = "ruamel.yaml.clib-0.2.7-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:15910ef4f3e537eea7fe45f8a5d19997479940d9196f357152a09031c5be59f3"},
