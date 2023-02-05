@@ -64,7 +64,7 @@ safety = "^2.3.1"
 sphinx-autodoc-typehints = "^1.21.7"
 types-PyYAML = "^6.0.12.1"
 types-requests = "^2.28.11.2"
-xdoctest = "^1.1.0"
+xdoctest = "^1.1.1"
 
 [tool.coverage.paths]
 source = ["dataservice_publisher", "*/site-packages"]
