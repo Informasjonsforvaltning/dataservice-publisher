@@ -80,7 +80,7 @@ async def test_create_catalog(http_service: Any, access_token: str) -> None:
             assert 0 < len(g)
 
             # Check that the catalog is in the catalogs graph, and extract the catalog's URI:
-            catalog_url: str = g.value(None, RDF.type, DCAT.Catalog, any=False)
+            catalog_url: str = str(g.value(None, RDF.type, DCAT.Catalog, any=False))
             assert catalog_url
 
         # Get the catalog's graph and check that it is isomorphic with the one we created:
