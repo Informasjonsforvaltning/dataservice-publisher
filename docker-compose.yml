@@ -19,24 +19,6 @@ services:
       - "fuseki"
 
   fuseki:
-    image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher-sparql-service:staging_latest
+    image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher-sparql-service:latest
     ports:
       - "8080:8080"
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
-  rabbitmq:
-    image: rabbitmq:3.8.2-management
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: rabbitmq-diagnostics check_port_connectivity
-      interval: 1s
-      timeout: 4s
-      retries: 6
-      start_period: 5s
