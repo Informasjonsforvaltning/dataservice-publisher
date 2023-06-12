@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   dataservice-publisher:
     build: .
@@ -19,6 +19,6 @@ services:
       - "fuseki"
 
   fuseki:
-    image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher-sparql-service:staging_latest
+    image: eu.gcr.io/digdir-fdk-infra/dataservice-publisher-sparql-service:latest
     ports:
       - "8080:8080"
