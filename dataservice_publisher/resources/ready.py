@@ -1,4 +1,5 @@
 """Repository module for ready."""
+
 import logging
 from os import environ as env
 from typing import Any

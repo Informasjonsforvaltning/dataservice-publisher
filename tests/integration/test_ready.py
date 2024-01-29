@@ -1,4 +1,5 @@
 """Integration test cases for the ready route."""
+
 from typing import Any
 
 from aiohttp import ClientConnectionError

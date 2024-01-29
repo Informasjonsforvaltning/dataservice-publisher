@@ -1,4 +1,5 @@
 """Repository module for service layer."""
+
 import logging
 from os import environ as env
 

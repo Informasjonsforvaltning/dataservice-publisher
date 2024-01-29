@@ -1,4 +1,5 @@
 """Test cases for login."""
+
 from os import environ as env
 from typing import Any
 

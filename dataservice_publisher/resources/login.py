@@ -1,4 +1,5 @@
 """Repository module for ping."""
+
 import json
 from os import environ as env
 from typing import Optional

@@ -1,4 +1,5 @@
 """Repository module for catalogs."""
+
 import json
 import logging
 from typing import Any, Dict
