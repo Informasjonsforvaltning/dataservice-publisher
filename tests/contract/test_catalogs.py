@@ -1,4 +1,5 @@
 """Test cases for the catalogs paths."""
+
 import asyncio
 import json
 from os import environ as env

@@ -1,4 +1,5 @@
 """Unit test cases for the catalog module."""
+
 import json
 from typing import Any, Dict
 

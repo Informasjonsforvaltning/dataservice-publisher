@@ -1,4 +1,5 @@
 """Exeptions module for dataservice-publisher."""
+
 from typing import Optional
 
 

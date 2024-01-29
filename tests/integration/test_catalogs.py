@@ -1,4 +1,5 @@
 """Integration test cases for the catalogs route."""
+
 import json
 from os import environ as env
 from typing import Any, Dict

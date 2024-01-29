@@ -1,4 +1,5 @@
 """Test cases for ping and ready."""
+
 from typing import Any
 
 from aiohttp import ClientSession

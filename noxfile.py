@@ -1,4 +1,5 @@
 """Nox sessions."""
+
 import sys
 
 import nox
@@ -11,7 +12,6 @@ package = "dataservice_publisher"
 nox.options.sessions = (
     "lint",
     "mypy",
-    "pytype",
     "unit_tests",
     "integration_tests",
     "contract_tests",
@@ -153,14 +153,6 @@ def mypy(session: Session) -> None:
     session.run("mypy", *args)
     if not session.posargs:
         session.run("mypy", f"--python-executable={sys.executable}", "noxfile.py")
-
-
-@session(python="3.10")
-def pytype(session: Session) -> None:
-    """Run the static type checker using pytype."""
-    args = session.posargs or ["--disable=import-error", *locations]
-    session.install("pytype")
-    session.run("pytype", *args)
 
 
 @session(python="3.10")

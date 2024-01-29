@@ -1,4 +1,5 @@
 """Repository module for ping."""
+
 from aiohttp import web
 
 
