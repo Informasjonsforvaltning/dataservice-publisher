@@ -1,0 +1,122 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ns1: <http://www.w3.org/2006/vcard/ns#> .
+
+<https://dataservice-publisher.digdir.no/catalogs/2> a dcat:Catalog ;
+    dcterms:description "Katalog med FDK-relaterte api-beskrivelser i seksjon for Informasjonsforvaltning"@nb ;
+    dcterms:publisher <https://organization-catalogue.fellesdatakatalog.digdir.no/organizations/991825827> ;
+    dcterms:title "Dataservicekatalog for Felles datakatalog"@nb ;
+    dcat:service <https://dataservice-publisher.digdir.no/dataservices/1d4e14adae640ed25a609555511737e6f4d33414>,
+        <https://dataservice-publisher.digdir.no/dataservices/27d3e51a56994594c7210ddf718e0e36365b8a38>,
+        <https://dataservice-publisher.digdir.no/dataservices/350e616364bbff72660def557b45393cdf877553>,
+        <https://dataservice-publisher.digdir.no/dataservices/a38b2e8a912da8e2549d9a938cd1c64445c1f21b>,
+        <https://dataservice-publisher.digdir.no/dataservices/f1a624faf7770a148749cea3d4c59015df4d705a>,
+        <https://dataservice-publisher.digdir.no/dataservices/fa743983b464928def8fdbdc79e6e8e5c1a1296f> .
+
+<http://server/unset-base/N0966e1fce3d94b9888b048c8ae1967bc> a ns1:Organization ;
+    ns1:hasEmail <mailto:fellesdatakatalog@digdir.no> ;
+    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
+    ns1:hasURL <https://fellesdatakatalog.digdir.no> .
+
+<http://server/unset-base/N2698a315423e49aab542faae56e90178> a ns1:Organization ;
+    ns1:hasEmail <mailto:fellesdatakatalog@digdir.no> ;
+    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
+    ns1:hasURL <https://fellesdatakatalog.digdir.no> .
+
+<http://server/unset-base/N2f7c9b36bced47828220386309ac022a> a ns1:Organization ;
+    ns1:hasEmail <mailto:fellesdatakatalog@digdir.no> ;
+    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
+    ns1:hasURL <https://fellesdatakatalog.digdir.no> .
+
+<http://server/unset-base/N768cb57fcd824935a0856ce9bdd69b2d> a ns1:Organization ;
+    ns1:hasEmail <mailto:fellesdatakatalog@digdir.no> ;
+    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
+    ns1:hasURL <https://fellesdatakatalog.digdir.no> .
+
+<http://server/unset-base/N8517a5bc13124f6c926a62ef63fbc9fa> a ns1:Organization ;
+    ns1:hasEmail <mailto:fellesdatakatalog@digdir.no> ;
+    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
+    ns1:hasURL <https://fellesdatakatalog.digdir.no> .
+
+<http://server/unset-base/N93ea1321a27341fb937f201eaa3203b3> a ns1:Organization ;
+    ns1:hasEmail <mailto:fellesdatakatalog@digdir.no> ;
+    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
+    ns1:hasURL <https://fellesdatakatalog.digdir.no> .
+
+<https://dataservice-publisher.digdir.no/dataservices/1d4e14adae640ed25a609555511737e6f4d33414> a dcat:DataService ;
+    dcterms:description "Tilgjengeliggjør dataservice-beskrivelser fra en dataservice-katalog ihht DCAT-AP-NO v2.0"@en ;
+    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
+    dcterms:title "FDK dataservice harvester"@en ;
+    dcat:contactPoint <http://server/unset-base/N768cb57fcd824935a0856ce9bdd69b2d> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-dataservice-harvester/master/src/main/resources/specification/fdk-dataservice-harvester.yaml> ;
+    dcat:endpointURL <https://dataservices.fellesdatakatalog.digdir.no/> ;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/application/ld+json>,
+        <https://www.iana.org/assignments/media-types/application/n-triples>,
+        <https://www.iana.org/assignments/media-types/application/rdf+json>,
+        <https://www.iana.org/assignments/media-types/application/rdf+xml>,
+        <https://www.iana.org/assignments/media-types/text/n3>,
+        <https://www.iana.org/assignments/media-types/text/turtle> .
+
+<https://dataservice-publisher.digdir.no/dataservices/27d3e51a56994594c7210ddf718e0e36365b8a38> a dcat:DataService ;
+    dcterms:description "Exposes a basic service which provides information related to the organization catalog in the National Data Directory"@en ;
+    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
+    dcterms:title "National Data Directory Organization Catalog"@en ;
+    dcat:contactPoint <http://server/unset-base/N8517a5bc13124f6c926a62ef63fbc9fa> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/organization-catalog/main/src/main/resources/specification/organization-catalog.yaml> ;
+    dcat:endpointURL <https://organization-catalog.fellesdatakatalog.digdir.no> ;
+    dcat:landingPage <https://informasjonsforvaltning.github.io/> ;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/application/json>,
+        <https://www.iana.org/assignments/media-types/application/ld+json>,
+        <https://www.iana.org/assignments/media-types/application/rdf+json>,
+        <https://www.iana.org/assignments/media-types/application/rdf+xml>,
+        <https://www.iana.org/assignments/media-types/application/xml>,
+        <https://www.iana.org/assignments/media-types/text/plain>,
+        <https://www.iana.org/assignments/media-types/text/turtle> .
+
+<https://dataservice-publisher.digdir.no/dataservices/350e616364bbff72660def557b45393cdf877553> a dcat:DataService ;
+    dcterms:description "Tilgjengeliggjør datasettbeskrivelser fra en datasetkatalog ihht DCAT-AP-NO v2.0"@en ;
+    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
+    dcterms:title "FDK dataset harvester"@en ;
+    dcat:contactPoint <http://server/unset-base/N0966e1fce3d94b9888b048c8ae1967bc> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-dataset-harvester/main/src/main/resources/specification/fdk-dataset-harvester.yaml> ;
+    dcat:endpointURL <https://datasets.fellesdatakatalog.digdir.no> ;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/application/ld+json>,
+        <https://www.iana.org/assignments/media-types/application/n-triples>,
+        <https://www.iana.org/assignments/media-types/application/rdf+json>,
+        <https://www.iana.org/assignments/media-types/application/rdf+xml>,
+        <https://www.iana.org/assignments/media-types/text/n3>,
+        <https://www.iana.org/assignments/media-types/text/turtle> .
+
+<https://dataservice-publisher.digdir.no/dataservices/a38b2e8a912da8e2549d9a938cd1c64445c1f21b> a dcat:DataService ;
+    dcterms:description "Tilgjengeliggjør begreper fra Begrepskatalog"@en ;
+    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
+    dcterms:title "Begrepskatalog API"@en ;
+    dcat:contactPoint <http://server/unset-base/N2698a315423e49aab542faae56e90178> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/ConceptRegistrationAPI.yaml> ;
+    dcat:endpointURL <https://registrering-begrep-api.fellesdatakatalog.digdir.no> ;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/application/json> .
+
+<https://dataservice-publisher.digdir.no/dataservices/f1a624faf7770a148749cea3d4c59015df4d705a> a dcat:DataService ;
+    dcterms:description "Tilgjengeliggjør informasjonsmodeller fra en katalog ihht DCAT-AP-NO"@en ;
+    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
+    dcterms:title "FDK information model harvester"@en ;
+    dcat:contactPoint <http://server/unset-base/N93ea1321a27341fb937f201eaa3203b3> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/fdk-informationmodel-harvester/master/src/main/resources/specification/specification.yaml> ;
+    dcat:endpointURL <https://informationmodels.fellesdatakatalog.digdir.no> ;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/application/ld+json>,
+        <https://www.iana.org/assignments/media-types/application/n-triples>,
+        <https://www.iana.org/assignments/media-types/application/rdf+json>,
+        <https://www.iana.org/assignments/media-types/application/rdf+xml>,
+        <https://www.iana.org/assignments/media-types/text/n3>,
+        <https://www.iana.org/assignments/media-types/text/turtle> .
+
+<https://dataservice-publisher.digdir.no/dataservices/fa743983b464928def8fdbdc79e6e8e5c1a1296f> a dcat:DataService ;
+    dcterms:description "Tilgjengeliggjør begreper fra en begrepskatalog ihht SKOS-AP-NO"@en ;
+    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
+    dcterms:title "FDK sin begrepssamling"@en ;
+    dcat:contactPoint <http://server/unset-base/N2f7c9b36bced47828220386309ac022a> ;
+    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/concept-catalogue/master/src/main/resources/static/skos-ap-no.yaml> ;
+    dcat:endpointURL <https://registrering-begrep-api.fellesdatakatalog.digdir.no/> ;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/application/ld+json>,
+        <https://www.iana.org/assignments/media-types/application/rdf+xml>,
+        <https://www.iana.org/assignments/media-types/text/turtle> .
