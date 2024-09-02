@@ -1,5 +1,0 @@
-"""Test package.
-
-Modules:
-    conftest
-"""
