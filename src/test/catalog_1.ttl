@@ -5,34 +5,4 @@
 <https://dataservice-publisher.staging.fellesdatakatalog.digdir.no/catalogs/1> a dcat:Catalog ;
     dcterms:description "Katalog med alle API-beskrivelser i seksjon for Informasjonsforvaltning"@nb ;
     dcterms:publisher <https://organization-catalogue.fellesdatakatalog.digdir.no/organizations/991825827> ;
-    dcterms:title "Dataservicekatalog for Digitaliseringsdirektoratet"@nb ;
-    dcat:service <https://dataservice-publisher.staging.fellesdatakatalog.digdir.no/dataservices/329b3b66ec7701e9f1394e11a5c96b2474cbcc81>,
-        <https://dataservice-publisher.staging.fellesdatakatalog.digdir.no/dataservices/ed63746fd5ce327853ab094f87f06a9c2394fa96> .
-
-<http://server/unset-base/N3227bf426ef8458bbae8d29a364d9412> a ns1:Organization ;
-    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
-    ns1:hasURL <https://digdir.no> .
-
-<http://server/unset-base/N61afb2b79eea43f4b909d5b8135b53a9> a ns1:Organization ;
-    ns1:hasOrganizationName "Digitaliseringsdirektoratet"@en ;
-    ns1:hasURL <https://digdir.no> .
-
-<https://dataservice-publisher.staging.fellesdatakatalog.digdir.no/dataservices/329b3b66ec7701e9f1394e11a5c96b2474cbcc81> a dcat:DataService ;
-    dcterms:description "Exposes a collection of dataservice catalogs according to DCAT-AP-NO v2"@en ;
-    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
-    dcterms:title "Dataservice-publisher of Digdir"@en ;
-    dcat:contactPoint <http://server/unset-base/N3227bf426ef8458bbae8d29a364d9412> ;
-    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/dataservice-publisher/master/dataservice-publisher.yaml> ;
-    dcat:endpointURL <https://dataservice-publisher.digdir.no> ;
-    dcat:mediaType <https://www.iana.org/assignments/media-types/application/json>,
-        <https://www.iana.org/assignments/media-types/application/ld+json>,
-        <https://www.iana.org/assignments/media-types/application/rdf+xml>,
-        <https://www.iana.org/assignments/media-types/text/turtle> .
-
-<https://dataservice-publisher.staging.fellesdatakatalog.digdir.no/dataservices/ed63746fd5ce327853ab094f87f06a9c2394fa96> a dcat:DataService ;
-    dcterms:description "Exposes a model-catalog"@en ;
-    dcterms:license <http://data.norge.no/nlod/no/2.0> ;
-    dcterms:title "Model-catalog of Digdir"@en ;
-    dcat:contactPoint <http://server/unset-base/N61afb2b79eea43f4b909d5b8135b53a9> ;
-    dcat:endpointDescription <https://raw.githubusercontent.com/Informasjonsforvaltning/model-publisher/master/model-catalog.yaml> ;
-    dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle> .
+    dcterms:title "Dataservicekatalog for Digitaliseringsdirektoratet"@nb .
